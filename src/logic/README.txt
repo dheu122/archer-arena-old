@@ -1,0 +1,1 @@
+This folder will contain files that relate to game logic/mechanics
