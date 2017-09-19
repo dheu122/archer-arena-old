@@ -1,4 +1,4 @@
-var controls = {
+var Controls = {
 	leftKey: 65,
 	rightKey: 68,
 	downKey: 83,
