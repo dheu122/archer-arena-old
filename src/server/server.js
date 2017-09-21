@@ -8,8 +8,16 @@ var app = express();
 var server = http.Server(app);
 var io = socket(server);
 
+var room = require('./room');
 var players = [];
-var rooms = [];
+
+/*
+    Informal Player Interface {
+        name: string,
+        id: string,
+        isInThisRoom: string
+    }
+*/
 
 app.set('port', 4200);
 app.use('/', express.static(path.join(__dirname, '../../')));
@@ -25,26 +33,32 @@ server.listen(4200, function() {
 io.on('connection', function(socket) {
 
     socket.on('ConnectToServer', function(playerData) {
-        var data = playerData; // information such as nicknames, location?, character
+        console.log('Connecting using id: ' + socket.id);
+        var data = playerData;  // information such as nicknames, location?, character
+        var roomId = room.joinRoom(socket.id);
 
-        players.push({
+        socket.join(roomId);    // Join a socket.io room 
+        players.push({          // Pushes the player's info into the array
             name: data.name,
             id: socket.id,
+            isInThisRoom: roomId
         });
-
-        console.log('Connection id: ' + players[players.length-1].id + ' has connected to the server');
     })
 
-    socket.on("DisconnectFromServer", function(playerData) {
+    socket.on("disconnect", function(playerData) {
         var data = playerData;
 
         for(var i = 0; i < players.length; i++) {
             if(players[i].id == socket.id) {
+                room.removePlayerFromRoom(players[i].isInThisRoom, players[i].id);
+                if(room.isRoomEmpty(players[i].isInThisRoom)) {
+                    room.deleteRoom(players[i].isInThisRoom);
+                }
                 players.splice(i, 1);
             }
         }
 
-        console.log('Connection id: ' + socket.id + 'has disconnected from the server');
+        console.log('Connection id: ' + socket.id + ' has disconnected from the server');
     })
 });
 
