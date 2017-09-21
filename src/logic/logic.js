@@ -23,6 +23,7 @@ var Logic = {
     leftPressed: false,
     upPressed: false,
     downPressed: false, 
+    mousePressed: false,
 
     //stamina: 100,
 
@@ -53,7 +54,19 @@ var Logic = {
         if(e.keyCode == Controls.downKey) {
             downPressed = false;
         }
-    }
+    },
+    mouseDownHandler: function(e) {
+        if (e.button == Controls.leftClick) {
+            mousePressed = true;
+            console.log('LMBtrue')
+        }
+    },
+    mouseUpHandler: function(e) {
+        if (e.button == Controls.leftClick) {
+            mousePressed = false;
+            console.log('LMBfalse')
+        }
+    },
  
 }
   
@@ -62,5 +75,7 @@ var Logic = {
 document.addEventListener("keydown", Logic.keyDownHandler, false);
 document.addEventListener("keyup", Logic.keyUpHandler, false);
 
+document.addEventListener("mousedown", Logic.mouseDownHandler, false);
+document.addEventListener("mouseup", Logic.mouseUpHandler, false);
+
 //document.addEventListener("move", move, false);
-//document.addEventListener("mousemove", mouseMoveHandler, false);
