@@ -5,15 +5,23 @@
     <head>
         <meta charset="UTF-8">
         <link rel="stylesheet" href="./style.css">
-        <title>Untitled CSCI 150 Project</title>
+        <title>Archer Arena - Alpha</title>
+        <script src="/socket.io/socket.io.js"></script>
+        <style>
+            * { padding: 0; margin:0 ; }
+            canvas { background: #eee; display: block; margin: 0 auto; }
+        </style>
     </head>
+
     <body style="background-color: blue;">
         <h1> <center> Archer Arena </center></h1>
 
-        <canvas></canvas>
+        <canvas id = "gameCanvas" width = "480" height = "320"></canvas>
+
     </body>
-    <script src="src/canvas/renderer.js"></script>
-    <script src="src/logic/logic.js"></script>
-    <script src="src/logic/ui.js"></script>
-    <script src="src/logic/game.js"></script>
+        <script src="src/logic/controls.js"></script>
+        <script src="src/canvas/renderer.js"></script>
+        <script src="src/logic/logic.js"></script>
+        <script src="src/logic/ui.js"></script>
+        <script src="src/logic/game.js"></script>
 </html>
