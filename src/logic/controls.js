@@ -3,5 +3,4 @@ var Controls = {
 	rightKey: 68,
 	downKey: 83,
 	upKey: 87,
-	leftClick: 0,
 }
