@@ -1,21 +1,3 @@
-/*
-function move(whatCharacter) {
-        if(rightPressed){
-            whatCharacter.charX += 7;         
-        }
-        if(leftPressed){
-            whatCharacter.charX -= 7;
-        }
-        if(upPressed){
-            whatCharacter.charY -= 7;
-        }
-        if(downPressed){
-            whatCharacter.charY += 7;
-        }
-}
-*/
-
-
 var Logic = {
     
     // Character movement, collision, attacking, and dodging mechanics function objects will go here
@@ -36,11 +18,13 @@ var Logic = {
         
         this.canDodge = 0
         this.arrowCount = 0;
-
         this.update = function() {
             this.sprite.render();
+            this.move();
+        }
+        this.move = function() {
             if(Logic.rightPressed) {
-                //this.sprite.animate(0, 3, 10, 'loop');
+            //this.sprite.animate(0, 3, 10, 'loop');
                 this.sprite.x += this.speed;
             }
             if(Logic.leftPressed) {
@@ -82,8 +66,22 @@ var Logic = {
         if(e.keyCode == Controls.downKey) {
             Logic.downPressed = false;
         }
-    }
- 
+    },
+    mouseDownHandler: function(e) {
+        if (e.button == Controls.leftClick) {
+            mousePressed = true;
+        }
+    },
+    mouseUpHandler: function(e) {
+        if (e.button == Controls.leftClick) {
+            mousePressed = false;
+        }
+    },
+    getMousePosition: function (e) {
+        var mousePosX = e.clientX;
+        var mousePosY = e.clientY;
+        console.log('mousePos: ' + mousePosX + ',' + mousePosY); //remove after testing
+    },
 }
   
 
@@ -91,5 +89,9 @@ var Logic = {
 document.addEventListener("keydown", Logic.keyDownHandler, false);
 document.addEventListener("keyup", Logic.keyUpHandler, false);
 
-//document.addEventListener("move", move, false);
-//document.addEventListener("mousemove", mouseMoveHandler, false);
+document.addEventListener("mousedown", Logic.mouseDownHandler, false);
+document.addEventListener("mouseup", Logic.mouseUpHandler, false);
+
+document.addEventListener("mousemove", Logic.getMousePosition, false);
+
+//document.addEventListener("spritemove", Logic.move, false);
