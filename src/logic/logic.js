@@ -5,7 +5,6 @@ var Logic = {
     leftPressed: false,
     upPressed: false,
     downPressed: false, 
-    mousePressed: false,
 
     //stamina: 100,
 
@@ -83,7 +82,6 @@ var Logic = {
         var mousePosY = e.clientY;
         console.log('mousePos: ' + mousePosX + ',' + mousePosY); //remove after testing
     },
-
 }
   
 
