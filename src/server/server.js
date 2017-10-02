@@ -9,7 +9,7 @@ var server = http.Server(app);
 var io = socket(server);
 
 var room = require('./room');
-var players = [];
+var player = require('./player');
 
 /*
     Informal Player Interface {
@@ -38,15 +38,12 @@ io.on('connection', function(socket) {
         var roomId = room.joinRoom(socket.id);
 
         socket.join(roomId);    // Join a socket.io room 
-        players.push({          // Pushes the player's info into the array
-            name: data.name,
-            id: socket.id,
-            isInThisRoom: roomId
-        });
+        player.addPlayerToServer(playerData, socket.id, roomId); // Adds player to player array for server
     })
 
     socket.on("disconnect", function(playerData) {
         var data = playerData;
+        var players = player.getPlayers();
 
         for(var i = 0; i < players.length; i++) {
             if(players[i].id == socket.id) {
@@ -54,7 +51,7 @@ io.on('connection', function(socket) {
                 if(room.isRoomEmpty(players[i].isInThisRoom)) {
                     room.deleteRoom(players[i].isInThisRoom);
                 }
-                players.splice(i, 1);
+                player.deletePlayerAt(i);
             }
         }
 
