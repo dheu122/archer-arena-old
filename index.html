@@ -7,25 +7,18 @@
         <link rel="stylesheet" href="./style.css">
         <title>Archer Arena - Alpha</title>
         <script src="/socket.io/socket.io.js"></script>
-        <style>
+        <style> 
             * { padding: 0; margin:0 ; }
-            canvas { background: #eee; display: block; margin: 0 auto; }
+            canvas { background: #eee; display: block; margin: 0 auto; cursor: crosshair }
         </style>
     </head>
-<<<<<<< HEAD
-    <body style="background-color: maroon;">
-        <h1> <center> Archer Arena </center></h1>
-        <h2><center> Welcome To The Game </center></h2>
-        <h3><right> Login In </right></h3>
-        <canvas></canvas>
-=======
-
-    <body style="background-color: blue;">
-        <h1> <center> Archer Arena </center></h1>
-
+    <body>
+        <h1> Archer Arena <h1/>
+        <form> 
+            <input id="username">
+            <button type="button" onclick="UI.getUsername()">login</button>
+        </form>
         <canvas id = "gameCanvas" width = "480" height = "320"></canvas>
-
->>>>>>> 1bbea207353708e9d084b651a0be7afa8b86c5ca
     </body>
         <script src="src/logic/controls.js"></script>
         <script src="src/canvas/renderer.js"></script>
