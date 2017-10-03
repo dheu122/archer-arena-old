@@ -19,7 +19,7 @@ var Logic = {
         this.canDodge = 0
         this.arrowCount = 0;
         this.update = function() {
-            this.sprite.render();
+            //this.sprite.render();
             this.move();
         }
         this.move = function() {
@@ -80,7 +80,7 @@ var Logic = {
     getMousePosition: function (e) {
         var mousePosX = e.clientX;
         var mousePosY = e.clientY;
-        console.log('mousePos: ' + mousePosX + ',' + mousePosY); //remove after testing
+        //console.log('mousePos: ' + mousePosX + ',' + mousePosY); //remove after testing
     },
 }
   

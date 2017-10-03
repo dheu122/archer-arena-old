@@ -1,11 +1,18 @@
 // This is the compiled game. Should be empty for now.
 var socket = io();
 
+// Global room id when joining, this will help tell the client which room and
+// which players it will associate with
+var globalRoomId;
+
 // Example of connecting to the server, uses 'ConnectToServer' from server.js
 socket.emit('ConnectToServer', {name: 'Bilbo Baggins'});
 
 // Creates a new player 'character', and renders a sprite
 var player = new Logic.character({
+	name: '',
+	id: '',
+	isInThisRoom: '',
 	sprite: new Renderer.Sprite({
 		image: Renderer.Images.player,
 		width: 16,
@@ -21,8 +28,41 @@ var player = new Logic.character({
 
 window.onload = function() {
 	gameLoop();
+
+	socket.on('JoinedRoom', function(identity) {
+		globalRoomId = identity.roomId;
+		player.isInThisRoom = identity.roomId;
+		player.id = identity.id;
+	});
+
+	socket.on('GetRoomPlayerData', function(playerData) {
+		//console.log(playerData);
+		updatePlayers(playerData);
+	});
 }
 
+function updatePlayers(playerData) {
+	for(var i = 0; i < playerData.length; i++) {
+		var data = playerData[i];
+		var player =  new Logic.character({
+			name: '',
+			id: data.id,
+			isInThisRoom: data.isInThisRoom,
+			sprite: new Renderer.Sprite({
+				image: Renderer.Images.player,
+				width: 16,
+				height: 16,
+				isSpriteSheet: true,
+				x: data.sprite.x,
+				y: data.sprite.y,
+				index: data.sprite.index
+			}),
+			speed: 2,
+			stamina: 100
+		});
+		player.sprite.render();
+	}
+}
 // Clears the screen
 // Calls the player's update() function and redraws itself
 // Repeat
@@ -32,9 +72,19 @@ function gameLoop() { //this is the main game loop, i found a version of it in a
 		//updatePositions();
 		//handleControls();
 		//showSprites();
-		ctx.clearRect(0, 0, 480, 320);
-		player.update();
-		lastLoopRun = new Date().getTime();
+		if(globalRoomId) {
+			var data = {
+				playerData: player,
+				roomId: globalRoomId
+			}
+
+			ctx.clearRect(0, 0, 480, 320);
+			player.update();					// Updates current client to itself
+			socket.emit('SendPlayerData', data); 		// Send current client's data to everyone, so they can update
+			lastLoopRun = new Date().getTime();
+		} else {
+			console.log("No joined room");
+		}
 	}
 	setTimeout('gameLoop();', 2);
 }

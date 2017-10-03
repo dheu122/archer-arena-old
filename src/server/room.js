@@ -18,10 +18,21 @@ var rooms = [];
 
 module.exports = {
 
+    getRooms: function() {
+        return rooms;
+    },
+
     getRoomIndex: function(roomId) {
         for(var i = 0; i < rooms.length; i++) {
             if(roomId == rooms[i].roomId)
                 return i;
+        }
+    },
+
+    getPlayersInRoom: function(roomId) {
+        for(var i = 0; i < rooms.length; i++) {
+            if(roomId == rooms[i].roomId)
+                return rooms[i].playersInRoom;
         }
     },
 
