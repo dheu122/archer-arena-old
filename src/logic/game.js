@@ -8,6 +8,25 @@ var globalRoomId;
 // Example of connecting to the server, uses 'ConnectToServer' from server.js
 socket.emit('ConnectToServer', {name: 'Bilbo Baggins'});
 
+/////////////////////////////////////////////////
+
+
+function loadJSON(url, onsuccess) {
+  var request = new XMLHttpRequest();
+  request.onreadystatechange = function() {
+    if ((request.readyState == 4) && (request.status == 200)) // if DONE and SUCCESS
+      onsuccess(JSON.parse(request.responseText));
+  }
+  console.log(request);
+  request.open("GET", url + ".json", true);
+  request.send();
+}
+
+
+
+/////////////////////////////////////////////////
+
+
 // Creates a new player 'character', and renders a sprite
 var player = new Logic.character({
 	name: '',
@@ -27,6 +46,7 @@ var player = new Logic.character({
 });
 
 window.onload = function() {
+	loadJSON('/assets/Forest16px', gameLoop);
 	gameLoop();
 
 	socket.on('JoinedRoom', function(identity) {
@@ -86,5 +106,6 @@ function gameLoop() { //this is the main game loop, i found a version of it in a
 			console.log("No joined room");
 		}
 	}
+	
 	setTimeout('gameLoop();', 2);
 }
