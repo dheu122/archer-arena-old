@@ -8,7 +8,6 @@ var Logic = {
     mousePressed: false,
     spacePressed: false,
     shiftPressed: false,
-    //arrowSpeed: 10,
 
     character: function(options) {
         this.sprite = options.sprite;
@@ -156,7 +155,6 @@ var Logic = {
             sprite.y = 480 - sprite.height;
         }
     },
-
 }
   
 
