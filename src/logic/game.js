@@ -35,6 +35,7 @@ window.onload = function() {
 
 	socket.on('GetRoomPlayerData', function(playerData) {
 		//console.log(playerData);
+		ctx.clearRect(0, 0, 480, 320);
 		updatePlayers(playerData);
 	});
 	
@@ -50,7 +51,7 @@ function updatePlayers(playerData) {
 			isInThisRoom: data.isInThisRoom,
 			sprite: new Renderer.Sprite({
 				image: Renderer.Images.player,
-				width: 16,
+				width: 15,
 				height: 16,
 				isSpriteSheet: true,
 				x: data.sprite.x,
@@ -78,7 +79,6 @@ function gameLoop() { //this is the main game loop, i found a version of it in a
 				roomId: globalRoomId
 			}
 
-			ctx.clearRect(0, 0, 480, 320);
 			player.update();					// Updates current client to itself
 			socket.emit('SendPlayerData', data); 		// Send current client's data to everyone, so they can update
 			lastLoopRun = new Date().getTime();
