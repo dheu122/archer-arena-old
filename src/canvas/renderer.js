@@ -7,7 +7,7 @@ ctx.scale(3,3);
 var Renderer = {
     // Images from our assets folder will go here
     Images: {
-        player: 'assets/player_test.png'
+        player: 'assets/sprite_sheet.png'
     },
 
     // Sprite, Tilemaps, and Animation function objects will go here
@@ -123,3 +123,10 @@ var Renderer = {
 }
 
 // Manual browser testing functions will go here
+
+//Ideas to implement
+//
+//  -Cached Rendering
+//  -Title Screen
+//  -Enterable rooms rendering
+//  -Camera Controls

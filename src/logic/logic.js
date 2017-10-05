@@ -22,7 +22,7 @@ var Logic = {
         this.canDodge = true;
         this.arrowCount = 0;
         this.update = function() {
-            this.sprite.render();
+            //this.sprite.render();
             this.move();
             this.sprint();
             this.dodge();
@@ -160,20 +160,6 @@ var Logic = {
         var mousePosX = e.clientX;
         var mousePosY = e.clientY;
         //console.log('mousePos: ' + mousePosX + ',' + mousePosY); //remove after testing
-    },
-    boundSprite: function (sprite) {
-        if (sprite.x < 20) {
-            sprite.x = 20;
-        }
-        if (sprite.y < 20) {
-            sprite.y = 20;
-        }
-        if (sprite.x + sprite.width > 480) {
-            sprite.x = 480 - sprite.width;
-        }
-        if (sprite.y + sprite.height > 480) {
-            sprite.y = 480 - sprite.height;
-        }
     },
 }
   
