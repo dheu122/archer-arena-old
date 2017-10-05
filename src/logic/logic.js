@@ -14,16 +14,18 @@ var Logic = {
 
         this.speed = options.speed;
         this.maxSpeed = options.maxSpeed;
+        this.minSpeed = options.minSpeed;
         
         this.maxStamina = 100;
         this.curStamina = this.maxStamina;
         
-        this.canDodge = 0
+        this.canDodge = true;
         this.arrowCount = 0;
         this.update = function() {
             this.sprite.render();
             this.move();
             this.sprint();
+            this.dodge();
         }
         /*this.firearrow function(){
             var arrowX = charPosX + 10;
@@ -65,22 +67,40 @@ var Logic = {
                         this.speed = this.maxSpeed;
                     }
                     else {
-                    Logic.mousePressed = false;
-                    this.speed = this.speed + 0.1;
+                    Logic.mousePressed = false; //may be buggy
+                    this.speed += 0.01;
                     this.curStamina = i;
-                    console.log('SPRINT i: ' + i);
+                    //console.log('SPRINT i: ' + i);
                     i--;
                         }
                     }
                 }
                 //otherwise recharge stamina to max 100
-                else if(Logic.shiftPressed = false && this.curStamina <= this.maxStamina) { //BUG: does not execute loop
-                    //var i = this.curStamina;
-                    while (i <= this.maxStamina) {
-                        console.log('RECHARGE i: ' + i);
-                        i++;
-                    }
+            else if(Logic.shiftPressed == false && Logic.spacePressed == false && this.curStamina <= this.maxStamina) { //BUG: cannot move until stamina = 100
+                var i = this.curStamina;
+                this.speed = this.minSpeed; //make this decelerate?
+                while (i <= this.maxStamina) {
+                    //console.log('RECHARGE i: ' + i);
+                    //console.log('SPEED: ' + this.speed);
+                    i++; //make this slower
+                    this.curStamina = i;
                 }
+            }
+        }
+        this.dodge = function(){ //should not be able to hold down space; make instant press
+            if (Logic.spacePressed) {
+                if (this.canDodge == true && this.curStamina >= 50) {
+                    this.speed += 10;
+                    this.curStamina -= 50;
+                    this.canDodge = false;
+                }
+                else {
+                    this.speed = this.minSpeed;
+                }
+            }
+            else {
+                this.canDodge = true;
+            }
         }
     },
 
