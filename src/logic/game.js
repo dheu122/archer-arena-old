@@ -5,9 +5,6 @@ var socket = io();
 // which players it will associate with
 var globalRoomId;
 
-// Example of connecting to the server, uses 'ConnectToServer' from server.js
-socket.emit('ConnectToServer', {name: 'Bilbo Baggins'});
-
 // Creates a new player 'character', and renders a sprite
 var player = new Logic.character({
 	name: '',
@@ -27,7 +24,8 @@ var player = new Logic.character({
 });
 
 window.onload = function() {
-	gameLoop();
+	// Example of connecting to the server, uses 'ConnectToServer' from server.js
+	socket.emit('ConnectToServer', {name: 'Bilbo Baggins'});
 
 	socket.on('JoinedRoom', function(identity) {
 		globalRoomId = identity.roomId;
@@ -39,6 +37,8 @@ window.onload = function() {
 		//console.log(playerData);
 		updatePlayers(playerData);
 	});
+	
+	gameLoop();
 }
 
 function updatePlayers(playerData) {
