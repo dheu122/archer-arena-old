@@ -1,10 +1,10 @@
 var Logic = {
-    
+
     // Character movement, collision, attacking, and dodging mechanics function objects will go here
     rightPressed: false,
     leftPressed: false,
     upPressed: false,
-    downPressed: false, 
+    downPressed: false,
     mousePressed: false,
     spacePressed: false,
     shiftPressed: false,
@@ -15,17 +15,17 @@ var Logic = {
         this.speed = options.speed;
         this.maxSpeed = options.maxSpeed;
         this.minSpeed = options.minSpeed;
-        
+
         this.maxStamina = 100;
         this.curStamina = this.maxStamina;
-        
+
         this.canDodge = true;
         this.arrowCount = 0;
         this.update = function() {
             //this.sprite.render();
             this.move();
-            this.sprint();
-            this.dodge();
+            // this.sprint();
+            // this.dodge();
         }
         /*this.firearrow function(){
             var arrowX = charPosX + 10;
@@ -47,61 +47,65 @@ var Logic = {
             if(Logic.rightPressed) {
             //this.sprite.animate(0, 3, 10, 'loop');
                 this.sprite.x += this.speed;
+                this.sprite.index = 0;
             }
             if(Logic.leftPressed) {
                 this.sprite.x -= this.speed;
+                this.sprite.index = 27;
             }
             if(Logic.upPressed) {
                 this.sprite.y -= this.speed;
+                this.sprite.index = 4;
             }
             if(Logic.downPressed) {
                 this.sprite.y += this.speed;
+                this.sprite.index = 5;
             }
         }
-        this.sprint = function() {
-            //sprint while draining stamina but cannot shoot
-            if(Logic.shiftPressed) {
-                var i = this.curStamina;
-                while (i >= 0) {
-                    if (this.speed > this.maxSpeed) {
-                        this.speed = this.maxSpeed;
-                    }
-                    else {
-                    Logic.mousePressed = false; //may be buggy
-                    this.speed += 0.01;
-                    this.curStamina = i;
-                    //console.log('SPRINT i: ' + i);
-                    i--;
-                        }
-                    }
-                }
-                //otherwise recharge stamina to max 100
-            else if(Logic.shiftPressed == false && Logic.spacePressed == false && this.curStamina <= this.maxStamina) { //BUG: cannot move until stamina = 100
-                var i = this.curStamina;
-                this.speed = this.minSpeed; //make this decelerate?
-                while (i <= this.maxStamina) {
-                    //console.log('RECHARGE i: ' + i);
-                    //console.log('SPEED: ' + this.speed);
-                    i++; //make this slower
-                    this.curStamina = i;
-                }
-            }
-        }
-        this.dodge = function(){ //should not be able to hold down space; make instant press
-            if (Logic.spacePressed) {
-                if (this.canDodge == true && this.curStamina >= 50) {
-                    this.speed += 10;
-                    this.curStamina -= 50;
-                    this.canDodge = false;
-                }
-                else {
-                    this.speed = this.minSpeed;
-                }
-            }
-            else {
-                this.canDodge = true;
-            }
-        }
+        // this.sprint = function() {
+        //     //sprint while draining stamina but cannot shoot
+        //     if(Logic.shiftPressed) {
+        //         var i = this.curStamina;
+        //         while (i >= 0) {
+        //             if (this.speed > this.maxSpeed) {
+        //                 this.speed = this.maxSpeed;
+        //             }
+        //             else {
+        //             Logic.mousePressed = false; //may be buggy
+        //             this.speed += 0.01;
+        //             this.curStamina = i;
+        //             //console.log('SPRINT i: ' + i);
+        //             i--;
+        //                 }
+        //             }
+        //         }
+        //         //otherwise recharge stamina to max 100
+        //     else if(Logic.shiftPressed == false && Logic.spacePressed == false && this.curStamina <= this.maxStamina) { //BUG: cannot move until stamina = 100
+        //         var i = this.curStamina;
+        //         this.speed = this.minSpeed; //make this decelerate?
+        //         while (i <= this.maxStamina) {
+        //             //console.log('RECHARGE i: ' + i);
+        //             //console.log('SPEED: ' + this.speed);
+        //             i++; //make this slower
+        //             this.curStamina = i;
+        //         }
+        //     }
+        // }
+        // this.dodge = function(){ //should not be able to hold down space; make instant press
+        //     if (Logic.spacePressed) {
+        //         if (this.canDodge == true && this.curStamina >= 50) {
+        //             this.speed += 10;
+        //             this.curStamina -= 50;
+        //             this.canDodge = false;
+        //         }
+        //         else {
+        //             this.speed = this.minSpeed;
+        //         }
+        //     }
+        //     else {
+        //         this.canDodge = true;
+        //     }
+        // }
     },
 
     keyDownHandler: function(e) {
@@ -162,7 +166,7 @@ var Logic = {
         //console.log('mousePos: ' + mousePosX + ',' + mousePosY); //remove after testing
     },
 }
-  
+
 
 // Manual browser testing functions will go here
 document.addEventListener("keydown", Logic.keyDownHandler, false); //up, down, left, right, space, shift

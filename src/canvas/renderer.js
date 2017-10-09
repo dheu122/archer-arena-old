@@ -43,17 +43,17 @@ var Renderer = {
                             if(this.index == curTile) {
                                 context.drawImage(this.image, col * this.width, row * this.height, this.width, this.height, this.x, this.y, this.width, this.height);
                                 return;
-                            } 
+                            }
                             else {
                                 curTile++;
                             }
                         }
                     }
-                } 
+                }
                 else {
                     console.log("Width, height, or index parameter is missing from render()");
                 }
-            } 
+            }
             else {
                 context.drawImage(this.image, this.x, this.y);
             }
@@ -62,7 +62,7 @@ var Renderer = {
         this.animate = function(startIndex, endIndex, animateSpeed, animateType) {
             if(!this.isSpriteSheet) {
                 console.log("You cannot animate a single sprite, set isSpriteSheet to true");
-            } 
+            }
             else {
                 var _this = this;
                 var i = startIndex;
@@ -72,7 +72,7 @@ var Renderer = {
                         if(i < endIndex) {
                             i++;
                             _this.setIndex(i);
-                        } 
+                        }
                         else {
                             if(animateType == 'pingpong') {
                                 var temp = startIndex;
@@ -118,7 +118,7 @@ var Renderer = {
     },
 
     Tilemap: function(options) {
-        
+
     }
 }
 
