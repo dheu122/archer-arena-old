@@ -6,8 +6,9 @@
         <meta charset="UTF-8">
         <link rel="stylesheet" href="./style.css">
         <title>Archer Arena - Alpha</title>
+        <link rel="shortcut icon" type="image/png" href="image/favicon.png"/>
         <script src="/socket.io/socket.io.js"></script>
-        <style> 
+        <style>
             * { padding: 0; margin:0 ; }
             canvas { 
                 background: #eee; 
@@ -20,11 +21,12 @@
 
     <body>
         <div id="titlescreen">
+        
+          <p>
+          <img src = "title.png" alt = "Title image" class="center">
+          </p>
+        <form>
 
-   <body>
-        <h1> Archer Arena <h1/>
-        <h2> Enter a User Name</h2>
-        <form> 
             <input id="username">
             <button type="button" onclick="UI.getUsername()">login</button>
         </form>
@@ -32,7 +34,9 @@
         <div id ="selectionscreen">
         
         </div>
-         <canvas id = "gameCanvas" width = "480" height = "320"></canvas>
+         
+    
+      <canvas id = "gameCanvas" width = "1000" height = "500"></canvas>
 
     </body>
     <script src="src/logic/controls.js"></script>

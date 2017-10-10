@@ -9,7 +9,7 @@ var server = http.Server(app);
 var io = socket(server);
 
 var room = require('./room');
-var players = [];
+var player = require('./player');
 
 /*
     Informal Player Interface {
@@ -36,17 +36,44 @@ io.on('connection', function(socket) {
         console.log('Connecting using id: ' + socket.id);
         var data = playerData;  // information such as nicknames, location?, character
         var roomId = room.joinRoom(socket.id);
+        var identity = {
+            roomId: roomId,
+            id: socket.id
+        }
 
         socket.join(roomId);    // Join a socket.io room 
-        players.push({          // Pushes the player's info into the array
-            name: data.name,
-            id: socket.id,
-            isInThisRoom: roomId
-        });
+        player.addPlayerToServer(playerData, socket.id, roomId); // Adds player to player array for server
+        
+        socket.emit('JoinedRoom', identity);
+    })
+
+    socket.on('SendPlayerData', function(data) {
+        player.updatePlayer(data.playerData, socket.id, data.roomId);
+
+        var players = player.getPlayers();
+        var playerIds = room.getPlayersInRoom(data.roomId); // Get the player ids from the room the player is in.
+        var playersInRoom = [];
+
+        if(!playerIds) {
+            return;
+        }
+
+        for(var i = 0; i < playerIds.length; i++) {
+            for(var j = 0; j < players.length; j++) {
+                if(playerIds[i] == players[j].id) {
+                    playersInRoom.push(players[i]);
+                    break;
+                }
+            }
+        }
+        // Using the player id, get their information and put that in an array.
+
+        io.sockets.in(data.roomId).emit('GetRoomPlayerData', playersInRoom);
     })
 
     socket.on("disconnect", function(playerData) {
         var data = playerData;
+        var players = player.getPlayers();
 
         for(var i = 0; i < players.length; i++) {
             if(players[i].id == socket.id) {
@@ -54,7 +81,7 @@ io.on('connection', function(socket) {
                 if(room.isRoomEmpty(players[i].isInThisRoom)) {
                     room.deleteRoom(players[i].isInThisRoom);
                 }
-                players.splice(i, 1);
+                player.deletePlayerAt(i);
             }
         }
 

@@ -7,7 +7,7 @@ ctx.scale(3,3);
 var Renderer = {
     // Images from our assets folder will go here
     Images: {
-        player: 'assets/player_test.png'
+        player: 'assets/sprite_sheet.png'
     },
 
     // Sprite, Tilemaps, and Animation function objects will go here
@@ -43,26 +43,27 @@ var Renderer = {
                             if(this.index == curTile) {
                                 context.drawImage(this.image, col * this.width, row * this.height, this.width, this.height, this.x, this.y, this.width, this.height);
                                 return;
-                            } 
+                            }
                             else {
                                 curTile++;
                             }
                         }
                     }
-                } 
+                }
                 else {
                     console.log("Width, height, or index parameter is missing from render()");
                 }
-            } 
+            }
             else {
                 context.drawImage(this.image, this.x, this.y);
             }
         }
 
+        //TODO: get working; Currently speeds up the more you move in one direction(loop never stops)
         this.animate = function(startIndex, endIndex, animateSpeed, animateType) {
             if(!this.isSpriteSheet) {
                 console.log("You cannot animate a single sprite, set isSpriteSheet to true");
-            } 
+            }
             else {
                 var _this = this;
                 var i = startIndex;
@@ -72,7 +73,7 @@ var Renderer = {
                         if(i < endIndex) {
                             i++;
                             _this.setIndex(i);
-                        } 
+                        }
                         else {
                             if(animateType == 'pingpong') {
                                 var temp = startIndex;
@@ -118,8 +119,15 @@ var Renderer = {
     },
 
     Tilemap: function(options) {
-        
+
     }
 }
 
 // Manual browser testing functions will go here
+
+//Ideas to implement
+//
+//  -Cached Rendering
+//  -Title Screen
+//  -Enterable rooms rendering
+//  -Camera Controls
