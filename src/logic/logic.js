@@ -4,12 +4,12 @@ canvas.width = 480;
 canvas.height = 320;
 
 var Logic = {
-    
+
     // Character movement, collision, attacking, and dodging mechanics function objects will go here
     rightPressed: false,
     leftPressed: false,
     upPressed: false,
-    downPressed: false, 
+    downPressed: false,
     mousePressed: false,
     spacePressed: false,
     shiftPressed: false,
@@ -20,10 +20,10 @@ var Logic = {
         this.speed = options.speed;
         this.maxSpeed = options.maxSpeed;
         this.minSpeed = options.minSpeed;
-        
+
         this.maxStamina = 100;
         this.curStamina = this.maxStamina;
-        
+
         this.canDodge = true;
         this.arrowCount = 0;
         this.update = function() {
@@ -53,15 +53,23 @@ var Logic = {
             if(Logic.rightPressed) {
             //this.sprite.animate(0, 3, 10, 'loop');
                 this.sprite.x += this.speed;
+                this.sprite.setIndex(0);
+                // while(Logic.rightPressed) this.sprite.animate(1,2,10,'loop');
             }
             if(Logic.leftPressed) {
                 this.sprite.x -= this.speed;
+                this.sprite.setIndex(27);
+                // while(Logic.upPressed) this.animate();
             }
             if(Logic.upPressed) {
                 this.sprite.y -= this.speed;
+                this.sprite.setIndex(4);
+                // while(Logic.upPressed) this.animate();
             }
             if(Logic.downPressed) {
                 this.sprite.y += this.speed;
+                this.sprite.setIndex(5);
+                // while(Logic.upPressed) this.animate();
             }
         }
         this.sprint = function() {
@@ -175,7 +183,7 @@ var Logic = {
         var mousePosY = e.clientY;
     },
 }
-  
+
 
 // Manual browser testing functions will go here
 document.addEventListener("keydown", Logic.keyDownHandler, false); //up, down, left, right, space, shift

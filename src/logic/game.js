@@ -6,7 +6,7 @@ var socket = io();
 var globalRoomId;
 
 // Example of connecting to the server, uses 'ConnectToServer' from server.js
-socket.emit('ConnectToServer', {name: 'Bilbo Baggins'});
+// socket.emit('ConnectToServer', {name: 'Bilbo Baggins'});
 
 /////////////////////////////////////////////////
 
@@ -33,7 +33,7 @@ var player = new Logic.character({
 	isInThisRoom: '',
 	sprite: new Renderer.Sprite({
 		image: Renderer.Images.player,
-		width: 16,
+		width: 15,
 		height: 16,
 		isSpriteSheet: true,
 		x: 0,
@@ -61,7 +61,7 @@ window.onload = function() {
 		ctx.clearRect(0, 0, 480, 320);
 		updatePlayers(playerData);
 	});
-	
+
 	gameLoop();
 }
 
@@ -109,6 +109,6 @@ function gameLoop() { //this is the main game loop, i found a version of it in a
 			console.log("No joined room");
 		}
 	}
-	
+
 	setTimeout('gameLoop();', 2);
 }
