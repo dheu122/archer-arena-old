@@ -59,6 +59,7 @@ var Renderer = {
             }
         }
 
+        //TODO: get working; Currently speeds up the more you move in one direction(loop never stops)
         this.animate = function(startIndex, endIndex, animateSpeed, animateType) {
             if(!this.isSpriteSheet) {
                 console.log("You cannot animate a single sprite, set isSpriteSheet to true");

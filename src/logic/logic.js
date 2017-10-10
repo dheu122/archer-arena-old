@@ -47,19 +47,23 @@ var Logic = {
             if(Logic.rightPressed) {
             //this.sprite.animate(0, 3, 10, 'loop');
                 this.sprite.x += this.speed;
-                this.sprite.index = 0;
+                this.sprite.setIndex(0);
+                // while(Logic.rightPressed) this.sprite.animate(1,2,10,'loop');
             }
             if(Logic.leftPressed) {
                 this.sprite.x -= this.speed;
-                this.sprite.index = 27;
+                this.sprite.setIndex(27);
+                // while(Logic.upPressed) this.animate();
             }
             if(Logic.upPressed) {
                 this.sprite.y -= this.speed;
-                this.sprite.index = 4;
+                this.sprite.setIndex(4);
+                // while(Logic.upPressed) this.animate();
             }
             if(Logic.downPressed) {
                 this.sprite.y += this.speed;
-                this.sprite.index = 5;
+                this.sprite.setIndex(5);
+                // while(Logic.upPressed) this.animate();
             }
         }
         // this.sprint = function() {
