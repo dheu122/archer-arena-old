@@ -24,6 +24,41 @@ function loadJSON(url, onsuccess) {
 
 
 
+///////////////////////////////////////////////// SOUND FUNCTION
+var titleMusic;
+var gameMusic = new sound("BackgroundMusic.wav");
+
+function sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+    this.play = function(){
+        this.sound.play();
+    }
+    this.stop = function(){
+        this.sound.pause();
+    }
+} 
+
+function musicPlayer() {
+
+    gameMusic.play();
+
+}
+
+musicPlayer();
+
+function donePlaying() {
+
+	if (gameMusic.paused = true) {
+	musicPlayer();
+	}
+
+}
+
 /////////////////////////////////////////////////
 
 
@@ -46,6 +81,7 @@ var player = new Logic.character({
 });
 
 window.onload = function() {
+	musicPlayer('/assets/I DECLARE BANKRUPTCY');
 	loadJSON('/assets/Forest16px', gameLoop);
 	gameLoop();
 
@@ -92,6 +128,7 @@ function gameLoop() { //this is the main game loop, i found a version of it in a
 		//updatePositions();
 		//handleControls();
 		//showSprites();
+		donePlaying();
 		if(globalRoomId) {
 			var data = {
 				playerData: player,
