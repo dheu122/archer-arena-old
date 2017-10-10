@@ -1,3 +1,8 @@
+var canvas = document.querySelector('canvas');
+var ctx = canvas.getContext("2d");
+canvas.width = 480;
+canvas.height = 320;
+
 var Logic = {
     
     // Character movement, collision, attacking, and dodging mechanics function objects will go here
@@ -26,6 +31,7 @@ var Logic = {
             this.move();
             this.sprint();
             this.dodge();
+            this.bound();
         }
         /*this.firearrow function(){
             var arrowX = charPosX + 10;
@@ -70,7 +76,6 @@ var Logic = {
                     Logic.mousePressed = false; //may be buggy
                     this.speed += 0.01;
                     this.curStamina = i;
-                    //console.log('SPRINT i: ' + i);
                     i--;
                         }
                     }
@@ -80,14 +85,12 @@ var Logic = {
                 var i = this.curStamina;
                 this.speed = this.minSpeed; //make this decelerate?
                 while (i <= this.maxStamina) {
-                    //console.log('RECHARGE i: ' + i);
-                    //console.log('SPEED: ' + this.speed);
                     i++; //make this slower
                     this.curStamina = i;
                 }
             }
         }
-        this.dodge = function(){ //should not be able to hold down space; make instant press
+        this.dodge = function(){ //BUG: should not be able to hold down space; make instant press
             if (Logic.spacePressed) {
                 if (this.canDodge == true && this.curStamina >= 50) {
                     this.speed += 10;
@@ -102,8 +105,21 @@ var Logic = {
                 this.canDodge = true;
             }
         }
+        this.bound = function() {
+            if(this.sprite.x - this.sprite.width/2 < 0){
+                this.sprite.x = this.sprite.width/2;
+            }
+            if(this.sprite.y - this.sprite.height/2 < 0){
+                this.sprite.y = this.sprite.height/2;
+            }
+            if(this.sprite.x + this.sprite.width + (this.sprite.width/2) > canvas.width){
+                this.sprite.x = canvas.width - this.sprite.width - (this.sprite.width/2);
+            }
+            if(this.sprite.y + this.sprite.height + (this.sprite.height/2) > canvas.height){
+                this.sprite.y = canvas.height - this.sprite.height - (this.sprite.height/2);
+            }
+        }
     },
-
     keyDownHandler: function(e) {
         if(e.keyCode == Controls.rightKey) {
             Logic.rightPressed = true;
@@ -119,11 +135,9 @@ var Logic = {
         }
         if (e.keyCode == Controls.spaceKey) {
             Logic.spacePressed = true;
-            console.log('spaceTRUE')
         }
         if (e.keyCode == Controls.shiftKey){
             Logic.shiftPressed = true;
-            console.log('shiftTRUE')
         }
     },
     keyUpHandler: function(e) {
@@ -159,7 +173,6 @@ var Logic = {
     getMousePosition: function (e) {
         var mousePosX = e.clientX;
         var mousePosY = e.clientY;
-        //console.log('mousePos: ' + mousePosX + ',' + mousePosY); //remove after testing
     },
 }
   
