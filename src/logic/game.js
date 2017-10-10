@@ -6,7 +6,7 @@ var socket = io();
 var globalRoomId;
 
 // Example of connecting to the server, uses 'ConnectToServer' from server.js
-socket.emit('ConnectToServer', {name: 'Bilbo Baggins'});
+// socket.emit('ConnectToServer', {name: 'Bilbo Baggins'});
 
 /////////////////////////////////////////////////
 
@@ -61,7 +61,6 @@ function donePlaying() {
 
 /////////////////////////////////////////////////
 
-
 // Creates a new player 'character', and renders a sprite
 var player = new Logic.character({
 	name: '',
@@ -69,7 +68,7 @@ var player = new Logic.character({
 	isInThisRoom: '',
 	sprite: new Renderer.Sprite({
 		image: Renderer.Images.player,
-		width: 16,
+		width: 15,
 		height: 16,
 		isSpriteSheet: true,
 		x: 0,
@@ -81,9 +80,10 @@ var player = new Logic.character({
 });
 
 window.onload = function() {
-	musicPlayer('/assets/I DECLARE BANKRUPTCY');
+
+	// Example of connecting to the server, uses 'ConnectToServer' from server.js
+	socket.emit('ConnectToServer', {name: 'Bilbo Baggins'});
 	loadJSON('/assets/Forest16px', gameLoop);
-	gameLoop();
 
 	socket.on('JoinedRoom', function(identity) {
 		globalRoomId = identity.roomId;
@@ -93,8 +93,11 @@ window.onload = function() {
 
 	socket.on('GetRoomPlayerData', function(playerData) {
 		//console.log(playerData);
+		ctx.clearRect(0, 0, 480, 320);
 		updatePlayers(playerData);
 	});
+
+	gameLoop();
 }
 
 function updatePlayers(playerData) {
@@ -106,7 +109,7 @@ function updatePlayers(playerData) {
 			isInThisRoom: data.isInThisRoom,
 			sprite: new Renderer.Sprite({
 				image: Renderer.Images.player,
-				width: 16,
+				width: 15,
 				height: 16,
 				isSpriteSheet: true,
 				x: data.sprite.x,
@@ -135,7 +138,6 @@ function gameLoop() { //this is the main game loop, i found a version of it in a
 				roomId: globalRoomId
 			}
 
-			ctx.clearRect(0, 0, 480, 320);
 			player.update();					// Updates current client to itself
 			socket.emit('SendPlayerData', data); 		// Send current client's data to everyone, so they can update
 			lastLoopRun = new Date().getTime();
@@ -143,6 +145,6 @@ function gameLoop() { //this is the main game loop, i found a version of it in a
 			console.log("No joined room");
 		}
 	}
-	
+
 	setTimeout('gameLoop();', 2);
 }
