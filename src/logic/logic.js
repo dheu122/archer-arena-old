@@ -59,17 +59,17 @@ var Logic = {
             if(Logic.leftPressed) {
                 this.sprite.x -= this.speed;
                 this.sprite.setIndex(27);
-                // while(Logic.upPressed) this.animate();
+                // while(Logic.upPressed) this.sprite.animate();
             }
             if(Logic.upPressed) {
                 this.sprite.y -= this.speed;
                 this.sprite.setIndex(4);
-                // while(Logic.upPressed) this.animate();
+                // while(Logic.upPressed) this.sprite.animate();
             }
             if(Logic.downPressed) {
                 this.sprite.y += this.speed;
                 this.sprite.setIndex(5);
-                // while(Logic.upPressed) this.animate();
+                // while(Logic.upPressed) this.sprite.animate();
             }
         }
         this.sprint = function() {
