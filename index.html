@@ -10,21 +10,36 @@
         <script src="/socket.io/socket.io.js"></script>
         <style>
             * { padding: 0; margin:0 ; }
-            canvas { background: #eee; display: block; margin: 0 auto; cursor: crosshair }
+            canvas { 
+                background: #eee; 
+                display: block; 
+                margin: 0 auto; 
+                cursor: crosshair 
+            }
         </style>
     </head>
-   <body>
-        <p>
+
+    <body>
+        <div id="titlescreen">
+        
+          <p>
           <img src = "title.png" alt = "Title image" class="center">
-        </p>
+          </p>
         <form>
+
             <input id="username">
             <button type="button" onclick="UI.getUsername()">login</button>
         </form>
+ </div>
+        <div id ="selectionscreen">
+        
+        </div>
+         
+    
+      <canvas id = "gameCanvas" width = "1000" height = "500"></canvas>
 
-        <canvas id = "gameCanvas" width = "1000" height = "500"></canvas>
     </body>
-        <script src="src/logic/controls.js"></script>
+    <script src="src/logic/controls.js"></script>
         <script src="src/canvas/renderer.js"></script>
         <script src="src/logic/logic.js"></script>
         <script src="src/logic/ui.js"></script>
