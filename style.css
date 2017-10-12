@@ -12,9 +12,13 @@ html,body{
     text-align: center;
     background-color:black;
  }
+
  #titlescreen{
     position: absolute;
-    background-color:black;
+    background-image: url(assets/Title_screen_backround.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
     top: 0px;
     left: 0px;
     z-index:100;
@@ -24,12 +28,3 @@ html,body{
 #selectionscreen{
     z-index:99;
 }
-
- 
-  
-
-
-
-
-
-
