@@ -129,20 +129,26 @@ var Logic = {
                 this.sprite.y = mapHeight - this.sprite.height - (this.sprite.height/2);
             }
         }
+        // ctx.translate(this.sprite.x,this.sprite.y)
         this.camera = function() {
+          //  ctx.translate(100,100)
             if(canvasPosition.x != this.sprite.x) {
-                if(Logic.rightPressed) {
+                if(Logic.rightPressed){
+                // if(Logic.rightPressed && this.sprite.x > 50) {
                     ctx.translate(-this.speed, 0);
                 }
-                if(Logic.leftPressed) {
+                if(Logic.leftPressed){
+                // if(Logic.leftPressed && this.sprite.x < mapWidth - 50) {
                     ctx.translate(this.speed, 0);
                 }
             }
             if(canvasPosition.y != this.sprite.y) {
-                if(Logic.upPressed) {
+                if(Logic.upPressed){
+                // if(Logic.upPressed && this.sprite.y > 50) {
                     ctx.translate(0, this.speed);
                 }
-                if(Logic.downPressed) {
+                if(Logic.downPressed){
+                // if(Logic.downPressed && this.sprite.y < mapHeight - 50) {
                     ctx.translate(0, -this.speed);
                 }
             }

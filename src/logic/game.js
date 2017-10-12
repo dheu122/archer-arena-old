@@ -38,10 +38,10 @@ function sound(src) {
     this.stop = function(){
         this.sound.pause();
     }
-} 
+}
 
 function musicPlayer() {
-    //gameMusic.play();
+//     gameMusic.play();
 }
 
 musicPlayer();
