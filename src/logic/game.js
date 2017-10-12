@@ -5,9 +5,6 @@ var socket = io();
 // which players it will associate with
 var globalRoomId;
 
-// Example of connecting to the server, uses 'ConnectToServer' from server.js
-// socket.emit('ConnectToServer', {name: 'Bilbo Baggins'});
-
 /////////////////////////////////////////////////
 
 
@@ -26,7 +23,7 @@ function loadJSON(url, onsuccess) {
 
 ///////////////////////////////////////////////// SOUND FUNCTION
 var titleMusic;
-var gameMusic = new sound("BackgroundMusic.wav");
+var gameMusic = new sound("assets/BackgroundMusic.wav");
 
 function sound(src) {
     this.sound = document.createElement("audio");
@@ -44,9 +41,7 @@ function sound(src) {
 } 
 
 function musicPlayer() {
-
-    gameMusic.play();
-
+    //gameMusic.play();
 }
 
 musicPlayer();
@@ -54,7 +49,7 @@ musicPlayer();
 function donePlaying() {
 
 	if (gameMusic.paused = true) {
-	musicPlayer();
+		musicPlayer();
 	}
 
 }
@@ -76,13 +71,22 @@ var player = new Logic.character({
 		index: 0
 	}),
 	speed: 2,
+	minSpeed: 2,
+	maxSpeed: 2.5,
 	stamina: 100
 });
 
-window.onload = function() {
+// Map for debugging, remove later
+var debugMap = new Renderer.Sprite({
+	image: '../../assets/map_debug.png',
+	width: 619,
+	height: 620,
+	isSpriteSheet: false,
+	x: 0,
+	y: 0
+})
 
-	// Example of connecting to the server, uses 'ConnectToServer' from server.js
-	socket.emit('ConnectToServer', {name: 'Bilbo Baggins'});
+window.onload = function() {
 	loadJSON('/assets/Forest16px', gameLoop);
 
 	socket.on('JoinedRoom', function(identity) {
@@ -97,10 +101,12 @@ window.onload = function() {
 		updatePlayers(playerData);
 	});
 
+	Renderer.Canvas.setPosition(0, 0); // Set to randomly located position from server
 	gameLoop();
 }
 
 function updatePlayers(playerData) {
+	debugMap.render();
 	for(var i = 0; i < playerData.length; i++) {
 		var data = playerData[i];
 		var player =  new Logic.character({
@@ -117,6 +123,8 @@ function updatePlayers(playerData) {
 				index: data.sprite.index
 			}),
 			speed: 2,
+			minSpeed: 2,
+			maxSpeed: 2.5,
 			stamina: 100
 		});
 		player.sprite.render();
@@ -139,10 +147,9 @@ function gameLoop() { //this is the main game loop, i found a version of it in a
 			}
 
 			player.update();					// Updates current client to itself
+			Renderer.Canvas.setPosition(player.sprite.x, player.sprite.y);
 			socket.emit('SendPlayerData', data); 		// Send current client's data to everyone, so they can update
 			lastLoopRun = new Date().getTime();
-		} else {
-			console.log("No joined room");
 		}
 	}
 
