@@ -1,13 +1,31 @@
 var canvas = document.querySelector('canvas');
 var ctx = canvas.getContext("2d");
+var canvasPosition = {
+    x: 7.5,
+    y: 8
+};
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
 ctx.imageSmoothingEnabled = false;
-ctx.scale(3,3);
+ctx.setTransform(5, 0, 0, 5, ((canvas.width/2) - 64), ((canvas.height/2) - 64));
+console.log(canvasPosition);
+console.log(((canvas.width/2) - 64));
+console.log(((canvas.height/2) - 64));
 
 var Renderer = {
+
     // Images from our assets folder will go here
     Images: {
         player: 'assets/sprite_sheet.png'
+    },
+
+    Canvas: {
+        setPosition: function(x, y) {
+            canvasPosition.x = x;
+            canvasPosition.y = y;
+        }
     },
 
     // Sprite, Tilemaps, and Animation function objects will go here
@@ -114,14 +132,27 @@ var Renderer = {
 
         this.setIndex = function(i) {
             this.index = i;
-            this.render();
         }
     },
 
     Tilemap: function(options) {
 
-    }
+    },
 }
+
+window.addEventListener('resize', function () {
+    if(canvas.width != window.innerWidth) {
+        canvas.width = window.innerWidth;
+    } 
+    if(canvas.height != window.innerHeight) {
+        canvas.height = window.innerHeight;
+    }
+    ctx.imageSmoothingEnabled = false;
+    ctx.setTransform(5, 0, 0, 5, ((canvas.width/2) - 64), ((canvas.height/2) - 64));
+    console.log(canvasPosition);
+    console.log(((canvas.width/2) - 64));
+    console.log(((canvas.height/2) - 64));
+})
 
 // Manual browser testing functions will go here
 
