@@ -1,7 +1,8 @@
 var canvas = document.querySelector('canvas');
 var ctx = canvas.getContext("2d");
-canvas.width = 480;
-canvas.height = 320;
+
+var mapHeight = 620;
+var mapWidth = 619;
 
 var Logic = {
 
@@ -32,6 +33,7 @@ var Logic = {
             this.sprint();
             this.dodge();
             this.bound();
+            this.camera();
         }
         /*this.firearrow function(){
             var arrowX = charPosX + 10;
@@ -120,11 +122,29 @@ var Logic = {
             if(this.sprite.y - this.sprite.height/2 < 0){
                 this.sprite.y = this.sprite.height/2;
             }
-            if(this.sprite.x + this.sprite.width + (this.sprite.width/2) > canvas.width){
-                this.sprite.x = canvas.width - this.sprite.width - (this.sprite.width/2);
+            if(this.sprite.x + this.sprite.width + (this.sprite.width/2) > mapWidth){
+                this.sprite.x = mapWidth - this.sprite.width - (this.sprite.width/2);
             }
-            if(this.sprite.y + this.sprite.height + (this.sprite.height/2) > canvas.height){
-                this.sprite.y = canvas.height - this.sprite.height - (this.sprite.height/2);
+            if(this.sprite.y + this.sprite.height + (this.sprite.height/2) > mapHeight){
+                this.sprite.y = mapHeight - this.sprite.height - (this.sprite.height/2);
+            }
+        }
+        this.camera = function() {
+            if(canvasPosition.x != this.sprite.x) {
+                if(Logic.rightPressed) {
+                    ctx.translate(-this.speed, 0);
+                }
+                if(Logic.leftPressed) {
+                    ctx.translate(this.speed, 0);
+                }
+            }
+            if(canvasPosition.y != this.sprite.y) {
+                if(Logic.upPressed) {
+                    ctx.translate(0, this.speed);
+                }
+                if(Logic.downPressed) {
+                    ctx.translate(0, -this.speed);
+                }
             }
         }
     },
