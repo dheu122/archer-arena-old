@@ -1,5 +1,6 @@
 var canvas = document.querySelector('canvas');
 var ctx = canvas.getContext("2d");
+var animTimer = 0;
 var canvasPosition = {
     x: 7.5,
     y: 8
@@ -83,14 +84,12 @@ var Renderer = {
                 console.log("You cannot animate a single sprite, set isSpriteSheet to true");
             }
             else {
-                var _this = this;
-                var i = startIndex;
-                setInterval(function() {
-                    context.clearRect(_this.x, _this.y, _this.width, _this.height);
+                var i = this.index;
+                if(animTimer > animateSpeed) {
                     if(startIndex < endIndex) {
                         if(i < endIndex) {
                             i++;
-                            _this.setIndex(i);
+                            this.setIndex(i);
                         }
                         else {
                             if(animateType == 'pingpong') {
@@ -98,18 +97,18 @@ var Renderer = {
                                 startIndex = endIndex;
                                 endIndex = temp;
                                 i--;
-                                _this.setIndex(i);
+                                this.setIndex(i);
                             }
                             else if (animateType == 'loop') {
                                 i = startIndex;
-                                _this.setIndex(i);
+                                this.setIndex(i);
                             }
                         }
                     }
                     else if (startIndex > endIndex) {
                         if(i > endIndex) {
                             i--;
-                            _this.setIndex(i);
+                            this.setIndex(i);
                         }
                         else {
                             if(animateType == 'pingpong') {
@@ -117,18 +116,18 @@ var Renderer = {
                                 startIndex = endIndex;
                                 endIndex = temp;
                                 i++;
-                                _this.setIndex(i);
+                                this.setIndex(i);
                             }
                             else if (animateType == 'loop') {
                                 i = startIndex;
-                                _this.setIndex(i);
+                                this.setIndex(i);
                             }
                         }
                     }
-                    _this.render();
-                }, 1000 / animateSpeed);
+                    animTimer = 0;
+                }
             }
-        }
+        },
 
         this.setIndex = function(i) {
             this.index = i;
@@ -153,6 +152,10 @@ window.addEventListener('resize', function () {
     //console.log(((canvas.width/2) - 64));
     //console.log(((canvas.height/2) - 64));
 })
+
+setInterval(function() {
+    animTimer++;
+}, 1000 / 60)
 
 // Manual browser testing functions will go here
 
