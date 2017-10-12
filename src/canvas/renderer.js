@@ -143,7 +143,7 @@ var Renderer = {
 window.addEventListener('resize', function () {
     if(canvas.width != window.innerWidth) {
         canvas.width = window.innerWidth;
-    } 
+    }
     if(canvas.height != window.innerHeight) {
         canvas.height = window.innerHeight;
     }
