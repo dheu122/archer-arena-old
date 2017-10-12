@@ -10,9 +10,9 @@ canvas.height = window.innerHeight;
 
 ctx.imageSmoothingEnabled = false;
 ctx.setTransform(5, 0, 0, 5, ((canvas.width/2) - 64), ((canvas.height/2) - 64));
-console.log(canvasPosition);
-console.log(((canvas.width/2) - 64));
-console.log(((canvas.height/2) - 64));
+//console.log(canvasPosition);
+//console.log(((canvas.width/2) - 64));
+//console.log(((canvas.height/2) - 64));
 
 var Renderer = {
 
@@ -149,9 +149,9 @@ window.addEventListener('resize', function () {
     }
     ctx.imageSmoothingEnabled = false;
     ctx.setTransform(5, 0, 0, 5, ((canvas.width/2) - 64), ((canvas.height/2) - 64));
-    console.log(canvasPosition);
-    console.log(((canvas.width/2) - 64));
-    console.log(((canvas.height/2) - 64));
+    //console.log(canvasPosition);
+    //console.log(((canvas.width/2) - 64));
+    //console.log(((canvas.height/2) - 64));
 })
 
 // Manual browser testing functions will go here

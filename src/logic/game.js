@@ -153,5 +153,5 @@ function gameLoop() { //this is the main game loop, i found a version of it in a
 		}
 	}
 
-	setTimeout('gameLoop();', 2);
+	setTimeout('gameLoop();', 1000 / 60);
 }
