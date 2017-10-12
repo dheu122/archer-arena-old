@@ -1,5 +1,3 @@
-var socket = io();
-
 var UI = {
     
     // Title screen, Game UI, and other UI-related function objects will go here
