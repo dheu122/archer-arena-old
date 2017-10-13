@@ -1,10 +1,11 @@
 {
-  "name": "csci-150-project",
+  "name": "archer-arena",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jasmine"
+    "test": "jasmine",
+    "start": "node src/server/server.js"
   },
   "author": "",
   "license": "ISC",

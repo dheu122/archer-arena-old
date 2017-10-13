@@ -26,7 +26,7 @@ app.get('/', function(request, response) {
     response.sendFile(path.join(__dirname, '../../index.html'));
 });
 
-server.listen(4200, function() {
+server.listen(process.env.PORT || 4200, function() {
     console.log('Starting server on port 4200');
 });
 
