@@ -52,26 +52,33 @@ var Logic = {
             }
         }*/
         this.move = function() {
+            //face right: index0 right movement: index1,index2
             if(Logic.rightPressed) {
-            //this.sprite.animate(0, 3, 10, 'loop');
+                this.sprite.animate(1, 2, 10, 'loop');
                 this.sprite.x += this.speed;
-                this.sprite.setIndex(0);
-                // while(Logic.rightPressed) this.sprite.animate(1,2,10,'loop');
+                // this.sprite.setIndex(0);
             }
+            //face left: index3 left movement: index4,index5
             if(Logic.leftPressed) {
+                this.sprite.animate(4, 5, 10, 'loop');
                 this.sprite.x -= this.speed;
-                this.sprite.setIndex(27);
-                // while(Logic.upPressed) this.sprite.animate();
+                // this.sprite.setIndex(27);
             }
+            //face up: index9 upward movement: index10,index11
             if(Logic.upPressed) {
+                this.sprite.animate(10, 11, 10, 'loop');
                 this.sprite.y -= this.speed;
-                this.sprite.setIndex(4);
-                // while(Logic.upPressed) this.sprite.animate();
+                // this.sprite.setIndex(4);
             }
+            //face down: index6 downward movement: index7,index8
             if(Logic.downPressed) {
+                this.sprite.animate(7, 8, 10, 'loop');
                 this.sprite.y += this.speed;
-                this.sprite.setIndex(5);
-                // while(Logic.upPressed) this.sprite.animate();
+                // this.sprite.setIndex(6);
+            }
+            if(this.sprite.x == this.oldx && this.sprite.y == this.oldy)
+            {
+              this.sprite.setIndex(index - 1);
             }
         }
         this.sprint = function() {

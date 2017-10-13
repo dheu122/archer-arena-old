@@ -19,7 +19,7 @@ var Renderer = {
 
     // Images from our assets folder will go here
     Images: {
-        player: 'assets/sprite_sheet.png'
+        player: 'assets/movement_sprite.png'
     },
 
     Canvas: {
@@ -35,7 +35,8 @@ var Renderer = {
 
         this.image = new Image();
         this.image.src = options.image;
-
+        this.oldx;
+        this.oldy;
         this.x = options.x;
         this.y = options.y;
 
@@ -85,6 +86,7 @@ var Renderer = {
             }
             else {
                 var i = this.index;
+                if(i < startIndex || i > endIndex) i = startIndex - 1; //smoothes out transition between animation changes
                 if(animTimer > animateSpeed) {
                     if(startIndex < endIndex) {
                         if(i < endIndex) {

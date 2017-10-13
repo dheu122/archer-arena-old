@@ -42,7 +42,7 @@ function sound(src) {
 }
 
 function musicPlayer() {
-//     gameMusic.play();
+    gameMusic.play();
 }
 
 musicPlayer();
