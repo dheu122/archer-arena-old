@@ -67,8 +67,8 @@ var player = new Logic.character({
 		width: 15,
 		height: 16,
 		isSpriteSheet: true,
-		x: 0,
-		y: 0,
+		x: 100,
+		y: 100,
 		index: 0
 	}),
 	speed: 2,

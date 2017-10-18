@@ -1,19 +1,59 @@
 var canvas = document.querySelector('canvas');
 var ctx = canvas.getContext("2d");
 var animTimer = 0;
-var canvasPosition = {
-    x: 7.5,
-    y: 8
-};
 
+//sets canvas size to window size
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+//property of the Canvas 2D API can be set to change if images are
+//smoothed (true, default) or not (false). On getting the
+//imageSmoothingEnabled property, the last value it was set to, is
+//returned.
+//
+// This property is useful for pixel-art themed games, when
+//scaling the canvas for example. The default resizing algorithm can
+//create blurry effects and ruins the beautiful pixels. Set this
+//property to false in that case.
 ctx.imageSmoothingEnabled = false;
-ctx.setTransform(5, 0, 0, 5, ((canvas.width/2) - 64), ((canvas.height/2) - 64));
+
+//setTransform: Method of the Canvas 2D API resets (overrides)
+//the current transformation to the identity matrix and then
+//invokes a transformation described by the arguments of this method.
+//
+//setTransform(a, b, c, d, e, f)
+//a = Horizontal scaling
+//b = Horizontal skewing
+//c = Vertical skewing
+//d = Vertical scaling
+//e = Horizontal moving
+//f = Vertical moving
+//
+//transform: method of the Canvas 2D API multiplies the current
+//transformation with the matrix described by the arguments of this
+//method. You are able to scale, rotate, move and skew the context.
+//
+//transform(a, b, c, d, e, f)
+//*same parameters as setTransform()
+//
+
+ctx.setTransform(, , , , , );
 console.log(canvasPosition);
 //console.log(((canvas.width/2) - 64));
 //console.log(((canvas.height/2) - 64));
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 var Renderer = {
 
