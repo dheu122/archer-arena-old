@@ -11,7 +11,7 @@ canvas.height = window.innerHeight;
 
 ctx.imageSmoothingEnabled = false;
 ctx.setTransform(5, 0, 0, 5, ((canvas.width/2) - 64), ((canvas.height/2) - 64));
-console.log(canvasPosition);
+//console.log(canvasPosition);
 //console.log(((canvas.width/2) - 64));
 //console.log(((canvas.height/2) - 64));
 
@@ -35,6 +35,8 @@ var Renderer = {
 
         this.image = new Image();
         this.image.src = options.image;
+        this.oldx;
+        this.oldy;
         this.x = options.x;
         this.y = options.y;
 
@@ -77,7 +79,7 @@ var Renderer = {
             }
         }
 
-        //TODO: get animation to reset after movement to standing in proper direction
+        //TODO: get working; Currently speeds up the more you move in one direction(loop never stops)
         this.animate = function(startIndex, endIndex, animateSpeed, animateType) {
             if(!this.isSpriteSheet) {
                 console.log("You cannot animate a single sprite, set isSpriteSheet to true");
