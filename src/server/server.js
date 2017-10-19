@@ -10,6 +10,7 @@ var io = socket(server);
 
 var room = require('./room');
 var player = require('./player');
+var arrow = require('./arrow');
 
 /*
     Informal Player Interface {
@@ -69,6 +70,25 @@ io.on('connection', function(socket) {
         // Using the player id, get their information and put that in an array.
 
         io.sockets.in(data.roomId).emit('GetRoomPlayerData', playersInRoom);
+    })
+
+    socket.on('AddArrowData', function(data) {
+        room.createArrowInRoom(data.isInThisRoom, data);
+        arrow.addArrowToServer(data, socket.id, data.isInThisRoom);
+    })
+
+    socket.on('RemoveArrowData', function(data) {
+        var arrowIndex = arrow.getArrowIndexById(data.id);
+        arrow.deleteArrowAt(arrowIndex);
+    })
+
+    socket.on('SendArrowData', function(data) {
+        var arrowIds = room.getArrowsInRoom(data.roomId);
+        var arrowsInRoom = [];
+
+        arrowsInRoom = arrow.updateAllArrowsInRoom(arrowIds);
+
+        io.sockets.in(data.roomId).emit('GetRoomArrowData', arrowsInRoom);
     })
 
     socket.on("disconnect", function(playerData) {

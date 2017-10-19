@@ -129,6 +129,11 @@ window.onload = function() {
 		updatePlayers(playerData);
 	});
 
+	socket.on('GetRoomArrowData', function(arrowData) {
+		//ctx.clearRect(-100, -100, canvas.width, canvas.height);
+		updateArrows(arrowData);
+	})
+
 	Renderer.Canvas.setPosition(0, 0); // Set to randomly located position from server
 	gameLoop();
 }
@@ -180,6 +185,33 @@ function updateArrows(arrowData) {
 		arrow.sprite.render();
 	}
 }
+
+function updateArrows(arrowData) {
+	console.log(arrowData);
+	for(var i = 0; i < arrowData.length; i++) {
+		var data = arrowData[i];
+		var arrow = new Logic.arrow({
+			sprite: new Renderer.Sprite({
+				image: Renderer.Images.arrow,
+				width: 16,
+				height: 16,
+				isSpriteSheet: true,
+				x: data.sprite.x,
+				y: data.sprite.y,
+				index: data.sprite.index
+			}),
+			
+			id: data.id,
+			arrowSpeedX: data.arrowSpeedX,
+			arrowSpeedY: data.arrowSpeedY,   
+			angle: data.angle,
+			belongsTo: data.belongsTo,
+			isInThisRoom: data.isInThisRoom, 
+			lifetime: data.lifetime,
+		});
+		arrow.sprite.render();
+	}
+}
 // Clears the screen
 // Calls the player's update() function and redraws itself
 // Repeat
@@ -198,6 +230,7 @@ function gameLoop() { //this is the main game loop, i found a version of it in a
 
 			player.update();					// Updates current client to itself
 			Renderer.Canvas.setPosition(player.sprite.x, player.sprite.y);
+			socket.emit('SendArrowData', data)
 			socket.emit('SendPlayerData', data); 		// Send current client's data to everyone, so they can update
 			lastLoopRun = new Date().getTime();
 		}
