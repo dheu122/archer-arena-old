@@ -19,7 +19,8 @@ var Renderer = {
 
     // Images from our assets folder will go here
     Images: {
-        player: 'assets/movement_sprite.png'
+        player: 'assets/movement_sprite.png',
+        arrow: 'assets/arrow_sprite.png'
     },
 
     Canvas: {

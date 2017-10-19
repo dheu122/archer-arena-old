@@ -4,7 +4,6 @@ var socket = io();
 // Global room id when joining, this will help tell the client which room and
 // which players it will associate with
 var globalRoomId;
-var globalClientId;
 
 /////////////////////////////////////////////////
 
@@ -39,10 +38,10 @@ function sound(src) {
     this.stop = function(){
         this.sound.pause();
     }
-}
+} 
 
 function musicPlayer() {
-    gameMusic.play();
+    //gameMusic.play();
 }
 
 musicPlayer();
@@ -77,6 +76,22 @@ var player = new Logic.character({
 	stamina: 100
 });
 
+var arrow = new Logic.arrow({
+	name: '',
+	id: '',
+	isInThisRoom: '',
+	sprite: new Renderer.Sprite({
+		image: Renderer.Images.arrow,
+		width: 5,
+		height: 16,
+		isSpriteSheet: true,
+		x: 0,
+		y: 0,
+		index: 0
+	}),
+	arrowSpeed: 3
+});
+
 // Map for debugging, remove later
 var debugMap = new Renderer.Sprite({
 	image: '../../assets/map_debug.png',
@@ -92,14 +107,13 @@ window.onload = function() {
 
 	socket.on('JoinedRoom', function(identity) {
 		globalRoomId = identity.roomId;
-		globalClientId = identity.id;
 		player.isInThisRoom = identity.roomId;
 		player.id = identity.id;
 	});
 
 	socket.on('GetRoomPlayerData', function(playerData) {
 		//console.log(playerData);
-		ctx.clearRect(-100, -100, canvas.width, canvas.height);
+		ctx.clearRect(0, 0, 480, 320);
 		updatePlayers(playerData);
 	});
 
@@ -111,27 +125,46 @@ function updatePlayers(playerData) {
 	debugMap.render();
 	for(var i = 0; i < playerData.length; i++) {
 		var data = playerData[i];
-		if(globalRoomId != data.id) {
-			var player =  new Logic.character({
-				name: '',
-				id: data.id,
-				isInThisRoom: data.isInThisRoom,
-				sprite: new Renderer.Sprite({
-					image: Renderer.Images.player,
-					width: 15,
-					height: 16,
-					isSpriteSheet: true,
-					x: data.sprite.x,
-					y: data.sprite.y,
-					index: data.sprite.index
-				}),
-				speed: 2,
-				minSpeed: 2,
-				maxSpeed: 2.5,
-				stamina: 100
-			});
-			player.sprite.render();
-		}
+		var player =  new Logic.character({
+			name: '',
+			id: data.id,
+			isInThisRoom: data.isInThisRoom,
+			sprite: new Renderer.Sprite({
+				image: Renderer.Images.player,
+				width: 15,
+				height: 16,
+				isSpriteSheet: true,
+				x: data.sprite.x,
+				y: data.sprite.y,
+				index: data.sprite.index
+			}),
+			speed: 2,
+			minSpeed: 2,
+			maxSpeed: 2.5,
+			stamina: 100
+		});
+		player.sprite.render();
+	}
+}
+function updateArrows(arrowData) {
+	for(var i = 0; i < arrowsData.length; i++) {
+		var data = arrowsData[i];
+		var arrow =  new Logic.arrow({
+			id: data.id,
+			belongsTo: data.belongsTo,
+			isInThisRoom: data.isInThisRoom,
+			sprite: new Renderer.Sprite({
+				image: Renderer.Images.arrow,
+				width: 5,
+				height: 16,
+				isSpriteSheet: true,
+				x: data.sprite.x,
+				y: data.sprite.y,
+				index: data.sprite.index
+			}),
+			arrowSpeed: 3,
+		});
+		arrow.sprite.render();
 	}
 }
 // Clears the screen
@@ -157,5 +190,5 @@ function gameLoop() { //this is the main game loop, i found a version of it in a
 		}
 	}
 
-	setTimeout('gameLoop();', 1000 / 60);
+	setTimeout('gameLoop();', 2);
 }
