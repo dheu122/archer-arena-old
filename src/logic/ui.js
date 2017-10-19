@@ -6,6 +6,7 @@ var UI = {
 
         socket.emit('ConnectToServer', {name: nickname});
         document.getElementById('titlescreen').remove();
+		//titleMusic.pause();
     }
 }
     
