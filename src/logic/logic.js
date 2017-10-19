@@ -1,6 +1,8 @@
 var canvas = document.querySelector('canvas');
 var ctx = canvas.getContext("2d");
 
+var socket = io();
+
 var mapHeight = 620;
 var mapWidth = 619;
 
@@ -14,6 +16,8 @@ var Logic = {
     mousePressed: false,
     spacePressed: false,
     shiftPressed: false,
+    mousePositionFromCharacter: {},
+    canvasMousePosition: {},
 
     character: function(options) {
         this.sprite = options.sprite;
@@ -26,7 +30,7 @@ var Logic = {
         this.curStamina = this.maxStamina;
 
         this.canDodge = true;
-        this.arrowCount = 0;
+        this.arrowCount = 1;
         this.update = function() {
             //this.sprite.render();
             this.move();
@@ -34,6 +38,7 @@ var Logic = {
             this.dodge();
             this.bound();
             this.camera();
+            this.createArrow();
         }
         /*this.firearrow function(){
             var arrowX = charPosX + 10;
@@ -160,7 +165,60 @@ var Logic = {
                 }
             }
         }
+        this.createArrow = function () {
+            //creates arrow to shoot
+			if(Logic.mousePressed && this.arrowCount > 0) {
+                //calculate direction to shoot arrow
+                var deltaX = Logic.mousePositionFromCharacter.x;
+                var deltaY = Logic.mousePositionFromCharacter.y;
+                var speedDivider = 100;
+
+                var angle = Math.atan2(Logic.canvasMousePosition.x - (canvas.width / 2),-(Logic.canvasMousePosition.y - (canvas.height / 2))) * (180/Math.PI);
+
+                var timestamp = new Date().getUTCMilliseconds(); //time in milliseconds
+                var idString = Math.random().toString(36).substring(7); //random 5 letter string
+                    
+				//create initial arrow
+				var arrow =  new Logic.arrow({
+                    id: 'arrow-' + idString + timestamp, // gives the arrow a random ID (EXAMPLE ID: arrow-cabde716)
+                    belongsTo: globalClientId,
+                    isInThisRoom: globalRoomId,
+                    angle: angle,
+                    lifetime: 100,
+					sprite: new Renderer.Sprite({
+                        image: Renderer.Images.arrow,
+                        width: 16,
+                        height: 16,
+                        isSpriteSheet: true,
+                        x: this.sprite.x,  // set initial position of arrow to player position
+                        y: this.sprite.y,
+                        index: 0
+                    }),
+                    arrowSpeedX: deltaX / speedDivider,
+				    arrowSpeedY: deltaY / speedDivider,
+				});
+				
+                socket.emit('AddArrowData', arrow); //send arrow object to server 
+                this.arrowCount--;
+			}
+		}
     },
+
+    arrow: function(options) {
+        this.sprite = options.sprite;
+
+        this.id = options.id;
+		
+        this.arrowSpeedX = options.arrowSpeedX;
+        this.arrowSpeedY = options.arrowSpeedY;   
+        this.angle = options.angle;
+		
+		this.belongsTo = options.belongsTo; //which player the arrow belongs to
+        this.isInThisRoom = options.isInThisRoom; //which room the arrow is in
+        
+        this.lifetime = options.lifetime;
+    },
+
     keyDownHandler: function(e) {
         if(e.keyCode == Controls.rightKey) {
             Logic.rightPressed = true;
@@ -203,17 +261,30 @@ var Logic = {
     },
     mouseDownHandler: function(e) {
         if (e.button == Controls.leftClick) {
-            mousePressed = true;
+            Logic.mousePressed = true;
         }
     },
     mouseUpHandler: function(e) {
         if (e.button == Controls.leftClick) {
-            mousePressed = false;
+            Logic.mousePressed = false;
         }
     },
     getMousePosition: function (e) {
-        var mousePosX = e.clientX;
-        var mousePosY = e.clientY;
+        var origin = {
+            x: canvas.width / 2,
+            y: canvas.height / 2
+        }
+        var fromPlayerMousePos = {
+            x: (e.clientX - origin.x),
+            y: (e.clientY - origin.y)
+        }
+        var canvasMousePos = {
+            x: e.clientX,
+            y: e.clientY
+        }
+
+        Logic.canvasMousePosition = canvasMousePos;
+        Logic.mousePositionFromCharacter = fromPlayerMousePos;
     },
 }
 
