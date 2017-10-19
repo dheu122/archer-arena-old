@@ -115,20 +115,23 @@ var Logic = {
                 this.canDodge = true;
             }
         }
-        this.bound = function() {
+        // REPLACE WITH BOUND FUNCTION IN LOGIC.JS
+this.bound = function() {
+            console.log(JsonMap);
             if(this.sprite.x - this.sprite.width/2 < 0){
                 this.sprite.x = this.sprite.width/2;
             }
             if(this.sprite.y - this.sprite.height/2 < 0){
                 this.sprite.y = this.sprite.height/2;
             }
-            if(this.sprite.x + this.sprite.width + (this.sprite.width/2) > mapWidth){
-                this.sprite.x = mapWidth - this.sprite.width - (this.sprite.width/2);
+            if(this.sprite.x + this.sprite.width + (this.sprite.width/2) > JsonMap.mapTotalWidth){
+                this.sprite.x = JsonMap.mapTotalWidth - this.sprite.width - (this.sprite.width/2);
             }
-            if(this.sprite.y + this.sprite.height + (this.sprite.height/2) > mapHeight){
-                this.sprite.y = mapHeight - this.sprite.height - (this.sprite.height/2);
+            if(this.sprite.y + this.sprite.height + (this.sprite.height/2) > JsonMap.mapTotalHeight){
+                this.sprite.y = JsonMap.mapTotalHeight - this.sprite.height - (this.sprite.height/2);
             }
         }
+
         // ctx.translate(this.sprite.x,this.sprite.y)
         this.camera = function() {
           //  ctx.translate(100,100)

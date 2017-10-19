@@ -19,7 +19,8 @@ var Renderer = {
 
     // Images from our assets folder will go here
     Images: {
-        player: 'assets/sprite_sheet.png'
+        player: 'assets/sprite_sheet.png',
+		map1: 'assets/tileset_map1.png'
     },
 
     Canvas: {

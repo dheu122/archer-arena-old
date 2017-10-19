@@ -6,24 +6,23 @@ var socket = io();
 var globalRoomId;
 var globalClientId;
 
-/////////////////////////////////////////////////
-
+///////////////////////////////////////////////// Function that loads the map .json file
 
 function loadJSON(url, onsuccess) {
   var request = new XMLHttpRequest();
   request.onreadystatechange = function() {
     if ((request.readyState == 4) && (request.status == 200)) // if DONE and SUCCESS
-      onsuccess(JSON.parse(request.responseText));
+	  JsonMap.render(JSON.parse(request.responseText));
   }
-  console.log(request);
   request.open("GET", url + ".json", true);
   request.send();
 }
 
 
 
+
 ///////////////////////////////////////////////// SOUND FUNCTION
-var titleMusic;
+var titleMusic = new sound("assets/TitleMusic.wav");
 var gameMusic = new sound("assets/BackgroundMusic.wav");
 
 function sound(src) {
@@ -41,18 +40,29 @@ function sound(src) {
     }
 }
 
-function musicPlayer() {
-//     gameMusic.play();
+var isTitlescreen = true;
+
+function gameMusicPlayer() {
+	gameMusic.play();
 }
 
-musicPlayer();
+function titleMusicPlayer() {
+	titleMusic.play();
+}
+	
+	
+function donePlaying() { //checks if the music has finished playing, then if true it plays it again
 
-function donePlaying() {
-
-	if (gameMusic.paused = true) {
-		musicPlayer();
+	if (isTitlescreen == true) {
+		if (titleMusic.paused = true) {
+		titleMusicPlayer(); 
+		}
 	}
-
+	else if (isTitlescreen == false) {
+			if (gameMusic.paused = true) {
+				gameMusicPlayer();
+			}
+		}
 }
 
 /////////////////////////////////////////////////
@@ -88,9 +98,10 @@ var debugMap = new Renderer.Sprite({
 })
 
 window.onload = function() {
-	loadJSON('/assets/Forest16px', gameLoop);
+	loadJSON('/assets/TesterProper2Layer', gameLoop); //calls JSON
 
 	socket.on('JoinedRoom', function(identity) {
+		isTitlescreen = false;
 		globalRoomId = identity.roomId;
 		globalClientId = identity.id;
 		player.isInThisRoom = identity.roomId;
@@ -108,7 +119,8 @@ window.onload = function() {
 }
 
 function updatePlayers(playerData) {
-	debugMap.render();
+	//debugMap.render();
+	JsonMap.render(JsonMap.jsonMap);
 	for(var i = 0; i < playerData.length; i++) {
 		var data = playerData[i];
 		if(globalRoomId != data.id) {
