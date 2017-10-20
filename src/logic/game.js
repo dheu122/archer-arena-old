@@ -4,6 +4,7 @@ var socket = io();
 // Global room id when joining, this will help tell the client which room and
 // which players it will associate with
 var globalRoomId;
+var globalClientId;
 
 ///////////////////////////////////////////////// Function that loads the map .json file
 
@@ -114,18 +115,19 @@ var debugMap = new Renderer.Sprite({
 })
 
 window.onload = function() {
-	loadJSON('/assets/TesterProper2Layer', gameLoop); //calls JSON
+	loadJSON('/assets/TesterProper', gameLoop); //calls JSON
 
 	socket.on('JoinedRoom', function(identity) {
 		isTitlescreen = false;
 		globalRoomId = identity.roomId;
+		globalClientId = identity.id;
 		player.isInThisRoom = identity.roomId;
 		player.id = identity.id;
 	});
 
 	socket.on('GetRoomPlayerData', function(playerData) {
 		//console.log(playerData);
-		ctx.clearRect(0, 0, 480, 320);
+		ctx.clearRect(-100, -100, canvas.width, canvas.height);
 		updatePlayers(playerData);
 	});
 
@@ -164,30 +166,8 @@ function updatePlayers(playerData) {
 		player.sprite.render();
 	}
 }
-function updateArrows(arrowData) {
-	for(var i = 0; i < arrowsData.length; i++) {
-		var data = arrowsData[i];
-		var arrow =  new Logic.arrow({
-			id: data.id,
-			belongsTo: data.belongsTo,
-			isInThisRoom: data.isInThisRoom,
-			sprite: new Renderer.Sprite({
-				image: Renderer.Images.arrow,
-				width: 5,
-				height: 16,
-				isSpriteSheet: true,
-				x: data.sprite.x,
-				y: data.sprite.y,
-				index: data.sprite.index
-			}),
-			arrowSpeed: 3,
-		});
-		arrow.sprite.render();
-	}
-}
 
 function updateArrows(arrowData) {
-	console.log(arrowData);
 	for(var i = 0; i < arrowData.length; i++) {
 		var data = arrowData[i];
 		var arrow = new Logic.arrow({
@@ -236,5 +216,5 @@ function gameLoop() { //this is the main game loop, i found a version of it in a
 		}
 	}
 
-	setTimeout('gameLoop();', 2);
+	setTimeout('gameLoop();', 1000 / 60);
 }
