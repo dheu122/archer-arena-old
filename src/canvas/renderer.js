@@ -30,7 +30,7 @@ var Renderer = {
         //calulate position of camera
         //bounding to the edges of the map being implemented
         this.calculatePostition = function(x,y) {
-          // if(canvasPosition == (x,y)) return;
+          //height and width buffer calculate the distance between the player and the edge of the canvas
           var widthBuffer = ((canvas.width/5)/2);
           var heightBuffer = ((canvas.height/5)/2);
           var xMin = widthBuffer - 1;
@@ -38,16 +38,19 @@ var Renderer = {
           var yMin = heightBuffer - 1;
           var yMax = mapHeight - heightBuffer - 2;
 
+          //clamps the camera position (value) to the minimum and maximum values passed in
           this.clamp = function(value, min, max){
             if(value > min && value < max) return value;
             else if(value < min) return min;
             else if(value > max) return max;
           }
+            //sets position of camera to passed in values (clamp returns the correct value to pass in);
             this.setPosition(this.clamp(x, xMin, xMax),this.clamp(y, yMin, yMax));
         }
 
         //translates canvas based on new player position of canvas to passed in position
         this.setPosition = function(x, y) {
+          //need to multiply x and y values by 5 due to setTransform scaling of 5
           ctx.setTransform(5,0,0,5,((-x * 5) + canvas.width/2) - 8,((-y * 5) + canvas.height/2)- 8);
         }
     },
@@ -100,7 +103,7 @@ var Renderer = {
             }
         }
 
-        //TODO: get working; Currently speeds up the more you move in one direction(loop never stops)
+        //TODO: get animation to reset after done animating
         this.animate = function(startIndex, endIndex, animateSpeed, animateType) {
             if(!this.isSpriteSheet) {
                 console.log("You cannot animate a single sprite, set isSpriteSheet to true");
