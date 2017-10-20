@@ -19,6 +19,8 @@ var Renderer = {
           //initialize camera position to player
           //last two variables are the postion initilaization
           //0,0 is the top left corner of the map
+          //player position currently hardcoded. will set to
+          //random spawn position of player at final product
           ctx.setTransform(5, 0, 0, 5, 0, 0);
         }
         //updates game of camera positioning

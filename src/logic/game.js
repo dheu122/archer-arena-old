@@ -105,7 +105,8 @@ window.onload = function() {
 		updatePlayers(playerData);
 	});
 
-	// Renderer.Camera.calculatePostition(0, 0); // Set to randomly located position from server
+	//sets camera position to (0,0) located at top left corner of the map
+  //Eventually will set to the players random spawn position.
   player.camera.initialize();
 	gameLoop();
 }
@@ -144,9 +145,6 @@ function updatePlayers(playerData) {
 var lastLoopRun = 0;
 function gameLoop() { //this is the main game loop, i found a version of it in a tutorial, basically repeats every 2 miliseconds and runs at 33 fps 1000ms/30 = 33.3
 	if (new Date().getTime() - lastLoopRun > 15) {
-		//updatePositions();
-		//handleControls();
-		//showSprites();
 		donePlaying();
 		if(globalRoomId) {
 			var data = {
@@ -155,7 +153,6 @@ function gameLoop() { //this is the main game loop, i found a version of it in a
 			}
 
 			player.update();					// Updates current client to itself
-      // Renderer.Camera.update();
       player.camera.calculatePostition(player.sprite.x, player.sprite.y); //sets camera to the position passed in here
 			socket.emit('SendPlayerData', data); 		// Send current client's data to everyone, so they can update
 			lastLoopRun = new Date().getTime();
