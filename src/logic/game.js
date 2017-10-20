@@ -62,6 +62,8 @@ var player = new Logic.character({
 	name: '',
 	id: '',
 	isInThisRoom: '',
+  camera: new Renderer.Camera({
+  }),
 	sprite: new Renderer.Sprite({
 		image: Renderer.Images.player,
 		width: 15,
@@ -69,7 +71,7 @@ var player = new Logic.character({
 		isSpriteSheet: true,
 		x: 0,
 		y: 0,
-		index: 0
+		index: 0,
 	}),
 	speed: 2,
 	minSpeed: 2,
@@ -103,7 +105,8 @@ window.onload = function() {
 		updatePlayers(playerData);
 	});
 
-	Renderer.Canvas.setPosition(0, 0); // Set to randomly located position from server
+	// Renderer.Camera.calculatePostition(0, 0); // Set to randomly located position from server
+  player.camera.initialize();
 	gameLoop();
 }
 
@@ -116,6 +119,7 @@ function updatePlayers(playerData) {
 				name: '',
 				id: data.id,
 				isInThisRoom: data.isInThisRoom,
+        camera: new Renderer.Camera({}),
 				sprite: new Renderer.Sprite({
 					image: Renderer.Images.player,
 					width: 15,
@@ -151,7 +155,8 @@ function gameLoop() { //this is the main game loop, i found a version of it in a
 			}
 
 			player.update();					// Updates current client to itself
-			Renderer.Canvas.setPosition(player.sprite.x, player.sprite.y);
+      // Renderer.Camera.update();
+      player.camera.calculatePostition(player.sprite.x, player.sprite.y); //sets camera to the position passed in here
 			socket.emit('SendPlayerData', data); 		// Send current client's data to everyone, so they can update
 			lastLoopRun = new Date().getTime();
 		}
