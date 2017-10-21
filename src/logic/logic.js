@@ -20,6 +20,7 @@ var Logic = {
     canvasMousePosition: {},
 
     character: function(options) {
+        this.camera = options.camera;
         this.sprite = options.sprite;
 
         this.speed = options.speed;
@@ -32,12 +33,10 @@ var Logic = {
         this.canDodge = true;
         this.arrowCount = 1;
         this.update = function() {
-            //this.sprite.render();
             this.move();
             this.sprint();
             this.dodge();
             this.bound();
-            this.camera();
             this.createArrow();
         }
         /*this.firearrow function(){
@@ -61,29 +60,21 @@ var Logic = {
             if(Logic.rightPressed) {
                 this.sprite.animate(1, 2, 10, 'loop');
                 this.sprite.x += this.speed;
-                // this.sprite.setIndex(0);
             }
             //face left: index3 left movement: index4,index5
             if(Logic.leftPressed) {
                 this.sprite.animate(4, 5, 10, 'loop');
                 this.sprite.x -= this.speed;
-                // this.sprite.setIndex(27);
             }
             //face up: index9 upward movement: index10,index11
             if(Logic.upPressed) {
                 this.sprite.animate(10, 11, 10, 'loop');
                 this.sprite.y -= this.speed;
-                // this.sprite.setIndex(4);
             }
             //face down: index6 downward movement: index7,index8
             if(Logic.downPressed) {
                 this.sprite.animate(7, 8, 10, 'loop');
                 this.sprite.y += this.speed;
-                // this.sprite.setIndex(6);
-            }
-            if(this.sprite.x == this.oldx && this.sprite.y == this.oldy)
-            {
-              this.sprite.setIndex(index - 1);
             }
         }
         this.sprint = function() {
@@ -139,30 +130,6 @@ var Logic = {
             }
             if(this.sprite.y + this.sprite.height + (this.sprite.height/2) > JsonMap.mapTotalHeight){
                 this.sprite.y = JsonMap.mapTotalHeight - this.sprite.height - (this.sprite.height/2);
-            }
-        }
-        // ctx.translate(this.sprite.x,this.sprite.y)
-        this.camera = function() {
-          //  ctx.translate(100,100)
-            if(canvasPosition.x != this.sprite.x) {
-                if(Logic.rightPressed){
-                // if(Logic.rightPressed && this.sprite.x > 50) {
-                    ctx.translate(-this.speed, 0);
-                }
-                if(Logic.leftPressed){
-                // if(Logic.leftPressed && this.sprite.x < mapWidth - 50) {
-                    ctx.translate(this.speed, 0);
-                }
-            }
-            if(canvasPosition.y != this.sprite.y) {
-                if(Logic.upPressed){
-                // if(Logic.upPressed && this.sprite.y > 50) {
-                    ctx.translate(0, this.speed);
-                }
-                if(Logic.downPressed){
-                // if(Logic.downPressed && this.sprite.y < mapHeight - 50) {
-                    ctx.translate(0, -this.speed);
-                }
             }
         }
         this.createArrow = function () {
