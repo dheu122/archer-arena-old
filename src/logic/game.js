@@ -72,6 +72,8 @@ var player = new Logic.character({
 	name: '',
 	id: '',
 	isInThisRoom: '',
+  camera: new Renderer.Camera({
+  }),
 	sprite: new Renderer.Sprite({
 		image: Renderer.Images.player,
 		width: 15,
@@ -79,7 +81,7 @@ var player = new Logic.character({
 		isSpriteSheet: true,
 		x: 0,
 		y: 0,
-		index: 0
+		index: 0,
 	}),
 	speed: 2,
 	minSpeed: 2,
@@ -129,12 +131,14 @@ window.onload = function() {
 		updatePlayers(playerData);
 	});
 
+	//sets camera position to (0,0) located at top left corner of the map
+  //Eventually will set to the players random spawn position.
+  player.camera.initialize();
+
 	socket.on('GetRoomArrowData', function(arrowData) {
 		//ctx.clearRect(-100, -100, canvas.width, canvas.height);
 		updateArrows(arrowData);
 	})
-
-	Renderer.Canvas.setPosition(0, 0); // Set to randomly located position from server
 	gameLoop();
 }
 
@@ -143,27 +147,29 @@ function updatePlayers(playerData) {
 	JsonMap.render(JsonMap.jsonMap);
 	for(var i = 0; i < playerData.length; i++) {
 		var data = playerData[i];
-		var player =  new Logic.character({
-			name: '',
-			id: data.id,
-			isInThisRoom: data.isInThisRoom,
-			sprite: new Renderer.Sprite({
-				image: Renderer.Images.player,
-				width: 15,
-				height: 16,
-				isSpriteSheet: true,
-				x: data.sprite.x,
-				y: data.sprite.y,
-				index: data.sprite.index
-			}),
-			speed: 2,
-			minSpeed: 2,
-			maxSpeed: 2.5,
-			stamina: 100
-		});
-		player.sprite.render();
-	}
-}
+		if(globalRoomId != data.id) {
+			var player =  new Logic.character({
+				name: '',
+				id: data.id,
+				isInThisRoom: data.isInThisRoom,
+        camera: new Renderer.Camera({}),
+				sprite: new Renderer.Sprite({
+					image: Renderer.Images.player,
+					width: 15,
+					height: 16,
+					isSpriteSheet: true,
+					x: data.sprite.x,
+					y: data.sprite.y,
+					index: data.sprite.index
+				}),
+				speed: 2,
+				minSpeed: 2,
+				maxSpeed: 2.5,
+				stamina: 100
+			});
+			player.sprite.render();
+		}
+
 function updateArrows(arrowData) {
 	for(var i = 0; i < arrowsData.length; i++) {
 		var data = arrowsData[i];
@@ -218,9 +224,6 @@ function updateArrows(arrowData) {
 var lastLoopRun = 0;
 function gameLoop() { //this is the main game loop, i found a version of it in a tutorial, basically repeats every 2 miliseconds and runs at 33 fps 1000ms/30 = 33.3
 	if (new Date().getTime() - lastLoopRun > 15) {
-		//updatePositions();
-		//handleControls();
-		//showSprites();
 		donePlaying();
 		if(globalRoomId) {
 			var data = {
@@ -229,8 +232,7 @@ function gameLoop() { //this is the main game loop, i found a version of it in a
 			}
 
 			player.update();					// Updates current client to itself
-			Renderer.Canvas.setPosition(player.sprite.x, player.sprite.y);
-			socket.emit('SendArrowData', data)
+      player.camera.calculatePostition(player.sprite.x, player.sprite.y); //sets camera to the position passed in here
 			socket.emit('SendPlayerData', data); 		// Send current client's data to everyone, so they can update
 			lastLoopRun = new Date().getTime();
 		}

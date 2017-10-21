@@ -1,19 +1,11 @@
 var canvas = document.querySelector('canvas');
 var ctx = canvas.getContext("2d");
 var animTimer = 0;
-var canvasPosition = {
-    x: 7.5,
-    y: 8
-};
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 ctx.imageSmoothingEnabled = false;
-ctx.setTransform(5, 0, 0, 5, ((canvas.width/2) - 64), ((canvas.height/2) - 64));
-//console.log(canvasPosition);
-//console.log(((canvas.width/2) - 64));
-//console.log(((canvas.height/2) - 64));
 
 var Renderer = {
 
@@ -24,10 +16,44 @@ var Renderer = {
         arrow: 'assets/arrow_sprite.png'
     },
 
-    Canvas: {
-        setPosition: function(x, y) {
-            canvasPosition.x = x;
-            canvasPosition.y = y;
+    Camera: function(options) {
+        this.initialize = function() {
+          //initialize camera position to player
+          //last two variables are the postion initilaization
+          //0,0 is the top left corner of the map
+          //player position currently hardcoded. will set to
+          //random spawn position of player at final product
+          ctx.setTransform(5, 0, 0, 5, 0, 0);
+        }
+        //updates game of camera positioning
+        this.update = function() {
+          this.calculatePostition();
+        }
+        //calulate position of camera
+        //bounding to the edges of the map being implemented
+        this.calculatePostition = function(x,y) {
+          //height and width buffer calculate the distance between the player and the edge of the canvas
+          var widthBuffer = ((canvas.width/5)/2);
+          var heightBuffer = ((canvas.height/5)/2);
+          var xMin = widthBuffer - 1;
+          var xMax = mapWidth - widthBuffer - 2;
+          var yMin = heightBuffer - 1;
+          var yMax = mapHeight - heightBuffer - 2;
+
+          //clamps the camera position (value) to the minimum and maximum values passed in
+          this.clamp = function(value, min, max){
+            if(value > min && value < max) return value;
+            else if(value < min) return min;
+            else if(value > max) return max;
+          }
+            //sets position of camera to passed in values (clamp returns the correct value to pass in);
+            this.setPosition(this.clamp(x, xMin, xMax),this.clamp(y, yMin, yMax));
+        }
+
+        //translates canvas based on new player position of canvas to passed in position
+        this.setPosition = function(x, y) {
+          //need to multiply x and y values by 5 due to setTransform scaling of 5
+          ctx.setTransform(5,0,0,5,((-x * 5) + canvas.width/2) - 8,((-y * 5) + canvas.height/2)- 8);
         }
     },
 
@@ -37,8 +63,6 @@ var Renderer = {
 
         this.image = new Image();
         this.image.src = options.image;
-        this.oldx;
-        this.oldy;
         this.x = options.x;
         this.y = options.y;
 
@@ -81,7 +105,7 @@ var Renderer = {
             }
         }
 
-        //TODO: get working; Currently speeds up the more you move in one direction(loop never stops)
+        //TODO: get animation to reset after done animating
         this.animate = function(startIndex, endIndex, animateSpeed, animateType) {
             if(!this.isSpriteSheet) {
                 console.log("You cannot animate a single sprite, set isSpriteSheet to true");
@@ -151,10 +175,7 @@ window.addEventListener('resize', function () {
         canvas.height = window.innerHeight;
     }
     ctx.imageSmoothingEnabled = false;
-    ctx.setTransform(5, 0, 0, 5, ((canvas.width/2) - 64), ((canvas.height/2) - 64));
-    //console.log(canvasPosition);
-    //console.log(((canvas.width/2) - 64));
-    //console.log(((canvas.height/2) - 64));
+    ctx.setTransform(5, 0, 0, 5, 0, 0);
 })
 
 setInterval(function() {
