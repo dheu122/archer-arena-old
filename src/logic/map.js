@@ -16,7 +16,7 @@ var JsonMap = {
 
         for(var i = 0; i < layers.length; i++) {
             var data = layers[i];
-            this.draw(data); // IF YOU UNCOMMENT THIS, THE GAME WILL CRASH ON RUN
+            this.draw(data);
         }
     },
 
