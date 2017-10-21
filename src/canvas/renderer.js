@@ -11,7 +11,9 @@ var Renderer = {
 
     // Images from our assets folder will go here
     Images: {
-        player: 'assets/movement_sprite.png'
+        map1: 'assets/tileset_map1.png',
+        player: 'assets/movement_sprite.png',
+        arrow: 'assets/arrow_sprite.png'
     },
 
     Camera: function(options) {
