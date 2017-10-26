@@ -90,22 +90,6 @@ var player = new Logic.character({
 	stamina: 100
 });
 
-var arrow = new Logic.arrow({
-	name: '',
-	id: '',
-	isInThisRoom: '',
-	sprite: new Renderer.Sprite({
-		image: Renderer.Images.arrow,
-		width: 5,
-		height: 16,
-		isSpriteSheet: true,
-		x: 0,
-		y: 0,
-		index: 0
-	}),
-	arrowSpeed: 3
-});
-
 // Map for debugging, remove later
 var debugMap = new Renderer.Sprite({
 	image: '../../assets/map_debug.png',
@@ -210,8 +194,9 @@ function gameLoop() { //this is the main game loop, i found a version of it in a
 			}
 
 			player.update();					// Updates current client to itself
-      player.camera.calculatePostition(player.sprite.x, player.sprite.y); //sets camera to the position passed in here
-			socket.emit('SendPlayerData', data); 		// Send current client's data to everyone, so they can update
+      		player.camera.calculatePostition(player.sprite.x, player.sprite.y); //sets camera to the position passed in here
+			socket.emit('SendArrowData', data);	
+		  	socket.emit('SendPlayerData', data); 		// Send current client's data to everyone, so they can update
 			lastLoopRun = new Date().getTime();
 		}
 	}
