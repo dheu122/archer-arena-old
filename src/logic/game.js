@@ -37,7 +37,7 @@ function sound(src) {
     this.stop = function(){
         this.sound.pause();
     }
-} 
+}
 
 var isTitlescreen = true;
 
@@ -49,13 +49,13 @@ function gameMusicPlayer() {
 function titleMusicPlayer() {
 	titleMusic.play();
 }
-	
-	
+
+
 function donePlaying() { //checks if the music has finished playing, then if true it plays it again
 
 	if (isTitlescreen == true) {
 		if (titleMusic.paused = true) {
-		titleMusicPlayer(); 
+		titleMusicPlayer();
 		}
 	}
 	else if (isTitlescreen == false) {
@@ -169,6 +169,8 @@ function updatePlayers(playerData) {
 			});
 			player.sprite.render();
 		}
+  }
+}
 
 function updateArrows(arrowData) {
 	for(var i = 0; i < arrowsData.length; i++) {
@@ -206,13 +208,13 @@ function updateArrows(arrowData) {
 				y: data.sprite.y,
 				index: data.sprite.index
 			}),
-			
+
 			id: data.id,
 			arrowSpeedX: data.arrowSpeedX,
-			arrowSpeedY: data.arrowSpeedY,   
+			arrowSpeedY: data.arrowSpeedY,
 			angle: data.angle,
 			belongsTo: data.belongsTo,
-			isInThisRoom: data.isInThisRoom, 
+			isInThisRoom: data.isInThisRoom,
 			lifetime: data.lifetime,
 		});
 		arrow.sprite.render();
