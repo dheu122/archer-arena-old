@@ -16,6 +16,50 @@ var Renderer = {
         arrow: 'assets/arrow_sprite.png'
     },
 
+    Screen: function() {
+
+        this.order = {
+            layer1: [
+                { 
+                    sprite: new Renderer.Sprite({
+                        image: '../../assets/map_layer1.png',
+                        width: 619,
+                        height: 620,
+                        isSpriteSheet: false,
+                        x: 0,
+                        y: 0
+                    })
+                }
+            ],
+            players: [],
+            arrows: [],
+            layer2: [
+                { 
+                    sprite: new Renderer.Sprite({
+                        image: '../../assets/map_layer2.png',
+                        width: 619,
+                        height: 620,
+                        isSpriteSheet: false,
+                        x: 0,
+                        y: 0
+                    })
+                }
+            ],
+            //layer2: []
+        }
+
+        this.renderInOrder = function() {
+            ctx.clearRect(-100, -100, canvas.width, canvas.height);
+            for(var key in this.order) {
+                if(this.order.hasOwnProperty(key)) {
+                    for(var i = 0; i < this.order[key].length; i++) {
+                        this.order[key][i].sprite.render();
+                    }
+                }
+            }
+        }
+    },
+
     Camera: function(options) {
         this.initialize = function() {
           //initialize camera position to player
