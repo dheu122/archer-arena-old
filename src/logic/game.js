@@ -105,7 +105,7 @@ var debugMap = {
 }
 
 window.onload = function() {
-	loadJSON('/assets/TesterProper', gameLoop); //calls JSON
+	//loadJSON('/assets/TesterProper', gameLoop); //calls JSON
 
 	socket.on('JoinedRoom', function(identity) {
 		isTitlescreen = false;

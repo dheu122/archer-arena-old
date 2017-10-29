@@ -7,6 +7,10 @@ canvas.height = window.innerHeight;
 
 ctx.imageSmoothingEnabled = false;
 
+// test: remove later
+var mapWidth = 560;
+var mapHeight = 560;
+
 var Renderer = {
 
     // Images from our assets folder will go here
@@ -23,8 +27,8 @@ var Renderer = {
                 { 
                     sprite: new Renderer.Sprite({
                         image: '../../assets/map_layer1.png',
-                        width: 619,
-                        height: 620,
+                        width: 560,
+                        height: 560,
                         isSpriteSheet: false,
                         x: 0,
                         y: 0
@@ -37,8 +41,8 @@ var Renderer = {
                 { 
                     sprite: new Renderer.Sprite({
                         image: '../../assets/map_layer2.png',
-                        width: 619,
-                        height: 620,
+                        width: 560,
+                        height: 560,
                         isSpriteSheet: false,
                         x: 0,
                         y: 0
@@ -61,6 +65,12 @@ var Renderer = {
     },
 
     Camera: function(options) {
+
+        this.isClamped = {
+            x: false,
+            y: false
+        }
+
         this.initialize = function() {
           //initialize camera position to player
           //last two variables are the postion initilaization
@@ -90,7 +100,25 @@ var Renderer = {
             else if(value < min) return min;
             else if(value > max) return max;
           }
+
+          this.setIsClamped = function(x, xMin, xMax, y, yMin, yMax) {
+            if(x > xMin && x < xMax) 
+                this.isClamped.x = false;
+            else if(x < xMin)  
+                this.isClamped.x = true;
+            else if(x > xMax) 
+                this.isClamped.x = true;
+
+            if(y > yMin && y < yMax) 
+                this.isClamped.y = false;
+            else if(y < yMin) 
+                this.isClamped.y = true;
+            else if(y > yMax) 
+                this.isClamped.y = true;
+          }
+          
             //sets position of camera to passed in values (clamp returns the correct value to pass in);
+            this.setIsClamped(x, xMin, xMax, y, yMin, yMax);
             this.setPosition(this.clamp(x, xMin, xMax),this.clamp(y, yMin, yMax));
         }
 

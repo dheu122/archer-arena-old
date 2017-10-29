@@ -3,9 +3,6 @@ var ctx = canvas.getContext("2d");
 
 var socket = io();
 
-var mapHeight = 620;
-var mapWidth = 619;
-
 var Logic = {
 
     // Character movement, collision, attacking, and dodging mechanics function objects will go here
@@ -16,8 +13,8 @@ var Logic = {
     mousePressed: false,
     spacePressed: false,
     shiftPressed: false,
-    mousePositionFromCharacter: {},
     canvasMousePosition: {},
+    mousePositionFromPlayer: {},
 
     character: function(options) {
         this.camera = options.camera;
@@ -31,13 +28,17 @@ var Logic = {
         this.curStamina = this.maxStamina;
 
         this.canDodge = true;
-        this.arrowCount = 1;
+        this.arrowCount = 100;
+
+        this.origin = {},
+
         this.update = function() {
             this.move();
             this.sprint();
             this.dodge();
             this.bound();
             this.createArrow();
+            this.setOrigin();
         }
         /*this.firearrow function(){
             var arrowX = charPosX + 10;
@@ -125,19 +126,19 @@ var Logic = {
             if(this.sprite.y - this.sprite.height/2 < 0){
                 this.sprite.y = this.sprite.height/2;
             }
-            if(this.sprite.x + this.sprite.width + (this.sprite.width/2) > JsonMap.mapTotalWidth){
-                this.sprite.x = JsonMap.mapTotalWidth - this.sprite.width - (this.sprite.width/2);
+            if(this.sprite.x + this.sprite.width + (this.sprite.width/2) > mapWidth){
+                this.sprite.x = mapWidth - this.sprite.width - (this.sprite.width/2);
             }
-            if(this.sprite.y + this.sprite.height + (this.sprite.height/2) > JsonMap.mapTotalHeight){
-                this.sprite.y = JsonMap.mapTotalHeight - this.sprite.height - (this.sprite.height/2);
+            if(this.sprite.y + this.sprite.height + (this.sprite.height/2) > mapHeight){
+                this.sprite.y = mapHeight - this.sprite.height - (this.sprite.height/2);
             }
         }
         this.createArrow = function () {
             //creates arrow to shoot
 			if(Logic.mousePressed && this.arrowCount > 0) {
                 //calculate direction to shoot arrow
-                var deltaX = Logic.mousePositionFromCharacter.x;
-                var deltaY = Logic.mousePositionFromCharacter.y;
+                var deltaX = Logic.mousePositionFromPlayer.x - this.sprite.x;
+                var deltaY = Logic.mousePositionFromPlayer.y - this.sprite.y;
                 var speedDivider = 100;
 
                 var angle = Math.atan2(Logic.canvasMousePosition.x - (canvas.width / 2),-(Logic.canvasMousePosition.y - (canvas.height / 2))) * (180/Math.PI);
@@ -168,7 +169,16 @@ var Logic = {
                 socket.emit('AddArrowData', arrow); //send arrow object to server 
                 this.arrowCount--;
 			}
-		}
+        }
+        this.setOrigin = function() {
+            this.origin = {
+                x: Logic.mousePositionFromPlayer.x - this.sprite.x,
+                y: Logic.mousePositionFromPlayer.y - this.sprite.y
+            }
+            
+            console.log(this.camera.isClamped);
+            //console.log(Logic.mousePositionFromPlayer);
+        }
     },
 
     arrow: function(options) {
@@ -237,21 +247,21 @@ var Logic = {
         }
     },
     getMousePosition: function (e) {
-        var origin = {
-            x: canvas.width / 2,
-            y: canvas.height / 2
-        }
-        var fromPlayerMousePos = {
-            x: (e.clientX - origin.x),
-            y: (e.clientY - origin.y)
-        }
+        var mouseX = e.clientX - ctx.canvas.offsetLeft;
+        var mouseY = e.clientY - ctx.canvas.offsetTop;
+        
         var canvasMousePos = {
             x: e.clientX,
             y: e.clientY
         }
 
+        var mousePositionFromPlayer = {
+            x: (mouseX * (canvas.width/5) / canvas.clientWidth),
+            y: (mouseY * (canvas.height/5) / canvas.clientHeight)
+        }
+
+        Logic.mousePositionFromPlayer = mousePositionFromPlayer;
         Logic.canvasMousePosition = canvasMousePos;
-        Logic.mousePositionFromCharacter = fromPlayerMousePos;
     },
 }
 
