@@ -67,8 +67,8 @@ var Renderer = {
     Camera: function(options) {
 
         this.isClamped = {
-            x: false,
-            y: false
+            x: 0,
+            y: 0
         }
 
         this.initialize = function() {
@@ -103,18 +103,18 @@ var Renderer = {
 
           this.setIsClamped = function(x, xMin, xMax, y, yMin, yMax) {
             if(x > xMin && x < xMax) 
-                this.isClamped.x = false;
+                this.isClamped.x = 0;   // Is not clamped
             else if(x < xMin)  
-                this.isClamped.x = true;
+                this.isClamped.x = 1;   // Is at left
             else if(x > xMax) 
-                this.isClamped.x = true;
+                this.isClamped.x = 2;   // Is at right
 
             if(y > yMin && y < yMax) 
-                this.isClamped.y = false;
+                this.isClamped.y = 0;   // Is not clamped
             else if(y < yMin) 
-                this.isClamped.y = true;
+                this.isClamped.y = 1;   // Is at top
             else if(y > yMax) 
-                this.isClamped.y = true;
+                this.isClamped.y = 2;   // Is at bottom
           }
           
             //sets position of camera to passed in values (clamp returns the correct value to pass in);

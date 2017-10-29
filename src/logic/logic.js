@@ -30,7 +30,7 @@ var Logic = {
         this.canDodge = true;
         this.arrowCount = 100;
 
-        this.origin = {},
+        this.origin = {x: 0, y: 0},
 
         this.update = function() {
             this.move();
@@ -137,8 +137,8 @@ var Logic = {
             //creates arrow to shoot
 			if(Logic.mousePressed && this.arrowCount > 0) {
                 //calculate direction to shoot arrow
-                var deltaX = Logic.mousePositionFromPlayer.x - this.sprite.x;
-                var deltaY = Logic.mousePositionFromPlayer.y - this.sprite.y;
+                var deltaX = this.origin.x;
+                var deltaY = this.origin.y;
                 var speedDivider = 100;
 
                 var angle = Math.atan2(Logic.canvasMousePosition.x - (canvas.width / 2),-(Logic.canvasMousePosition.y - (canvas.height / 2))) * (180/Math.PI);
@@ -171,13 +171,26 @@ var Logic = {
 			}
         }
         this.setOrigin = function() {
-            this.origin = {
-                x: Logic.mousePositionFromPlayer.x - this.sprite.x,
-                y: Logic.mousePositionFromPlayer.y - this.sprite.y
+
+            if(this.camera.isClamped.x == 0) {
+                this.origin.x = (this.sprite.x - ((canvas.width/5)/2)) + (Logic.mousePositionFromPlayer.x - this.sprite.x) - 8;
+            } 
+            else if(this.camera.isClamped.x == 1) {
+                this.origin.x = Logic.mousePositionFromPlayer.x - this.sprite.x - 8;
             }
-            
-            console.log(this.camera.isClamped);
-            //console.log(Logic.mousePositionFromPlayer);
+            else if(this.camera.isClamped.x == 2) {
+                this.origin.x = (mapWidth - (canvas.width/5)) + (Logic.mousePositionFromPlayer.x - this.sprite.x) - 8;
+            }
+
+            if(this.camera.isClamped.y == 0) {
+                this.origin.y = (this.sprite.y - ((canvas.height/5)/2)) + (Logic.mousePositionFromPlayer.y - this.sprite.y) - 8;
+            } 
+            else if(this.camera.isClamped.y == 1) {
+                this.origin.y = Logic.mousePositionFromPlayer.y - this.sprite.y - 8;
+            }
+            else if(this.camera.isClamped.y == 2) {
+                this.origin.y = (mapHeight - (canvas.height/5)) + (Logic.mousePositionFromPlayer.y - this.sprite.y) - 8;
+            }
         }
     },
 
