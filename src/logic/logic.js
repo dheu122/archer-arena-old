@@ -139,13 +139,21 @@ var Logic = {
                 //calculate direction to shoot arrow
                 var deltaX = this.origin.x;
                 var deltaY = this.origin.y;
-                var speedDivider = 100;
+
+                var speed = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+                var maxSpeed = 3;
 
                 var angle = Math.atan2(Logic.canvasMousePosition.x - (canvas.width / 2),-(Logic.canvasMousePosition.y - (canvas.height / 2))) * (180/Math.PI);
 
                 var timestamp = new Date().getUTCMilliseconds(); //time in milliseconds
                 var idString = Math.random().toString(36).substring(7); //random 5 letter string
-                    
+                
+                if(speed > maxSpeed) {
+                    var speedRatio = speed / maxSpeed;
+                    deltaX = deltaX / speedRatio;
+                    deltaY = deltaY / speedRatio;
+                }
+
 				//create initial arrow
 				var arrow =  new Logic.arrow({
                     id: 'arrow-' + idString + timestamp, // gives the arrow a random ID (EXAMPLE ID: arrow-cabde716)
@@ -162,8 +170,8 @@ var Logic = {
                         y: this.sprite.y,
                         index: 0
                     }),
-                    arrowSpeedX: deltaX / speedDivider,
-				    arrowSpeedY: deltaY / speedDivider,
+                    arrowSpeedX: deltaX,
+				    arrowSpeedY: deltaY
 				});
 				
                 socket.emit('AddArrowData', arrow); //send arrow object to server 
