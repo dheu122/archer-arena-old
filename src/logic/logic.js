@@ -28,6 +28,10 @@ var Logic = {
         this.curStamina = this.maxStamina;
 
         this.canDodge = true;
+        this.canShoot = true;
+        
+        this.curArrowTimer = 0;
+        this.arrowTimer = 60;
         this.arrowCount = 100;
 
         this.origin = {x: 0, y: 0},
@@ -134,8 +138,14 @@ var Logic = {
             }
         }
         this.createArrow = function () {
+            this.curArrowTimer++;
+            if(this.curArrowTimer > this.arrowTimer) {
+                this.canShoot = true;
+                this.curArrowTimer = this.arrowTimer;
+            }
+
             //creates arrow to shoot
-			if(Logic.mousePressed && this.arrowCount > 0) {
+			if(Logic.mousePressed && this.canShoot && this.arrowCount > 0) {
                 //calculate direction to shoot arrow
                 var deltaX = this.origin.x;
                 var deltaY = this.origin.y;
@@ -176,6 +186,8 @@ var Logic = {
 				
                 socket.emit('AddArrowData', arrow); //send arrow object to server 
                 this.arrowCount--;
+                this.canShoot = false;
+                this.curArrowTimer = 0;
 			}
         }
         this.setOrigin = function() {
