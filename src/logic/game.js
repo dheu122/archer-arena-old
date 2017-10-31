@@ -68,6 +68,8 @@ function donePlaying() { //checks if the music has finished playing, then if tru
 
 /////////////////////////////////////////////////
 
+var canvasScreen = new Renderer.Screen;
+
 // Creates a new player 'character', and renders a sprite
 var player = new Logic.character({
 	name: '',
@@ -90,34 +92,20 @@ var player = new Logic.character({
 	stamina: 100
 });
 
-var arrow = new Logic.arrow({
-	name: '',
-	id: '',
-	isInThisRoom: '',
-	sprite: new Renderer.Sprite({
-		image: Renderer.Images.arrow,
-		width: 5,
-		height: 16,
-		isSpriteSheet: true,
-		x: 0,
-		y: 0,
-		index: 0
-	}),
-	arrowSpeed: 3
-});
-
 // Map for debugging, remove later
-var debugMap = new Renderer.Sprite({
-	image: '../../assets/map_debug.png',
-	width: 619,
-	height: 620,
-	isSpriteSheet: false,
-	x: 0,
-	y: 0
-})
+var debugMap = { 
+	sprite: new Renderer.Sprite({
+		image: '../../assets/map_debug.png',
+		width: 619,
+		height: 620,
+		isSpriteSheet: false,
+		x: 0,
+		y: 0
+	})
+}
 
 window.onload = function() {
-	loadJSON('/assets/TesterProper', gameLoop); //calls JSON
+	//loadJSON('/assets/TesterProper', gameLoop); //calls JSON
 
 	socket.on('JoinedRoom', function(identity) {
 		isTitlescreen = false;
@@ -129,7 +117,7 @@ window.onload = function() {
 
 	socket.on('GetRoomPlayerData', function(playerData) {
 		//console.log(playerData);
-		ctx.clearRect(-100, -100, canvas.width, canvas.height);
+		//ctx.clearRect(-100, -100, canvas.width, canvas.height);
 		updatePlayers(playerData);
 	});
 
@@ -146,7 +134,8 @@ window.onload = function() {
 
 function updatePlayers(playerData) {
 	//debugMap.render();
-	JsonMap.render(JsonMap.jsonMap);
+	//JsonMap.render(JsonMap.jsonMap);
+	var players = [];
 	for(var i = 0; i < playerData.length; i++) {
 		var data = playerData[i];
 		var player =  new Logic.character({
@@ -167,11 +156,14 @@ function updatePlayers(playerData) {
 			maxSpeed: 2.5,
 			stamina: 100
 		});
-		player.sprite.render();
+		//player.sprite.render();
+		players.push(player);
 	}
+	canvasScreen.order.players = players;
 }
 
 function updateArrows(arrowData) {
+	var arrows = [];
 	for(var i = 0; i < arrowData.length; i++) {
 		var data = arrowData[i];
 		var arrow = new Logic.arrow({
@@ -193,8 +185,10 @@ function updateArrows(arrowData) {
 			isInThisRoom: data.isInThisRoom, 
 			lifetime: data.lifetime,
 		});
-		arrow.sprite.render();
+		//arrow.sprite.render();
+		arrows.push(arrow);
 	}
+	canvasScreen.order.arrows = arrows;
 }
 // Clears the screen
 // Calls the player's update() function and redraws itself
@@ -210,8 +204,10 @@ function gameLoop() { //this is the main game loop, i found a version of it in a
 			}
 
 			player.update();					// Updates current client to itself
-      player.camera.calculatePostition(player.sprite.x, player.sprite.y); //sets camera to the position passed in here
-			socket.emit('SendPlayerData', data); 		// Send current client's data to everyone, so they can update
+			player.camera.calculatePostition(player.sprite.x, player.sprite.y); //sets camera to the position passed in here
+			canvasScreen.renderInOrder();
+			socket.emit('SendArrowData', data);	
+		  	socket.emit('SendPlayerData', data); 		// Send current client's data to everyone, so they can update
 			lastLoopRun = new Date().getTime();
 		}
 	}

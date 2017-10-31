@@ -7,6 +7,10 @@ canvas.height = window.innerHeight;
 
 ctx.imageSmoothingEnabled = false;
 
+// test: remove later
+var mapWidth = 560;
+var mapHeight = 560;
+
 var Renderer = {
 
     // Images from our assets folder will go here
@@ -16,7 +20,57 @@ var Renderer = {
         arrow: 'assets/arrow_sprite.png'
     },
 
+    Screen: function() {
+
+        this.order = {
+            layer1: [
+                { 
+                    sprite: new Renderer.Sprite({
+                        image: '../../assets/map_layer1.png',
+                        width: 560,
+                        height: 560,
+                        isSpriteSheet: false,
+                        x: 0,
+                        y: 0
+                    })
+                }
+            ],
+            players: [],
+            arrows: [],
+            layer2: [
+                { 
+                    sprite: new Renderer.Sprite({
+                        image: '../../assets/map_layer2.png',
+                        width: 560,
+                        height: 560,
+                        isSpriteSheet: false,
+                        x: 0,
+                        y: 0
+                    })
+                }
+            ],
+            //layer2: []
+        }
+
+        this.renderInOrder = function() {
+            ctx.clearRect(-100, -100, canvas.width, canvas.height);
+            for(var key in this.order) {
+                if(this.order.hasOwnProperty(key)) {
+                    for(var i = 0; i < this.order[key].length; i++) {
+                        this.order[key][i].sprite.render();
+                    }
+                }
+            }
+        }
+    },
+
     Camera: function(options) {
+
+        this.isClamped = {
+            x: 0,
+            y: 0
+        }
+
         this.initialize = function() {
           //initialize camera position to player
           //last two variables are the postion initilaization
@@ -46,7 +100,25 @@ var Renderer = {
             else if(value < min) return min;
             else if(value > max) return max;
           }
+
+          this.setIsClamped = function(x, xMin, xMax, y, yMin, yMax) {
+            if(x > xMin && x < xMax) 
+                this.isClamped.x = 0;   // Is not clamped
+            else if(x < xMin)  
+                this.isClamped.x = 1;   // Is at left
+            else if(x > xMax) 
+                this.isClamped.x = 2;   // Is at right
+
+            if(y > yMin && y < yMax) 
+                this.isClamped.y = 0;   // Is not clamped
+            else if(y < yMin) 
+                this.isClamped.y = 1;   // Is at top
+            else if(y > yMax) 
+                this.isClamped.y = 2;   // Is at bottom
+          }
+          
             //sets position of camera to passed in values (clamp returns the correct value to pass in);
+            this.setIsClamped(x, xMin, xMax, y, yMin, yMax);
             this.setPosition(this.clamp(x, xMin, xMax),this.clamp(y, yMin, yMax));
         }
 
