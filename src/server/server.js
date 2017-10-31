@@ -11,6 +11,7 @@ var io = socket(server);
 var room = require('./room');
 var player = require('./player');
 var arrow = require('./arrow');
+var collision = require('./collision');
 
 /*
     Informal Player Interface {
@@ -38,6 +39,7 @@ io.on('connection', function(socket) {
         var data = playerData;  // information such as nicknames, location?, character
         var roomId = room.joinRoom(socket.id);
         var identity = {
+            name: playerData.name,
             roomId: roomId,
             id: socket.id
         }
@@ -78,6 +80,7 @@ io.on('connection', function(socket) {
     })
 
     socket.on('RemoveArrowData', function(data) {
+        // delete from room too!
         var arrowIndex = arrow.getArrowIndexById(data.id);
         arrow.deleteArrowAt(arrowIndex);
     })
@@ -89,6 +92,26 @@ io.on('connection', function(socket) {
         arrowsInRoom = arrow.updateAllArrowsInRoom(arrowIds);
 
         io.sockets.in(data.roomId).emit('GetRoomArrowData', arrowsInRoom);
+    })
+
+    socket.on('CheckCollision', function(roomId) {
+        // Check collisions
+        // Check if anyone was hit by an arrow
+        // Send Death response ONLY to the client who died.
+        // Send Score respone to ALL clients
+        // Send Message respone to ALL clients (bob killed jim)
+        var players = player.getPlayers();
+        var arrows = arrow.getArrows();
+
+        var c = collision.returnCollided(roomId, players, arrows);
+
+        if(c != undefined) {
+            var collisionData = {
+                playerWhoDied: players[player.getPlayerIndexById(c.player.id)],
+                playerWhoKilled: players[player.getPlayerIndexById(c.arrow.belongsTo)]
+            }
+            socket.emit('CollisionHasHappened', collisionData);
+        }
     })
 
     socket.on("disconnect", function(playerData) {

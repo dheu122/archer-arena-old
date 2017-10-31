@@ -113,6 +113,7 @@ window.onload = function() {
 		globalClientId = identity.id;
 		player.isInThisRoom = identity.roomId;
 		player.id = identity.id;
+		player.name = identity.name;
 	});
 
 	socket.on('GetRoomPlayerData', function(playerData) {
@@ -129,6 +130,11 @@ window.onload = function() {
 		//ctx.clearRect(-100, -100, canvas.width, canvas.height);
 		updateArrows(arrowData);
 	})
+
+	socket.on('CollisionHasHappened', function(collision) {
+		//console.log(collision);
+		console.log(collision.playerWhoKilled.name + " Killed " + collision.playerWhoDied.name);
+	})
 	gameLoop();
 }
 
@@ -139,7 +145,7 @@ function updatePlayers(playerData) {
 	for(var i = 0; i < playerData.length; i++) {
 		var data = playerData[i];
 		var player =  new Logic.character({
-			name: '',
+			name: data.name,
 			id: data.id,
 			isInThisRoom: data.isInThisRoom,
 			sprite: new Renderer.Sprite({
@@ -214,3 +220,9 @@ function gameLoop() { //this is the main game loop, i found a version of it in a
 
 	setTimeout('gameLoop();', 1000 / 60);
 }
+
+setInterval(function() {
+	if(globalRoomId) {
+		socket.emit('CheckCollision', globalRoomId);
+	}
+}, 1000 / 10);
