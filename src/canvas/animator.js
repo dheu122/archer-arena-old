@@ -26,3 +26,11 @@
 
 //Parameters will be bools for now..
 //(ex. IsMoving, IsShooting, DirectionOfMovement)
+
+var animator = {
+
+  Parameters: {
+    IsRunning
+  }
+
+}

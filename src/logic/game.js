@@ -143,8 +143,8 @@ window.onload = function() {
 }
 
 function updatePlayers(playerData) {
-	//debugMap.render();
-	JsonMap.render(JsonMap.jsonMap);
+	debugMap.render();
+	// JsonMap.render(JsonMap.jsonMap);
 	for(var i = 0; i < playerData.length; i++) {
 		var data = playerData[i];
 		if(globalRoomId != data.id) {
