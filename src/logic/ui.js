@@ -4,6 +4,7 @@ var UI = {
     getUsername: function() {
         var nickname = document.getElementById('username').value;
 
+
         var request = new XMLHttpRequest();
         request.onreadystatechange = function() {
           if ((request.readyState == 4) && (request.status == 200)) {// if DONE and SUCCESS
@@ -21,6 +22,7 @@ var UI = {
         }
         request.open("GET", "../../assets/profanity.json", true);
         request.send();
+
     }
 
 }

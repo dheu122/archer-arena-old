@@ -12,7 +12,8 @@ var rooms = [];
 /*
     Informal Room Interface {
         roomId: string,
-        playersInRoom: [playerIds, ...]
+        playersInRoom: [playerIds, ...],
+        arrowsInRoom: [arrowIds, ...]
     }
 */
 
@@ -29,10 +30,25 @@ module.exports = {
         }
     },
 
+    getArrowsInRoom: function(roomId) {
+        for(var i = 0; i < rooms.length; i++) {
+            if(roomId == rooms[i].roomId) 
+                return rooms[i].arrowsInRoom;
+        }
+    },
+
     getPlayersInRoom: function(roomId) {
         for(var i = 0; i < rooms.length; i++) {
             if(roomId == rooms[i].roomId)
                 return rooms[i].playersInRoom;
+        }
+    },
+
+    createArrowInRoom: function(roomId, arrowId) {
+        for(var i = 0; i < rooms.length; i++) {
+            if(roomId == rooms[i].roomId) {
+                rooms[i].arrowsInRoom.push(arrowId);
+            }
         }
     },
 
@@ -42,7 +58,8 @@ module.exports = {
 
         rooms.push({
             roomId: roomId,
-            playersInRoom: [playerId]
+            playersInRoom: [playerId],
+            arrowsInRoom: []
         })
 
         console.log('Creating and joining new room: ' + roomId);

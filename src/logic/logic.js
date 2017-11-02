@@ -1,8 +1,7 @@
 var canvas = document.querySelector('canvas');
 var ctx = canvas.getContext("2d");
 
-var mapHeight = 620;
-var mapWidth = 619;
+var socket = io();
 
 var Logic = {
 
@@ -14,8 +13,11 @@ var Logic = {
     mousePressed: false,
     spacePressed: false,
     shiftPressed: false,
+    canvasMousePosition: {},
+    mousePositionFromPlayer: {},
 
     character: function(options) {
+        this.camera = options.camera;
         this.sprite = options.sprite;
 
         this.speed = options.speed;
@@ -26,14 +28,21 @@ var Logic = {
         this.curStamina = this.maxStamina;
 
         this.canDodge = true;
-        this.arrowCount = 0;
+        this.canShoot = true;
+        
+        this.curArrowTimer = 0;
+        this.arrowTimer = 60;
+        this.arrowCount = 100;
+
+        this.origin = {x: 0, y: 0},
+
         this.update = function() {
-            //this.sprite.render();
             this.move();
             this.sprint();
             this.dodge();
             this.bound();
-            this.camera();
+            this.createArrow();
+            this.setOrigin();
         }
         /*this.firearrow function(){
             var arrowX = charPosX + 10;
@@ -56,29 +65,21 @@ var Logic = {
             if(Logic.rightPressed) {
                 this.sprite.animate(1, 2, 10, 'loop');
                 this.sprite.x += this.speed;
-                // this.sprite.setIndex(0);
             }
             //face left: index3 left movement: index4,index5
             if(Logic.leftPressed) {
                 this.sprite.animate(4, 5, 10, 'loop');
                 this.sprite.x -= this.speed;
-                // this.sprite.setIndex(27);
             }
             //face up: index9 upward movement: index10,index11
             if(Logic.upPressed) {
                 this.sprite.animate(10, 11, 10, 'loop');
                 this.sprite.y -= this.speed;
-                // this.sprite.setIndex(4);
             }
             //face down: index6 downward movement: index7,index8
             if(Logic.downPressed) {
                 this.sprite.animate(7, 8, 10, 'loop');
                 this.sprite.y += this.speed;
-                // this.sprite.setIndex(6);
-            }
-            if(this.sprite.x == this.oldx && this.sprite.y == this.oldy)
-            {
-              this.sprite.setIndex(index - 1);
             }
         }
         this.sprint = function() {
@@ -136,31 +137,98 @@ var Logic = {
                 this.sprite.y = mapHeight - this.sprite.height - (this.sprite.height/2);
             }
         }
-        // ctx.translate(this.sprite.x,this.sprite.y)
-        this.camera = function() {
-          //  ctx.translate(100,100)
-            if(canvasPosition.x != this.sprite.x) {
-                if(Logic.rightPressed){
-                // if(Logic.rightPressed && this.sprite.x > 50) {
-                    ctx.translate(-this.speed, 0);
-                }
-                if(Logic.leftPressed){
-                // if(Logic.leftPressed && this.sprite.x < mapWidth - 50) {
-                    ctx.translate(this.speed, 0);
-                }
+        this.createArrow = function () {
+            this.curArrowTimer++;
+            if(this.curArrowTimer > this.arrowTimer) {
+                this.canShoot = true;
+                this.curArrowTimer = this.arrowTimer;
             }
-            if(canvasPosition.y != this.sprite.y) {
-                if(Logic.upPressed){
-                // if(Logic.upPressed && this.sprite.y > 50) {
-                    ctx.translate(0, this.speed);
+
+            //creates arrow to shoot
+			if(Logic.mousePressed && this.canShoot && this.arrowCount > 0) {
+                //calculate direction to shoot arrow
+                var deltaX = this.origin.x;
+                var deltaY = this.origin.y;
+
+                var speed = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+                var maxSpeed = 3;
+
+                var angle = Math.atan2(Logic.canvasMousePosition.x - (canvas.width / 2),-(Logic.canvasMousePosition.y - (canvas.height / 2))) * (180/Math.PI);
+
+                var timestamp = new Date().getUTCMilliseconds(); //time in milliseconds
+                var idString = Math.random().toString(36).substring(7); //random 5 letter string
+                
+                if(speed > maxSpeed) {
+                    var speedRatio = speed / maxSpeed;
+                    deltaX = deltaX / speedRatio;
+                    deltaY = deltaY / speedRatio;
                 }
-                if(Logic.downPressed){
-                // if(Logic.downPressed && this.sprite.y < mapHeight - 50) {
-                    ctx.translate(0, -this.speed);
-                }
+
+				//create initial arrow
+				var arrow =  new Logic.arrow({
+                    id: 'arrow-' + idString + timestamp, // gives the arrow a random ID (EXAMPLE ID: arrow-cabde716)
+                    belongsTo: globalClientId,
+                    isInThisRoom: globalRoomId,
+                    angle: angle,
+                    lifetime: 100,
+					sprite: new Renderer.Sprite({
+                        image: Renderer.Images.arrow,
+                        width: 16,
+                        height: 16,
+                        isSpriteSheet: true,
+                        x: this.sprite.x,  // set initial position of arrow to player position
+                        y: this.sprite.y,
+                        index: 0
+                    }),
+                    arrowSpeedX: deltaX,
+				    arrowSpeedY: deltaY
+				});
+				
+                socket.emit('AddArrowData', arrow); //send arrow object to server 
+                this.arrowCount--;
+                this.canShoot = false;
+                this.curArrowTimer = 0;
+			}
+        }
+        this.setOrigin = function() {
+
+            if(this.camera.isClamped.x == 0) {
+                this.origin.x = (this.sprite.x - ((canvas.width/5)/2)) + (Logic.mousePositionFromPlayer.x - this.sprite.x) - 8;
+            } 
+            else if(this.camera.isClamped.x == 1) {
+                this.origin.x = Logic.mousePositionFromPlayer.x - this.sprite.x - 8;
+            }
+            else if(this.camera.isClamped.x == 2) {
+                this.origin.x = (mapWidth - (canvas.width/5)) + (Logic.mousePositionFromPlayer.x - this.sprite.x) - 8;
+            }
+
+            if(this.camera.isClamped.y == 0) {
+                this.origin.y = (this.sprite.y - ((canvas.height/5)/2)) + (Logic.mousePositionFromPlayer.y - this.sprite.y) - 8;
+            } 
+            else if(this.camera.isClamped.y == 1) {
+                this.origin.y = Logic.mousePositionFromPlayer.y - this.sprite.y - 8;
+            }
+            else if(this.camera.isClamped.y == 2) {
+                this.origin.y = (mapHeight - (canvas.height/5)) + (Logic.mousePositionFromPlayer.y - this.sprite.y) - 8;
             }
         }
     },
+
+    arrow: function(options) {
+        this.sprite = options.sprite;
+
+        this.id = options.id;
+		
+        this.arrowSpeedX = options.arrowSpeedX;
+        this.arrowSpeedY = options.arrowSpeedY;   
+        this.angle = options.angle;
+		
+		this.belongsTo = options.belongsTo; //which player the arrow belongs to
+        this.isInThisRoom = options.isInThisRoom; //which room the arrow is in
+        
+        this.lifetime = options.lifetime;
+    },
+
     keyDownHandler: function(e) {
         if(e.keyCode == Controls.rightKey) {
             Logic.rightPressed = true;
@@ -203,17 +271,30 @@ var Logic = {
     },
     mouseDownHandler: function(e) {
         if (e.button == Controls.leftClick) {
-            mousePressed = true;
+            Logic.mousePressed = true;
         }
     },
     mouseUpHandler: function(e) {
         if (e.button == Controls.leftClick) {
-            mousePressed = false;
+            Logic.mousePressed = false;
         }
     },
     getMousePosition: function (e) {
-        var mousePosX = e.clientX;
-        var mousePosY = e.clientY;
+        var mouseX = e.clientX - ctx.canvas.offsetLeft;
+        var mouseY = e.clientY - ctx.canvas.offsetTop;
+        
+        var canvasMousePos = {
+            x: e.clientX,
+            y: e.clientY
+        }
+
+        var mousePositionFromPlayer = {
+            x: (mouseX * (canvas.width/5) / canvas.clientWidth),
+            y: (mouseY * (canvas.height/5) / canvas.clientHeight)
+        }
+
+        Logic.mousePositionFromPlayer = mousePositionFromPlayer;
+        Logic.canvasMousePosition = canvasMousePos;
     },
 }
 

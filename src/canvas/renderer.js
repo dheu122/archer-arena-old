@@ -1,31 +1,131 @@
 var canvas = document.querySelector('canvas');
 var ctx = canvas.getContext("2d");
 var animTimer = 0;
-var canvasPosition = {
-    x: 7.5,
-    y: 8
-};
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 ctx.imageSmoothingEnabled = false;
-ctx.setTransform(5, 0, 0, 5, ((canvas.width/2) - 64), ((canvas.height/2) - 64));
-//console.log(canvasPosition);
-//console.log(((canvas.width/2) - 64));
-//console.log(((canvas.height/2) - 64));
+
+// test: remove later
+var mapWidth = 560;
+var mapHeight = 560;
 
 var Renderer = {
 
     // Images from our assets folder will go here
     Images: {
-        player: 'assets/movement_sprite.png'
+        map1: 'assets/tileset_map1.png',
+        player: 'assets/movement_sprite.png',
+        arrow: 'assets/arrow_sprite.png'
     },
 
-    Canvas: {
-        setPosition: function(x, y) {
-            canvasPosition.x = x;
-            canvasPosition.y = y;
+    Screen: function() {
+
+        this.order = {
+            layer1: [
+                { 
+                    sprite: new Renderer.Sprite({
+                        image: '../../assets/map_layer1.png',
+                        width: 560,
+                        height: 560,
+                        isSpriteSheet: false,
+                        x: 0,
+                        y: 0
+                    })
+                }
+            ],
+            players: [],
+            arrows: [],
+            layer2: [
+                { 
+                    sprite: new Renderer.Sprite({
+                        image: '../../assets/map_layer2.png',
+                        width: 560,
+                        height: 560,
+                        isSpriteSheet: false,
+                        x: 0,
+                        y: 0
+                    })
+                }
+            ],
+            //layer2: []
+        }
+
+        this.renderInOrder = function() {
+            ctx.clearRect(-100, -100, canvas.width, canvas.height);
+            for(var key in this.order) {
+                if(this.order.hasOwnProperty(key)) {
+                    for(var i = 0; i < this.order[key].length; i++) {
+                        this.order[key][i].sprite.render();
+                    }
+                }
+            }
+        }
+    },
+
+    Camera: function(options) {
+
+        this.isClamped = {
+            x: 0,
+            y: 0
+        }
+
+        this.initialize = function() {
+          //initialize camera position to player
+          //last two variables are the postion initilaization
+          //0,0 is the top left corner of the map
+          //player position currently hardcoded. will set to
+          //random spawn position of player at final product
+          ctx.setTransform(5, 0, 0, 5, 0, 0);
+        }
+        //updates game of camera positioning
+        this.update = function() {
+          this.calculatePostition();
+        }
+        //calulate position of camera
+        //bounding to the edges of the map being implemented
+        this.calculatePostition = function(x,y) {
+          //height and width buffer calculate the distance between the player and the edge of the canvas
+          var widthBuffer = ((canvas.width/5)/2);
+          var heightBuffer = ((canvas.height/5)/2);
+          var xMin = widthBuffer - 1;
+          var xMax = mapWidth - widthBuffer - 2;
+          var yMin = heightBuffer - 1;
+          var yMax = mapHeight - heightBuffer - 2;
+
+          //clamps the camera position (value) to the minimum and maximum values passed in
+          this.clamp = function(value, min, max){
+            if(value > min && value < max) return value;
+            else if(value < min) return min;
+            else if(value > max) return max;
+          }
+
+          this.setIsClamped = function(x, xMin, xMax, y, yMin, yMax) {
+            if(x > xMin && x < xMax) 
+                this.isClamped.x = 0;   // Is not clamped
+            else if(x < xMin)  
+                this.isClamped.x = 1;   // Is at left
+            else if(x > xMax) 
+                this.isClamped.x = 2;   // Is at right
+
+            if(y > yMin && y < yMax) 
+                this.isClamped.y = 0;   // Is not clamped
+            else if(y < yMin) 
+                this.isClamped.y = 1;   // Is at top
+            else if(y > yMax) 
+                this.isClamped.y = 2;   // Is at bottom
+          }
+          
+            //sets position of camera to passed in values (clamp returns the correct value to pass in);
+            this.setIsClamped(x, xMin, xMax, y, yMin, yMax);
+            this.setPosition(this.clamp(x, xMin, xMax),this.clamp(y, yMin, yMax));
+        }
+
+        //translates canvas based on new player position of canvas to passed in position
+        this.setPosition = function(x, y) {
+          //need to multiply x and y values by 5 due to setTransform scaling of 5
+          ctx.setTransform(5,0,0,5,((-x * 5) + canvas.width/2) - 8,((-y * 5) + canvas.height/2)- 8);
         }
     },
 
@@ -35,8 +135,6 @@ var Renderer = {
 
         this.image = new Image();
         this.image.src = options.image;
-        this.oldx;
-        this.oldy;
         this.x = options.x;
         this.y = options.y;
 
@@ -79,7 +177,7 @@ var Renderer = {
             }
         }
 
-        //TODO: get working; Currently speeds up the more you move in one direction(loop never stops)
+        //TODO: get animation to reset after done animating
         this.animate = function(startIndex, endIndex, animateSpeed, animateType) {
             if(!this.isSpriteSheet) {
                 console.log("You cannot animate a single sprite, set isSpriteSheet to true");
@@ -149,10 +247,7 @@ window.addEventListener('resize', function () {
         canvas.height = window.innerHeight;
     }
     ctx.imageSmoothingEnabled = false;
-    ctx.setTransform(5, 0, 0, 5, ((canvas.width/2) - 64), ((canvas.height/2) - 64));
-    //console.log(canvasPosition);
-    //console.log(((canvas.width/2) - 64));
-    //console.log(((canvas.height/2) - 64));
+    ctx.setTransform(5, 0, 0, 5, 0, 0);
 })
 
 setInterval(function() {
