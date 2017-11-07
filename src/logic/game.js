@@ -89,7 +89,12 @@ var player = new Logic.character({
 	speed: 2,
 	minSpeed: 2,
 	maxSpeed: 2.5,
-	stamina: 100
+	stamina: 100,
+	score: 0,
+});
+
+var leaderboard = new Logic.leaderboard({
+
 });
 
 // Map for debugging, remove later
@@ -134,6 +139,7 @@ window.onload = function() {
 	socket.on('CollisionHasHappened', function(collision) {
 		//console.log(collision);
 		console.log(collision.playerWhoKilled.name + " Killed " + collision.playerWhoDied.name);
+		leaderboard.addScore(collision.playerWhoKilled, collision.playerWhoDied);
 	})
 	gameLoop();
 }
@@ -160,7 +166,8 @@ function updatePlayers(playerData) {
 			speed: 2,
 			minSpeed: 2,
 			maxSpeed: 2.5,
-			stamina: 100
+			stamina: 100,
+			score: data.score,
 		});
 		//player.sprite.render();
 		players.push(player);

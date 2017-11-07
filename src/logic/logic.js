@@ -34,6 +34,9 @@ var Logic = {
         this.arrowTimer = 60;
         this.arrowCount = 100;
 
+        this.score = 0;
+        this.rank = 0;
+
         this.origin = {x: 0, y: 0},
 
         this.update = function() {
@@ -44,22 +47,6 @@ var Logic = {
             this.createArrow();
             this.setOrigin();
         }
-        /*this.firearrow function(){
-            var arrowX = charPosX + 10;
-            var arrowY = charPosY + 10;
-            if (mousePressed == true) {
-                this.sprite.x = arrowX;
-                this.sprite.y = arrowY;
-                render(arrow, mousePosX, mousePosY);
-
-                this.arrow = arrowSpeed;
-
-                if (this.arrow > canvas.edge || this.arrow > sprite.edge) {
-                    mousePressed = false;
-                    break;
-                }
-            }
-        }*/
         this.move = function() {
             //face right: index0 right movement: index1,index2
             if(Logic.rightPressed) {
@@ -228,7 +215,56 @@ var Logic = {
         
         this.lifetime = options.lifetime;
     },
+    leaderboard: function(options) {
+        this.playerList = [];
+        this.isFirst = ''; //check if player is first place
+        this.isHit = ''; //check if player is hit by arrow
+        
+        this.update = function() {
+          this.addPlayer();
+          //this.addScore();
+          this.sortRank();
+        }
+        this.addPlayer = function(player) {
+            //update leaderboard with playerList array when player joins or leaves
+            this.playerList.push({
+                playerName: player.name,
+                playerId: player.id,
+                score: 0,
+                rank: 0
+            });
+        }
+        this.addScore = function (playerKiller, playerKilled) {
+            //calculate and add player score
+            //socket.emit('AddScore', amount)
+            //bonus points for hitting top player -- steal half of top player score
+            playerKiller.score++;
+            if (playerKilled.rank == 1) {
+                playerKiller.score = (playerKilled.score/2) + playerKiller.score;
+            }
+        }
+        this.sortRank = function () {
+            //calculate and change player ranking with quick sort
+            var i = playerList[0]; //left
+            var j = playerList.length; //right
+            var pivot = playerList[Math.floor((j + i) / 2)];
 
+            while (i <= j) {
+                while (playerList[i] < pivot) {
+                    i++; //move right
+                }
+                while (playerList[j] > pivot) {
+                    j--; //move left
+                }
+                if (i <= j) { //when i and j meet
+                    swap(playerList, i, j); //perform sort
+                    i++;
+                    j--;
+                }
+            }
+            return i;
+        }
+    },
     keyDownHandler: function(e) {
         if(e.keyCode == Controls.rightKey) {
             Logic.rightPressed = true;
@@ -296,6 +332,17 @@ var Logic = {
         Logic.mousePositionFromPlayer = mousePositionFromPlayer;
         Logic.canvasMousePosition = canvasMousePos;
     },
+    collision: function (object1, object2) { //FIX
+        if (object1.x < object2.x + object2.width &&
+        object1.x + object1.width > object2.x &&
+        object1.y < object2.y + object2.height &&
+        object1.y + object1.height > object2.y) {
+            canCollide = true;
+        }
+        else {
+            canCollide = false;
+        }
+    },
 }
 
 
@@ -307,5 +354,3 @@ document.addEventListener("mousedown", Logic.mouseDownHandler, false); //mouse c
 document.addEventListener("mouseup", Logic.mouseUpHandler, false);
 
 document.addEventListener("mousemove", Logic.getMousePosition, false); //mouse movement
-
-//document.addEventListener("spritemove", Logic.move, false);
