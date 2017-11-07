@@ -136,10 +136,19 @@ window.onload = function() {
 		updateArrows(arrowData);
 	})
 
-	socket.on('CollisionHasHappened', function(collision) {
+	socket.on('PlayerWasKilled', function(collision) {
 		//console.log(collision);
 		console.log(collision.playerWhoKilled.name + " Killed " + collision.playerWhoDied.name);
-		leaderboard.addScore(collision.playerWhoKilled, collision.playerWhoDied);
+		//leaderboard.addScore(collision.playerWhoKilled, collision.playerWhoDied);
+	})
+
+	socket.on('YouDied', function() {
+		console.log('You died');
+	})
+
+	socket.on('YouKilled', function() {
+		player.score++;
+		console.log('You killed someone');
 	})
 	gameLoop();
 }

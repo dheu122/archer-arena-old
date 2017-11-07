@@ -110,7 +110,10 @@ io.on('connection', function(socket) {
                 playerWhoDied: players[player.getPlayerIndexById(c.player.id)],
                 playerWhoKilled: players[player.getPlayerIndexById(c.arrow.belongsTo)]
             }
-            socket.emit('CollisionHasHappened', collisionData);
+            
+            socket.broadcast.to(collisionData.playerWhoDied.id).emit('YouDied');
+            socket.broadcast.to(collisionData.playerWhoKilled.id).emit('YouKilled');
+            io.sockets.in(roomId).emit('PlayerWasKilled', collisionData);
         }
     })
 
