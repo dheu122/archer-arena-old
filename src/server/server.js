@@ -40,6 +40,7 @@ io.on('connection', function(socket) {
         var roomId = room.joinRoom(socket.id);
         var identity = {
             name: playerData.name,
+            characterIndex: playerData.characterIndex,
             roomId: roomId,
             id: socket.id
         }

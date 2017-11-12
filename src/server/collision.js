@@ -45,6 +45,8 @@ module.exports = {
         //console.log(arrowsInRoom);
 
         for(var m = 0; m < playersInRoom.length; m++) {
+            if(playersInRoom[m].sprite == undefined) { break; }
+
             for(var n = 0; n < arrowsInRoom.length; n++) {
                 if(this.hasCollided(playersInRoom[m].sprite.x, playersInRoom[m].sprite.y, arrowsInRoom[n].sprite.x, arrowsInRoom[n].sprite.y) && playersInRoom[m].id != arrowsInRoom[n].belongsTo) {
                     var collision = {

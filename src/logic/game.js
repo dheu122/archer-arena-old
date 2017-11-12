@@ -75,10 +75,11 @@ var player = new Logic.character({
 	name: '',
 	id: '',
 	isInThisRoom: '',
+	characterIndex: 0,
   camera: new Renderer.Camera({
   }),
 	sprite: new Renderer.Sprite({
-		image: Renderer.Images.player,
+		image: Renderer.Images.players[0],
 		width: 15,
 		height: 16,
 		isSpriteSheet: true,
@@ -116,6 +117,7 @@ window.onload = function() {
 		isTitlescreen = false;
 		globalRoomId = identity.roomId;
 		globalClientId = identity.id;
+		player.characterIndex = identity.characterIndex;
 		player.isInThisRoom = identity.roomId;
 		player.id = identity.id;
 		player.name = identity.name;
@@ -164,8 +166,9 @@ function updatePlayers(playerData) {
 			name: data.name,
 			id: data.id,
 			isInThisRoom: data.isInThisRoom,
+			characterIndex: data.characterIndex,
 			sprite: new Renderer.Sprite({
-				image: Renderer.Images.player,
+				image: Renderer.Images.players[data.characterIndex],
 				width: 15,
 				height: 16,
 				isSpriteSheet: true,

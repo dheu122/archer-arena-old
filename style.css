@@ -1,21 +1,114 @@
-img.center{
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-}
-form{
-    text-align: center;
-}
 html,body{
     width: 100%;
     height: 100%;
     text-align: center;
     background-color:black;
- }
+    image-rendering: auto;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+}
 
- #titlescreen{
+.center{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+form{
+    width: 450px;
+    height: 450px;
+    text-align: center;
+    background-image: url(assets/titlescreen/titlescreen_menu_bg.png);
+    background-size: cover;
+}
+
+#title {
+    width: 400px;
+    height: 200px;
+}
+
+.title-arrow {
     position: absolute;
-    background-image: url(assets/Title_screen_backround.jpg);
+    z-index: -1;
+    left: 25%;
+    width: 250px;
+    height: 400px;
+}
+
+.title-arrow-2 {
+    position: absolute;
+    z-index: -1;
+    right: 25%;
+    width: 250px;
+    height: 400px;
+}
+
+#title-bg {
+    position: relative;
+    top: 20px;
+}
+
+#title-selection {
+    width: 200px;
+    height: 200px;
+    text-align: center;
+    background-image: url(assets/titlescreen/titlescreen_menu_selection.png);
+    background-size: cover;
+    margin-top: 65px;
+}
+
+#selection-arrow-left {
+    position: relative;
+    top: 75px;
+    right: 125px;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    background-image: url(assets/titlescreen/titlescreen_menu_arrow.png);
+    background-size: cover;
+    background-color: transparent;
+    border: 0;
+}
+
+#selection-arrow-right {
+    position: relative;
+    top: 75px;
+    left: 125px;
+    transform: scaleX(-1);
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    background-image: url(assets/titlescreen/titlescreen_menu_arrow.png);
+    background-size: cover;
+    background-color: transparent;
+    border: 0;
+}
+
+#username {
+    width: 250px;
+    height: 50px;
+    font-size: 26px;
+}
+
+#login-button {
+    position: relative;
+    width: 450px;
+    height: 225px;
+    top: 90px;
+    text-align: center;
+    background-image: url(assets/titlescreen/titlescreen_menu_addon.png);
+    background-size: cover;
+    border: 0;
+    background-color: black;
+}
+
+#login-button:hover {
+    background-image: url(assets/titlescreen/titlescreen_menu_addon_highlight.png);
+}
+
+#titlescreen{
+    position: absolute;
+    background-color: black;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -24,7 +117,4 @@ html,body{
     z-index:100;
     width: 100%;
     height: 100%;
-}
-#selectionscreen{
-    z-index:99;
 }
