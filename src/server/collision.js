@@ -19,6 +19,9 @@ module.exports = {
         var playersInRoom = [];
 
         // This is EXTREMELY unefficient
+
+        if(playerIdsInRoom == undefined) { return; }
+
         for(var i = 0; i < playerIdsInRoom.length; i++) {
             for(var j = 0; j < players.length; j++) {
                 if(playerIdsInRoom[i] == players[j].id) {

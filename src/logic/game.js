@@ -159,6 +159,7 @@ function updatePlayers(playerData) {
 	var players = [];
 	for(var i = 0; i < playerData.length; i++) {
 		var data = playerData[i];
+		if(data.sprite == undefined) { break; }
 		var player =  new Logic.character({
 			name: data.name,
 			id: data.id,
