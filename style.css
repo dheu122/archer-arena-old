@@ -29,7 +29,7 @@ form{
     text-align: center;
     background-image: url(assets/titlescreen/titlescreen_menu_bg.png);
     background-size: cover;
-}
+/*}*/
 
 #title {
     width: 400px;
@@ -38,11 +38,6 @@ form{
 
 .title-arrow {
     position: absolute;
-<<<<<<< HEAD
-    background-image: url(assets/Rain_overlay.gif);
-    background-position: center;
-    background-repeat: no-repeat;
-=======
     z-index: -1;
     left: 25%;
     width: 250px;
@@ -111,7 +106,6 @@ form{
     top: 90px;
     text-align: center;
     background-image: url(assets/titlescreen/titlescreen_menu_addon.png);
->>>>>>> master
     background-size: cover;
     border: 0;
     background-color: transparent
