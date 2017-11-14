@@ -3,8 +3,7 @@ var ctx = canvas.getContext("2d");
 
 var socket = io();
 
-var mapHeight = 620;
-var mapWidth = 619;
+var staminaTimer = 0; //for setInterval of stamina
 
 var Logic = {
 
@@ -16,8 +15,8 @@ var Logic = {
     mousePressed: false,
     spacePressed: false,
     shiftPressed: false,
-    mousePositionFromCharacter: {},
     canvasMousePosition: {},
+    mousePositionFromPlayer: {},
 
     character: function(options) {
         this.camera = options.camera;
@@ -31,30 +30,24 @@ var Logic = {
         this.curStamina = this.maxStamina;
 
         this.canDodge = true;
-        this.arrowCount = 1;
+        this.canShoot = true;
+
+        this.curArrowTimer = 0;
+        this.arrowTimer = 60;
+        this.arrowCount = 100;
+
+        this.score = 0;
+
+        this.origin = {x: 0, y: 0},
+
         this.update = function() {
             this.move();
             this.sprint();
             this.dodge();
             this.bound();
             this.createArrow();
+            this.setOrigin();
         }
-        /*this.firearrow function(){
-            var arrowX = charPosX + 10;
-            var arrowY = charPosY + 10;
-            if (mousePressed == true) {
-                this.sprite.x = arrowX;
-                this.sprite.y = arrowY;
-                render(arrow, mousePosX, mousePosY);
-
-                this.arrow = arrowSpeed;
-
-                if (this.arrow > canvas.edge || this.arrow > sprite.edge) {
-                    mousePressed = false;
-                    break;
-                }
-            }
-        }*/
         this.move = function() {
             //face right: index0 right movement: index1,index2
             if(Logic.rightPressed) {
@@ -86,20 +79,21 @@ var Logic = {
                         this.speed = this.maxSpeed;
                     }
                     else {
-                    Logic.mousePressed = false; //may be buggy
+                    Logic.mousePressed = false; //cannot shoot
                     this.speed += 0.01;
                     this.curStamina = i;
                     i--;
                         }
                     }
                 }
-                //otherwise recharge stamina to max 100
-            else if(Logic.shiftPressed == false && Logic.spacePressed == false && this.curStamina <= this.maxStamina) { //BUG: cannot move until stamina = 100
+                //otherwise recharge stamina to maximum value
+            else if(Logic.shiftPressed == false && Logic.spacePressed == false && this.curStamina <= this.maxStamina) {
                 var i = this.curStamina;
-                this.speed = this.minSpeed; //make this decelerate?
-                while (i <= this.maxStamina) {
-                    i++; //make this slower
+                this.speed = this.minSpeed;
+                if (i <= this.maxStamina && staminaTimer > 1) { //staminaTimer to 1 10th of a second
+                    i++;
                     this.curStamina = i;
+                    staminaTimer = 0; //reinitialize staminaTimer
                 }
             }
         }
@@ -133,17 +127,31 @@ var Logic = {
             }
         }
         this.createArrow = function () {
+            this.curArrowTimer++;
+            if(this.curArrowTimer > this.arrowTimer) {
+                this.canShoot = true;
+                this.curArrowTimer = this.arrowTimer;
+            }
+
             //creates arrow to shoot
-			if(Logic.mousePressed && this.arrowCount > 0) {
+			if(Logic.mousePressed && this.canShoot && this.arrowCount > 0) {
                 //calculate direction to shoot arrow
-                var deltaX = Logic.mousePositionFromCharacter.x;
-                var deltaY = Logic.mousePositionFromCharacter.y;
-                var speedDivider = 100;
+                var deltaX = this.origin.x;
+                var deltaY = this.origin.y;
+
+                var speed = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+                var maxSpeed = 3;
 
                 var angle = Math.atan2(Logic.canvasMousePosition.x - (canvas.width / 2),-(Logic.canvasMousePosition.y - (canvas.height / 2))) * (180/Math.PI);
 
                 var timestamp = new Date().getUTCMilliseconds(); //time in milliseconds
                 var idString = Math.random().toString(36).substring(7); //random 5 letter string
+
+                if(speed > maxSpeed) {
+                    var speedRatio = speed / maxSpeed;
+                    deltaX = deltaX / speedRatio;
+                    deltaY = deltaY / speedRatio;
+                }
 
 				//create initial arrow
 				var arrow =  new Logic.arrow({
@@ -161,14 +169,38 @@ var Logic = {
                         y: this.sprite.y,
                         index: 0
                     }),
-                    arrowSpeedX: deltaX / speedDivider,
-				    arrowSpeedY: deltaY / speedDivider,
+                    arrowSpeedX: deltaX,
+				    arrowSpeedY: deltaY
 				});
 
                 socket.emit('AddArrowData', arrow); //send arrow object to server
                 this.arrowCount--;
+                this.canShoot = false;
+                this.curArrowTimer = 0;
 			}
-		}
+        }
+        this.setOrigin = function() {
+
+            if(this.camera.isClamped.x == 0) {
+                this.origin.x = (this.sprite.x - ((canvas.width/5)/2)) + (Logic.mousePositionFromPlayer.x - this.sprite.x) - 8;
+            }
+            else if(this.camera.isClamped.x == 1) {
+                this.origin.x = Logic.mousePositionFromPlayer.x - this.sprite.x - 8;
+            }
+            else if(this.camera.isClamped.x == 2) {
+                this.origin.x = (mapWidth - (canvas.width/5)) + (Logic.mousePositionFromPlayer.x - this.sprite.x) - 8;
+            }
+
+            if(this.camera.isClamped.y == 0) {
+                this.origin.y = (this.sprite.y - ((canvas.height/5)/2)) + (Logic.mousePositionFromPlayer.y - this.sprite.y) - 8;
+            }
+            else if(this.camera.isClamped.y == 1) {
+                this.origin.y = Logic.mousePositionFromPlayer.y - this.sprite.y - 8;
+            }
+            else if(this.camera.isClamped.y == 2) {
+                this.origin.y = (mapHeight - (canvas.height/5)) + (Logic.mousePositionFromPlayer.y - this.sprite.y) - 8;
+            }
+        }
     },
 
     arrow: function(options) {
@@ -184,6 +216,32 @@ var Logic = {
         this.isInThisRoom = options.isInThisRoom; //which room the arrow is in
 
         this.lifetime = options.lifetime;
+    },
+
+    leaderboard: function(options) {
+        this.playerList = [];
+        this.isFirst = ''; //check if player is first place
+        this.isHit = ''; //check if player is hit by arrow
+        this.hit = ''; //check if player hit another player with arrow
+
+        this.update = function() {
+          //this.addPlayer();
+          this.playerList = this.sortScore(this.playerList, 'score');
+          //console.log(this.playerList);
+        }
+        this.addPlayer = function(player) { //update leaderboard with playerList array when player joins or leaves
+            this.playerList.push({
+                playerName: player.name,
+                playerId: player.id,
+                score: 0,
+            });
+        }
+        this.sortScore = function (array, key) { //sort scores of players and ranks them on leaderboard from highest (1st) to lowest
+            return array.sort(function(a, b) {
+                var x = a[key]; var y = b[key];
+                return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+            });
+        }
     },
 
     keyDownHandler: function(e) {
@@ -237,21 +295,32 @@ var Logic = {
         }
     },
     getMousePosition: function (e) {
-        var origin = {
-            x: canvas.width / 2,
-            y: canvas.height / 2
-        }
-        var fromPlayerMousePos = {
-            x: (e.clientX - origin.x),
-            y: (e.clientY - origin.y)
-        }
+        var mouseX = e.clientX - ctx.canvas.offsetLeft;
+        var mouseY = e.clientY - ctx.canvas.offsetTop;
+
         var canvasMousePos = {
             x: e.clientX,
             y: e.clientY
         }
 
+        var mousePositionFromPlayer = {
+            x: (mouseX * (canvas.width/5) / canvas.clientWidth),
+            y: (mouseY * (canvas.height/5) / canvas.clientHeight)
+        }
+
+        Logic.mousePositionFromPlayer = mousePositionFromPlayer;
         Logic.canvasMousePosition = canvasMousePos;
-        Logic.mousePositionFromCharacter = fromPlayerMousePos;
+    },
+    collision: function (object1, object2) {
+        if (object1.x < object2.x + object2.width &&
+        object1.x + object1.width > object2.x &&
+        object1.y < object2.y + object2.height &&
+        object1.y + object1.height > object2.y) {
+            canCollide = true;
+        }
+        else {
+            canCollide = false;
+        }
     },
 }
 
@@ -264,4 +333,6 @@ document.addEventListener("mousedown", Logic.mouseDownHandler, false); //mouse c
 document.addEventListener("mouseup", Logic.mouseUpHandler, false);
 document.addEventListener("mousemove", Logic.getMousePosition, false); //mouse movement
 
-// document.addEventListener("spritemove", Logic.move, false);
+setInterval(function(){
+    staminaTimer++; //increment the stamina
+}, 1000/10); //10 times per 1 second (1000 is in milliseconds)

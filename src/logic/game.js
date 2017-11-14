@@ -4,6 +4,7 @@ var socket = io();
 // Global room id when joining, this will help tell the client which room and
 // which players it will associate with
 var globalRoomId;
+var globalClientId;
 
 ///////////////////////////////////////////////// Function that loads the map .json file
 
@@ -21,8 +22,8 @@ function loadJSON(url, onsuccess) {
 
 
 ///////////////////////////////////////////////// SOUND FUNCTION
-var titleMusic = new sound("assets/TitleMusic.wav");
-var gameMusic = new sound("assets/BackgroundMusic.wav");
+var titleMusic = new sound("assets/TitleMusic2.wav");
+var gameMusic = new sound("assets/BackgroundMusicNoCrow.wav");
 
 function sound(src) {
     this.sound = document.createElement("audio");
@@ -59,6 +60,9 @@ function donePlaying() { //checks if the music has finished playing, then if tru
 		}
 	}
 	else if (isTitlescreen == false) {
+
+			titleMusic.stop();
+
 			if (gameMusic.paused = true) {
 				gameMusicPlayer();
 			}
@@ -67,16 +71,19 @@ function donePlaying() { //checks if the music has finished playing, then if tru
 
 /////////////////////////////////////////////////
 
+var canvasScreen = new Renderer.Screen;
+
 // Creates a new player 'character', and renders a sprite
 var player = new Logic.character({
 	name: '',
 	id: '',
 	isInThisRoom: '',
+	characterIndex: 0,
   camera: new Renderer.Camera({
   }),
   // animator: new Animator.animator({}),
 	sprite: new Renderer.Sprite({
-		image: Renderer.Images.player,
+		image: Renderer.Images.players[0],
 		width: 15,
 		height: 16,
 		isSpriteSheet: true,
@@ -87,48 +94,42 @@ var player = new Logic.character({
 	speed: 2,
 	minSpeed: 2,
 	maxSpeed: 2.5,
-	stamina: 100
+	stamina: 100,
+	score: 0,
 });
 
-var arrow = new Logic.arrow({
-	name: '',
-	id: '',
-	isInThisRoom: '',
-	sprite: new Renderer.Sprite({
-		image: Renderer.Images.arrow,
-		width: 5,
-		height: 16,
-		isSpriteSheet: true,
-		x: 0,
-		y: 0,
-		index: 0
-	}),
-	arrowSpeed: 3
+var leaderboard = new Logic.leaderboard({
+
 });
 
 // Map for debugging, remove later
-var debugMap = new Renderer.Sprite({
-	image: '../../assets/map_debug.png',
-	width: 619,
-	height: 620,
-	isSpriteSheet: false,
-	x: 0,
-	y: 0
-})
+var debugMap = {
+	sprite: new Renderer.Sprite({
+		image: '../../assets/map_debug.png',
+		width: 619,
+		height: 620,
+		isSpriteSheet: false,
+		x: 0,
+		y: 0
+	})
+}
 
 window.onload = function() {
-	loadJSON('/assets/TesterProper2Layer', gameLoop); //calls JSON
+	//loadJSON('/assets/TesterProper', gameLoop); //calls JSON
 
 	socket.on('JoinedRoom', function(identity) {
 		isTitlescreen = false;
 		globalRoomId = identity.roomId;
+		globalClientId = identity.id;
+		player.characterIndex = identity.characterIndex;
 		player.isInThisRoom = identity.roomId;
 		player.id = identity.id;
+		player.name = identity.name;
 	});
 
 	socket.on('GetRoomPlayerData', function(playerData) {
 		//console.log(playerData);
-		ctx.clearRect(0, 0, 480, 320);
+		//ctx.clearRect(-100, -100, canvas.width, canvas.height);
 		updatePlayers(playerData);
 	});
 
@@ -140,63 +141,66 @@ window.onload = function() {
 		//ctx.clearRect(-100, -100, canvas.width, canvas.height);
 		updateArrows(arrowData);
 	})
+
+	socket.on('PlayerWasKilled', function(collision) {
+		//console.log(collision);
+		console.log(collision.playerWhoKilled.name + " Killed " + collision.playerWhoDied.name);
+		//leaderboard.addScore(collision.playerWhoKilled, collision.playerWhoDied);
+	})
+
+	socket.on('YouDied', function() {
+		console.log('You died');
+	})
+
+	socket.on('YouKilled', function() {
+		player.score++;
+		console.log('You killed someone');
+	})
 	gameLoop();
 }
 
-function updatePlayers(playerData) {
-	debugMap.render();
-	// JsonMap.render(JsonMap.jsonMap);
-	for(var i = 0; i < playerData.length; i++) {
-		var data = playerData[i];
-		if(globalRoomId != data.id) {
-			var player =  new Logic.character({
-				name: '',
-				id: data.id,
-				isInThisRoom: data.isInThisRoom,
-        camera: new Renderer.Camera({}),
-				sprite: new Renderer.Sprite({
-					image: Renderer.Images.player,
-					width: 15,
-					height: 16,
-					isSpriteSheet: true,
-					x: data.sprite.x,
-					y: data.sprite.y,
-					index: data.sprite.index
-				}),
-				speed: 2,
-				minSpeed: 2,
-				maxSpeed: 2.5,
-				stamina: 100
-			});
-			player.sprite.render();
-		}
-  }
+function updateThisPlayer() {
+	canvasScreen.order.thisPlayer = [];
+	canvasScreen.order.thisPlayer.push(player);
 }
 
-function updateArrows(arrowData) {
-	for(var i = 0; i < arrowsData.length; i++) {
-		var data = arrowsData[i];
-		var arrow =  new Logic.arrow({
+function updatePlayers(playerData) {
+	//debugMap.render();
+	//JsonMap.render(JsonMap.jsonMap);
+	var players = [];
+	for(var i = 0; i < playerData.length; i++) {
+		var data = playerData[i];
+		if(data.sprite == undefined) { break; }
+		var player =  new Logic.character({
+			name: data.name,
 			id: data.id,
-			belongsTo: data.belongsTo,
 			isInThisRoom: data.isInThisRoom,
+			characterIndex: data.characterIndex,
 			sprite: new Renderer.Sprite({
-				image: Renderer.Images.arrow,
-				width: 5,
+				image: Renderer.Images.players[data.characterIndex],
+				width: 15,
 				height: 16,
 				isSpriteSheet: true,
 				x: data.sprite.x,
 				y: data.sprite.y,
 				index: data.sprite.index
 			}),
-			arrowSpeed: 3,
+			speed: 2,
+			minSpeed: 2,
+			maxSpeed: 2.5,
+			stamina: 100,
+			score: data.score,
 		});
-		arrow.sprite.render();
+		//player.sprite.render();
+		if(data.id != globalClientId) {
+			players.push(player);
+		}
 	}
+	canvasScreen.order.players = players;
 }
 
 function updateArrows(arrowData) {
-	console.log(arrowData);
+	var arrows = [];
 	for(var i = 0; i < arrowData.length; i++) {
 		var data = arrowData[i];
 		var arrow = new Logic.arrow({
@@ -218,8 +222,11 @@ function updateArrows(arrowData) {
 			isInThisRoom: data.isInThisRoom,
 			lifetime: data.lifetime,
 		});
-		arrow.sprite.render();
+		//arrow.sprite.render();
+		arrows.push(arrow);
 	}
+	//console.log(arrows);
+	canvasScreen.order.arrows = arrows;
 }
 // Clears the screen
 // Calls the player's update() function and redraws itself
@@ -235,11 +242,21 @@ function gameLoop() { //this is the main game loop, i found a version of it in a
 			}
 
 			player.update();					// Updates current client to itself
-      player.camera.calculatePostition(player.sprite.x, player.sprite.y); //sets camera to the position passed in here
-      socket.emit('SendPlayerData', data); 		// Send current client's data to everyone, so they can update
+			updateThisPlayer();
+			player.camera.calculatePostition(player.sprite.x, player.sprite.y); //sets camera to the position passed in here
+			canvasScreen.renderInOrder();
+			socket.emit('SendArrowData', data);
+		  	socket.emit('SendPlayerData', data); 		// Send current client's data to everyone, so they can update
 			lastLoopRun = new Date().getTime();
 		}
 	}
 
-	setTimeout('gameLoop();', 2);
+	setTimeout('gameLoop();', 1000 / 60);
 }
+
+setInterval(function() {
+	if(globalRoomId) {
+		leaderboard.update();
+		socket.emit('CheckCollision', globalRoomId);
+	}
+}, 1000 / 10);
