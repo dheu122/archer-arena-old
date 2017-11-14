@@ -155,6 +155,11 @@ window.onload = function() {
 	gameLoop();
 }
 
+function updateThisPlayer() {
+	canvasScreen.order.thisPlayer = [];
+	canvasScreen.order.thisPlayer.push(player);
+}
+
 function updatePlayers(playerData) {
 	//debugMap.render();
 	//JsonMap.render(JsonMap.jsonMap);
@@ -183,7 +188,9 @@ function updatePlayers(playerData) {
 			score: data.score,
 		});
 		//player.sprite.render();
-		players.push(player);
+		if(data.id != globalClientId) {
+			players.push(player);
+		}
 	}
 	canvasScreen.order.players = players;
 }
@@ -214,6 +221,7 @@ function updateArrows(arrowData) {
 		//arrow.sprite.render();
 		arrows.push(arrow);
 	}
+	//console.log(arrows);
 	canvasScreen.order.arrows = arrows;
 }
 // Clears the screen
@@ -230,6 +238,7 @@ function gameLoop() { //this is the main game loop, i found a version of it in a
 			}
 
 			player.update();					// Updates current client to itself
+			updateThisPlayer();
 			player.camera.calculatePostition(player.sprite.x, player.sprite.y); //sets camera to the position passed in here
 			canvasScreen.renderInOrder();
 			socket.emit('SendArrowData', data);	

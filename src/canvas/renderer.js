@@ -41,6 +41,7 @@ var Renderer = {
                 }
             ],
             players: [],
+            thisPlayer: [],
             arrows: [],
             layer2: [
                 { 
