@@ -7,6 +7,8 @@ var app = express();
 var server = http.Server(app);
 var io = socket(server);
 
+var room = require('./room');
+
 var arrows = [];
 
 /*
@@ -50,7 +52,7 @@ module.exports = {
         arrows.push(arrowData);
     },
 
-    updateAllArrowsInRoom: function(arrowsInRoom) {
+    updateAllArrowsInRoom: function(arrowsInRoom, roomId) {
         var updatedArrows = [];
         // Update arrow here,
         // Update lifetime here
@@ -65,6 +67,7 @@ module.exports = {
                     var arrow = arrows[j];
                     arrow.lifetime--;
                     if(arrow.lifetime <= 0) {
+                        room.removeArrowFromRoom(roomId, arrow.id);
                         this.deleteArrowAt(j);
                     } else {
                         arrow.sprite.x += arrow.arrowSpeedX;
