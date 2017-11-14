@@ -236,7 +236,7 @@ function gameLoop() { //this is the main game loop, i found a version of it in a
 
 			player.update();					// Updates current client to itself
       player.camera.calculatePostition(player.sprite.x, player.sprite.y); //sets camera to the position passed in here
-			socket.emit('SendPlayerData', data); 		// Send current client's data to everyone, so they can update
+      socket.emit('SendPlayerData', data); 		// Send current client's data to everyone, so they can update
 			lastLoopRun = new Date().getTime();
 		}
 	}

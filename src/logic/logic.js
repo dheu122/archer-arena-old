@@ -189,11 +189,9 @@ var Logic = {
     keyDownHandler: function(e) {
         if(e.keyCode == Controls.rightKey) {
             Logic.rightPressed = true;
-            // Animator.Parameters.movingRight = true;
         }
         if(e.keyCode == Controls.leftKey) {
             Logic.leftPressed = true;
-            // Animator.Parameters.movingLeft = true;
         }
         if(e.keyCode == Controls.upKey) {
             Logic.upPressed = true;
@@ -211,11 +209,9 @@ var Logic = {
     keyUpHandler: function(e) {
         if(e.keyCode == Controls.rightKey) {
             Logic.rightPressed = false;
-            Animator.Parameters.movingRight = false;
         }
         if(e.keyCode == Controls.leftKey) {
             Logic.leftPressed = false;
-            Animator.Parameters.movingLeft = false;
         }
         if(e.keyCode == Controls.upKey) {
             Logic.upPressed = false;

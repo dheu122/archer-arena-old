@@ -13,7 +13,8 @@ var Renderer = {
     Images: {
         map1: 'assets/tileset_map1.png',
         player: 'assets/movement_sprite.png',
-        arrow: 'assets/arrow_sprite.png'
+        arrow: 'assets/arrow_sprite.png',
+        rainOverlay: 'assets/Rain_overlay.png'
     },
 
     Camera: function(options) {
