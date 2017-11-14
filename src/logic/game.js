@@ -74,6 +74,7 @@ var player = new Logic.character({
 	isInThisRoom: '',
   camera: new Renderer.Camera({
   }),
+  // animator: new Animator.animator({}),
 	sprite: new Renderer.Sprite({
 		image: Renderer.Images.player,
 		width: 15,

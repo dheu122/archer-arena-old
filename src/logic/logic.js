@@ -144,7 +144,7 @@ var Logic = {
 
                 var timestamp = new Date().getUTCMilliseconds(); //time in milliseconds
                 var idString = Math.random().toString(36).substring(7); //random 5 letter string
-                    
+
 				//create initial arrow
 				var arrow =  new Logic.arrow({
                     id: 'arrow-' + idString + timestamp, // gives the arrow a random ID (EXAMPLE ID: arrow-cabde716)
@@ -164,8 +164,8 @@ var Logic = {
                     arrowSpeedX: deltaX / speedDivider,
 				    arrowSpeedY: deltaY / speedDivider,
 				});
-				
-                socket.emit('AddArrowData', arrow); //send arrow object to server 
+
+                socket.emit('AddArrowData', arrow); //send arrow object to server
                 this.arrowCount--;
 			}
 		}
@@ -175,23 +175,25 @@ var Logic = {
         this.sprite = options.sprite;
 
         this.id = options.id;
-		
+
         this.arrowSpeedX = options.arrowSpeedX;
-        this.arrowSpeedY = options.arrowSpeedY;   
+        this.arrowSpeedY = options.arrowSpeedY;
         this.angle = options.angle;
-		
+
 		this.belongsTo = options.belongsTo; //which player the arrow belongs to
         this.isInThisRoom = options.isInThisRoom; //which room the arrow is in
-        
+
         this.lifetime = options.lifetime;
     },
 
     keyDownHandler: function(e) {
         if(e.keyCode == Controls.rightKey) {
             Logic.rightPressed = true;
+            // Animator.Parameters.movingRight = true;
         }
         if(e.keyCode == Controls.leftKey) {
             Logic.leftPressed = true;
+            // Animator.Parameters.movingLeft = true;
         }
         if(e.keyCode == Controls.upKey) {
             Logic.upPressed = true;
@@ -209,9 +211,11 @@ var Logic = {
     keyUpHandler: function(e) {
         if(e.keyCode == Controls.rightKey) {
             Logic.rightPressed = false;
+            Animator.Parameters.movingRight = false;
         }
         if(e.keyCode == Controls.leftKey) {
             Logic.leftPressed = false;
+            Animator.Parameters.movingLeft = false;
         }
         if(e.keyCode == Controls.upKey) {
             Logic.upPressed = false;
@@ -262,7 +266,6 @@ document.addEventListener("keyup", Logic.keyUpHandler, false);
 
 document.addEventListener("mousedown", Logic.mouseDownHandler, false); //mouse click
 document.addEventListener("mouseup", Logic.mouseUpHandler, false);
-
 document.addEventListener("mousemove", Logic.getMousePosition, false); //mouse movement
 
-//document.addEventListener("spritemove", Logic.move, false);
+// document.addEventListener("spritemove", Logic.move, false);

@@ -105,7 +105,6 @@ var Renderer = {
             }
         }
 
-        //TODO: get animation to reset after done animating
         this.animate = function(startIndex, endIndex, animateSpeed, animateType) {
             if(!this.isSpriteSheet) {
                 console.log("You cannot animate a single sprite, set isSpriteSheet to true");
