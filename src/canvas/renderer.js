@@ -8,8 +8,8 @@ canvas.height = window.innerHeight;
 ctx.imageSmoothingEnabled = false;
 
 // test: remove later
-var mapWidth = 560;
-var mapHeight = 560;
+var mapWidth = 1600;
+var mapHeight = 1600;
 
 var Renderer = {
 
@@ -27,29 +27,94 @@ var Renderer = {
                 { 
                     sprite: new Renderer.Sprite({
                         image: '../../assets/map_layer1.png',
-                        width: 560,
-                        height: 560,
+                        width: 1600,
+                        height: 1600,
                         isSpriteSheet: false,
                         x: 0,
                         y: 0
                     })
                 }
             ],
-            players: [],
-            arrows: [],
             layer2: [
                 { 
                     sprite: new Renderer.Sprite({
                         image: '../../assets/map_layer2.png',
-                        width: 560,
-                        height: 560,
+                        width: 1600,
+                        height: 1600,
                         isSpriteSheet: false,
                         x: 0,
                         y: 0
                     })
                 }
             ],
-            //layer2: []
+			//layer2: []
+			players: [],
+            arrows: [],
+			layer3: [
+                { 
+                    sprite: new Renderer.Sprite({
+                        image: '../../assets/map_layer3.png',
+                        width: 1600,
+                        height: 1600,
+                        isSpriteSheet: false,
+                        x: 0,
+                        y: 0
+                    })
+                }
+            ],
+            //layer3: []
+			layer4: [
+                { 
+                    sprite: new Renderer.Sprite({
+                        image: '../../assets/map_layer4.png',
+                        width: 1600,
+                        height: 1600,
+                        isSpriteSheet: false,
+                        x: 0,
+                        y: 0
+                    })
+                }
+            ],
+            //layer4: []
+			layer5: [
+                { 
+                    sprite: new Renderer.Sprite({
+                        image: '../../assets/map_layer5.png',
+                        width: 1600,
+                        height: 1600,
+                        isSpriteSheet: false,
+                        x: 0,
+                        y: 0
+                    })
+                }
+            ],
+            //layer5: []
+			layer6: [
+                { 
+                    sprite: new Renderer.Sprite({
+                        image: '../../assets/map_layer6.png',
+                        width: 1600,
+                        height: 1600,
+                        isSpriteSheet: false,
+                        x: 0,
+                        y: 0
+                    })
+                }
+            ],
+            //layer6: []
+			layer7: [
+                { 
+                    sprite: new Renderer.Sprite({
+                        image: '../../assets/map_layer7.png',
+                        width: 1600,
+                        height: 1600,
+                        isSpriteSheet: false,
+                        x: 0,
+                        y: 0
+                    })
+                }
+            ],
+            //layer7: []
         }
 
         this.renderInOrder = function() {
