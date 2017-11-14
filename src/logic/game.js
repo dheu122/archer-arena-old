@@ -22,8 +22,8 @@ function loadJSON(url, onsuccess) {
 
 
 ///////////////////////////////////////////////// SOUND FUNCTION
-var titleMusic = new sound("assets/TitleMusic.wav");
-var gameMusic = new sound("assets/BackgroundMusic.wav");
+var titleMusic = new sound("assets/TitleMusic2.wav");
+var gameMusic = new sound("assets/BackgroundMusicNoCrow.wav");
 
 function sound(src) {
     this.sound = document.createElement("audio");
@@ -60,6 +60,9 @@ function donePlaying() { //checks if the music has finished playing, then if tru
 		}
 	}
 	else if (isTitlescreen == false) {
+		
+			titleMusic.stop();
+			
 			if (gameMusic.paused = true) {
 				gameMusicPlayer();
 			}
