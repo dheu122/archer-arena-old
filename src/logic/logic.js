@@ -35,7 +35,6 @@ var Logic = {
         this.arrowCount = 100;
 
         this.score = 0;
-        this.rank = 0;
 
         this.origin = {x: 0, y: 0},
 
@@ -215,56 +214,33 @@ var Logic = {
         
         this.lifetime = options.lifetime;
     },
+
     leaderboard: function(options) {
         this.playerList = [];
         this.isFirst = ''; //check if player is first place
         this.isHit = ''; //check if player is hit by arrow
-        
+        this.hit = ''; //check if player hit another player with arrow
+
         this.update = function() {
-          this.addPlayer();
-          //this.addScore();
-          this.sortRank();
+          //this.addPlayer();
+          this.playerList = this.sortScore(this.playerList, 'score');
+          console.log(this.playerList);
         }
-        this.addPlayer = function(player) {
-            //update leaderboard with playerList array when player joins or leaves
+        this.addPlayer = function(player) { //update leaderboard with playerList array when player joins or leaves
             this.playerList.push({
                 playerName: player.name,
                 playerId: player.id,
                 score: 0,
-                rank: 0
             });
         }
-        this.addScore = function (playerKiller, playerKilled) {
-            //calculate and add player score
-            //socket.emit('AddScore', amount)
-            //bonus points for hitting top player -- steal half of top player score
-            playerKiller.score++;
-            if (playerKilled.rank == 1) {
-                playerKiller.score = (playerKilled.score/2) + playerKiller.score;
-            }
-        }
-        this.sortRank = function () {
-            //calculate and change player ranking with quick sort
-            var i = playerList[0]; //left
-            var j = playerList.length; //right
-            var pivot = playerList[Math.floor((j + i) / 2)];
-
-            while (i <= j) {
-                while (playerList[i] < pivot) {
-                    i++; //move right
-                }
-                while (playerList[j] > pivot) {
-                    j--; //move left
-                }
-                if (i <= j) { //when i and j meet
-                    swap(playerList, i, j); //perform sort
-                    i++;
-                    j--;
-                }
-            }
-            return i;
+        this.sortScore = function (array, key) { //sort scores of players and ranks them on leaderboard from highest (1st) to lowest
+            return array.sort(function(a, b) {
+                var x = a[key]; var y = b[key];
+                return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+            });
         }
     },
+
     keyDownHandler: function(e) {
         if(e.keyCode == Controls.rightKey) {
             Logic.rightPressed = true;
@@ -354,3 +330,8 @@ document.addEventListener("mousedown", Logic.mouseDownHandler, false); //mouse c
 document.addEventListener("mouseup", Logic.mouseUpHandler, false);
 
 document.addEventListener("mousemove", Logic.getMousePosition, false); //mouse movement
+
+/* IMPLEMENT:
+    assign and sort ranks based on scores
+    drop arrow after arrow flies
+*/

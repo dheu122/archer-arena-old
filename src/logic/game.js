@@ -94,7 +94,7 @@ var player = new Logic.character({
 });
 
 var leaderboard = new Logic.leaderboard({
-
+	
 });
 
 // Map for debugging, remove later
@@ -239,6 +239,7 @@ function gameLoop() { //this is the main game loop, i found a version of it in a
 
 setInterval(function() {
 	if(globalRoomId) {
+		leaderboard.update();
 		socket.emit('CheckCollision', globalRoomId);
 	}
 }, 1000 / 10);
