@@ -3,6 +3,8 @@ var ctx = canvas.getContext("2d");
 
 var socket = io();
 
+var staminaTimer = 0; //for setInterval of stamina
+
 var Logic = {
 
     // Character movement, collision, attacking, and dodging mechanics function objects will go here
@@ -35,7 +37,6 @@ var Logic = {
         this.arrowCount = 100;
 
         this.score = 0;
-        this.rank = 0;
 
         this.origin = {x: 0, y: 0},
 
@@ -78,20 +79,21 @@ var Logic = {
                         this.speed = this.maxSpeed;
                     }
                     else {
-                    Logic.mousePressed = false; //may be buggy
+                    Logic.mousePressed = false; //cannot shoot
                     this.speed += 0.01;
                     this.curStamina = i;
                     i--;
                         }
                     }
                 }
-                //otherwise recharge stamina to max 100
-            else if(Logic.shiftPressed == false && Logic.spacePressed == false && this.curStamina <= this.maxStamina) { //BUG: cannot move until stamina = 100
+                //otherwise recharge stamina to maximum value
+            else if(Logic.shiftPressed == false && Logic.spacePressed == false && this.curStamina <= this.maxStamina) {
                 var i = this.curStamina;
-                this.speed = this.minSpeed; //make this decelerate?
-                while (i <= this.maxStamina) {
-                    i++; //make this slower
+                this.speed = this.minSpeed;
+                if (i <= this.maxStamina && staminaTimer > 1) { //staminaTimer to 1 10th of a second
+                    i++;
                     this.curStamina = i;
+                    staminaTimer = 0; //reinitialize staminaTimer
                 }
             }
         }
@@ -215,56 +217,33 @@ var Logic = {
         
         this.lifetime = options.lifetime;
     },
+
     leaderboard: function(options) {
         this.playerList = [];
         this.isFirst = ''; //check if player is first place
         this.isHit = ''; //check if player is hit by arrow
-        
+        this.hit = ''; //check if player hit another player with arrow
+
         this.update = function() {
-          this.addPlayer();
-          //this.addScore();
-          this.sortRank();
+          //this.addPlayer();
+          this.playerList = this.sortScore(this.playerList, 'score');
+          //console.log(this.playerList);
         }
-        this.addPlayer = function(player) {
-            //update leaderboard with playerList array when player joins or leaves
+        this.addPlayer = function(player) { //update leaderboard with playerList array when player joins or leaves
             this.playerList.push({
                 playerName: player.name,
                 playerId: player.id,
                 score: 0,
-                rank: 0
             });
         }
-        this.addScore = function (playerKiller, playerKilled) {
-            //calculate and add player score
-            //socket.emit('AddScore', amount)
-            //bonus points for hitting top player -- steal half of top player score
-            playerKiller.score++;
-            if (playerKilled.rank == 1) {
-                playerKiller.score = (playerKilled.score/2) + playerKiller.score;
-            }
-        }
-        this.sortRank = function () {
-            //calculate and change player ranking with quick sort
-            var i = playerList[0]; //left
-            var j = playerList.length; //right
-            var pivot = playerList[Math.floor((j + i) / 2)];
-
-            while (i <= j) {
-                while (playerList[i] < pivot) {
-                    i++; //move right
-                }
-                while (playerList[j] > pivot) {
-                    j--; //move left
-                }
-                if (i <= j) { //when i and j meet
-                    swap(playerList, i, j); //perform sort
-                    i++;
-                    j--;
-                }
-            }
-            return i;
+        this.sortScore = function (array, key) { //sort scores of players and ranks them on leaderboard from highest (1st) to lowest
+            return array.sort(function(a, b) {
+                var x = a[key]; var y = b[key];
+                return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+            });
         }
     },
+
     keyDownHandler: function(e) {
         if(e.keyCode == Controls.rightKey) {
             Logic.rightPressed = true;
@@ -332,7 +311,7 @@ var Logic = {
         Logic.mousePositionFromPlayer = mousePositionFromPlayer;
         Logic.canvasMousePosition = canvasMousePos;
     },
-    collision: function (object1, object2) { //FIX
+    collision: function (object1, object2) {
         if (object1.x < object2.x + object2.width &&
         object1.x + object1.width > object2.x &&
         object1.y < object2.y + object2.height &&
@@ -354,3 +333,7 @@ document.addEventListener("mousedown", Logic.mouseDownHandler, false); //mouse c
 document.addEventListener("mouseup", Logic.mouseUpHandler, false);
 
 document.addEventListener("mousemove", Logic.getMousePosition, false); //mouse movement
+
+setInterval(function(){
+    staminaTimer++; //increment the stamina
+}, 1000/10); //10 times per 1 second (1000 is in milliseconds)
