@@ -1,11 +1,20 @@
 html,body{
+    background-image: url(assets/titlescreen/title_border.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
     width: 100%;
     height: 100%;
     text-align: center;
-    background-color:black;
+    background-color: transparent;
     image-rendering: auto;
     image-rendering: crisp-edges;
     image-rendering: pixelated;
+}
+
+canvas {
+    background-color: transparent;
 }
 
 .center{
@@ -99,7 +108,7 @@ form{
     background-image: url(assets/titlescreen/titlescreen_menu_addon.png);
     background-size: cover;
     border: 0;
-    background-color: black;
+    background-color: transparent
 }
 
 #login-button:hover {
@@ -107,11 +116,6 @@ form{
 }
 
 #titlescreen{
-    position: absolute;
-    background-color: black;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
     top: 0px;
     left: 0px;
     z-index:100;
