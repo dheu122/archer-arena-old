@@ -11,7 +11,6 @@
         <style>
             * { padding: 0; margin:0 ; }
             canvas {
-                background: #eee;
                 display: block;
                 margin: 0 auto;
                 cursor: crosshair
@@ -21,13 +20,20 @@
 
     <body>
         <div id="titlescreen">
-            <p><img src="assets/title.png" alt="Title image" class="center"></p>
-            <form>
-                <input id="username">
-                <button type="button" onclick="UI.getUsername()">Login</button>
+            <img src="assets/titlescreen/title.png" alt="Title" id="title" class="center">
+            <img src="assets/titlescreen/title_arrow.png" alt="arrow" class="title-arrow">
+            <img src="assets/titlescreen/title_arrow.png" alt="arrow" class="title-arrow-2">
+            <form class="center">
+                <div id="title-bg">
+                    <h3> Enter a nickname </h3>
+                    <input id="username"> <br>
+                    <div id="title-selection" class="center">
+                        <button id="selection-arrow-left" type="button" onclick="UI.setCharacterIndex(true)"></button>
+                        <button id="selection-arrow-right" type="button" onclick="UI.setCharacterIndex(false)"></button>
+                    </div>
+                    <button id="login-button" type="button" onclick="UI.login()"></button>
+                </div>
             </form>
-        </div>
-        <div id ="selectionscreen">
         </div>
         <canvas id="gameCanvas"></canvas>
     </body>

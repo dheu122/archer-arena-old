@@ -16,7 +16,12 @@ var Renderer = {
     // Images from our assets folder will go here
     Images: {
         map1: 'assets/tileset_map1.png',
-        player: 'assets/movement_sprite.png',
+        players: ['assets/players/player_blue.png',
+                  'assets/players/player_black.png',
+                  'assets/players/player_green.png',
+                  'assets/players/player_pink.png',
+                  'assets/players/player_purple.png',
+                  'assets/players/player_red.png'],
         arrow: 'assets/arrow_sprite.png'
     },
 
@@ -49,6 +54,7 @@ var Renderer = {
             ],
 			//layer2: []
 			players: [],
+      thisPlayer: [],
             arrows: [],
 			layer3: [
                 { 

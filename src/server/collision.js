@@ -19,6 +19,9 @@ module.exports = {
         var playersInRoom = [];
 
         // This is EXTREMELY unefficient
+
+        if(playerIdsInRoom == undefined) { return; }
+
         for(var i = 0; i < playerIdsInRoom.length; i++) {
             for(var j = 0; j < players.length; j++) {
                 if(playerIdsInRoom[i] == players[j].id) {
@@ -42,6 +45,8 @@ module.exports = {
         //console.log(arrowsInRoom);
 
         for(var m = 0; m < playersInRoom.length; m++) {
+            if(playersInRoom[m].sprite == undefined) { break; }
+
             for(var n = 0; n < arrowsInRoom.length; n++) {
                 if(this.hasCollided(playersInRoom[m].sprite.x, playersInRoom[m].sprite.y, arrowsInRoom[n].sprite.x, arrowsInRoom[n].sprite.y) && playersInRoom[m].id != arrowsInRoom[n].belongsTo) {
                     var collision = {

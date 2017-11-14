@@ -1,5 +1,6 @@
 var UI = {
     
+    characterIndex: 0,
     // Title screen, Game UI, and other UI-related function objects will go here
     getUsername: function() {
         var nickname = document.getElementById('username').value;
@@ -16,13 +17,25 @@ var UI = {
                         return;
                     }
                 }
-                socket.emit('ConnectToServer', {name: nickname});
                 document.getElementById('titlescreen').remove();
             }
         }
         request.open("GET", "../../assets/profanity.json", true);
         request.send();
+        return nickname;
+    },
 
+    setCharacterIndex: function(left) {
+        if(left == true && UI.characterIndex > 0) { UI.characterIndex--; }
+        else if(left == false && UI.characterIndex < 5) { UI.characterIndex++; }
+    },
+
+    login() {
+        var loginData = {
+            name: UI.getUsername(),
+            characterIndex: UI.characterIndex
+        }
+        socket.emit('ConnectToServer', loginData);
     }
 
 }

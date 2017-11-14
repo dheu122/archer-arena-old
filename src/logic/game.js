@@ -78,10 +78,11 @@ var player = new Logic.character({
 	name: '',
 	id: '',
 	isInThisRoom: '',
+	characterIndex: 0,
   camera: new Renderer.Camera({
   }),
 	sprite: new Renderer.Sprite({
-		image: Renderer.Images.player,
+		image: Renderer.Images.players[0],
 		width: 15,
 		height: 16,
 		isSpriteSheet: true,
@@ -119,6 +120,7 @@ window.onload = function() {
 		isTitlescreen = false;
 		globalRoomId = identity.roomId;
 		globalClientId = identity.id;
+		player.characterIndex = identity.characterIndex;
 		player.isInThisRoom = identity.roomId;
 		player.id = identity.id;
 		player.name = identity.name;
@@ -156,18 +158,25 @@ window.onload = function() {
 	gameLoop();
 }
 
+function updateThisPlayer() {
+	canvasScreen.order.thisPlayer = [];
+	canvasScreen.order.thisPlayer.push(player);
+}
+
 function updatePlayers(playerData) {
 	//debugMap.render();
 	//JsonMap.render(JsonMap.jsonMap);
 	var players = [];
 	for(var i = 0; i < playerData.length; i++) {
 		var data = playerData[i];
+		if(data.sprite == undefined) { break; }
 		var player =  new Logic.character({
 			name: data.name,
 			id: data.id,
 			isInThisRoom: data.isInThisRoom,
+			characterIndex: data.characterIndex,
 			sprite: new Renderer.Sprite({
-				image: Renderer.Images.player,
+				image: Renderer.Images.players[data.characterIndex],
 				width: 15,
 				height: 16,
 				isSpriteSheet: true,
@@ -182,7 +191,9 @@ function updatePlayers(playerData) {
 			score: data.score,
 		});
 		//player.sprite.render();
-		players.push(player);
+		if(data.id != globalClientId) {
+			players.push(player);
+		}
 	}
 	canvasScreen.order.players = players;
 }
@@ -213,6 +224,7 @@ function updateArrows(arrowData) {
 		//arrow.sprite.render();
 		arrows.push(arrow);
 	}
+	//console.log(arrows);
 	canvasScreen.order.arrows = arrows;
 }
 // Clears the screen
@@ -229,6 +241,7 @@ function gameLoop() { //this is the main game loop, i found a version of it in a
 			}
 
 			player.update();					// Updates current client to itself
+			updateThisPlayer();
 			player.camera.calculatePostition(player.sprite.x, player.sprite.y); //sets camera to the position passed in here
 			canvasScreen.renderInOrder();
 			socket.emit('SendArrowData', data);	

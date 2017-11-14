@@ -40,6 +40,7 @@ io.on('connection', function(socket) {
         var roomId = room.joinRoom(socket.id);
         var identity = {
             name: playerData.name,
+            characterIndex: playerData.characterIndex,
             roomId: roomId,
             id: socket.id
         }
@@ -82,6 +83,7 @@ io.on('connection', function(socket) {
     socket.on('RemoveArrowData', function(data) {
         // delete from room too!
         var arrowIndex = arrow.getArrowIndexById(data.id);
+        room.removeArrowFromRoom(data.roomId, arrowIndex)
         arrow.deleteArrowAt(arrowIndex);
     })
 
@@ -89,7 +91,7 @@ io.on('connection', function(socket) {
         var arrowIds = room.getArrowsInRoom(data.roomId);
         var arrowsInRoom = [];
 
-        arrowsInRoom = arrow.updateAllArrowsInRoom(arrowIds);
+        arrowsInRoom = arrow.updateAllArrowsInRoom(arrowIds, data.roomId);
 
         io.sockets.in(data.roomId).emit('GetRoomArrowData', arrowsInRoom);
     })
