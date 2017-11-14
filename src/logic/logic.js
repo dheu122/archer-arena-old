@@ -3,6 +3,8 @@ var ctx = canvas.getContext("2d");
 
 var socket = io();
 
+var staminaTimer = 0; //for setInterval of stamina
+
 var Logic = {
 
     // Character movement, collision, attacking, and dodging mechanics function objects will go here
@@ -77,20 +79,21 @@ var Logic = {
                         this.speed = this.maxSpeed;
                     }
                     else {
-                    Logic.mousePressed = false; //may be buggy
+                    Logic.mousePressed = false; //cannot shoot
                     this.speed += 0.01;
                     this.curStamina = i;
                     i--;
                         }
                     }
                 }
-                //otherwise recharge stamina to max 100
-            else if(Logic.shiftPressed == false && Logic.spacePressed == false && this.curStamina <= this.maxStamina) { //BUG: cannot move until stamina = 100
+                //otherwise recharge stamina to maximum value
+            else if(Logic.shiftPressed == false && Logic.spacePressed == false && this.curStamina <= this.maxStamina) {
                 var i = this.curStamina;
-                this.speed = this.minSpeed; //make this decelerate?
-                while (i <= this.maxStamina) {
-                    i++; //make this slower
+                this.speed = this.minSpeed;
+                if (i <= this.maxStamina && staminaTimer > 1) { //staminaTimer to 1 10th of a second
+                    i++;
                     this.curStamina = i;
+                    staminaTimer = 0; //reinitialize staminaTimer
                 }
             }
         }
@@ -224,7 +227,7 @@ var Logic = {
         this.update = function() {
           //this.addPlayer();
           this.playerList = this.sortScore(this.playerList, 'score');
-          console.log(this.playerList);
+          //console.log(this.playerList);
         }
         this.addPlayer = function(player) { //update leaderboard with playerList array when player joins or leaves
             this.playerList.push({
@@ -308,7 +311,7 @@ var Logic = {
         Logic.mousePositionFromPlayer = mousePositionFromPlayer;
         Logic.canvasMousePosition = canvasMousePos;
     },
-    collision: function (object1, object2) { //FIX
+    collision: function (object1, object2) {
         if (object1.x < object2.x + object2.width &&
         object1.x + object1.width > object2.x &&
         object1.y < object2.y + object2.height &&
@@ -331,7 +334,6 @@ document.addEventListener("mouseup", Logic.mouseUpHandler, false);
 
 document.addEventListener("mousemove", Logic.getMousePosition, false); //mouse movement
 
-/* IMPLEMENT:
-    assign and sort ranks based on scores
-    drop arrow after arrow flies
-*/
+setInterval(function(){
+    staminaTimer++; //increment the stamina
+}, 1000/10); //10 times per 1 second (1000 is in milliseconds)
