@@ -144,6 +144,8 @@ var Renderer = {
 
     Camera: function(options) {
 
+        this.enabled = options.enabled;
+
         this.isClamped = {
             x: 0,
             y: 0
@@ -159,11 +161,14 @@ var Renderer = {
         }
         //updates game of camera positioning
         this.update = function() {
-          this.calculatePostition();
+            this.calculatePostition();
         }
         //calulate position of camera
         //bounding to the edges of the map being implemented
         this.calculatePostition = function(x,y) {
+            if(!this.enabled) {
+                return;
+            }
           //height and width buffer calculate the distance between the player and the edge of the canvas
           var widthBuffer = ((canvas.width/5)/2);
           var heightBuffer = ((canvas.height/5)/2);

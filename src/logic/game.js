@@ -78,16 +78,18 @@ var player = new Logic.character({
 	name: '',
 	id: '',
 	isInThisRoom: '',
+	isDead: false,
 	characterIndex: 0,
 	camera: new Renderer.Camera({
+		enabled: true
 	}),
 	sprite: new Renderer.Sprite({
 		image: Renderer.Images.players[0],
 		width: 15,
 		height: 16,
 		isSpriteSheet: true,
-		x: 0,
-		y: 0,
+		x: Math.floor((Math.random() * 1500) + 100),	// Hard-coded these values, CHANGEME
+		y: Math.floor((Math.random() * 1500) + 100),
 		index: 0,
 	}),
 	speed: 2,
@@ -148,6 +150,7 @@ window.onload = function() {
 	})
 
 	socket.on('YouDied', function() {
+		player.die();
 		console.log('You died');
 	})
 
@@ -176,10 +179,13 @@ function updatePlayers(playerData) {
 			id: data.id,
 			isInThisRoom: data.isInThisRoom,
 			characterIndex: data.characterIndex,
+			camera: new Renderer.Camera({
+				enabled: data.camera.enabled
+			}),
 			sprite: new Renderer.Sprite({
 				image: Renderer.Images.players[data.characterIndex],
-				width: 15,
-				height: 16,
+				width: data.sprite.width,
+				height: data.sprite.height,
 				isSpriteSheet: true,
 				x: data.sprite.x,
 				y: data.sprite.y,
