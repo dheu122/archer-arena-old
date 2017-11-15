@@ -120,7 +120,8 @@ var Renderer = {
                     })
                 }
             ],
-            //layer7: []
+            names: []
+            //layer2: []
         }
 
         this.renderInOrder = function() {
@@ -128,7 +129,13 @@ var Renderer = {
             for(var key in this.order) {
                 if(this.order.hasOwnProperty(key)) {
                     for(var i = 0; i < this.order[key].length; i++) {
-                        this.order[key][i].sprite.render();
+                        if(key == 'names') {
+                            ctx.font = '4pt Calibri';
+                            ctx.fillStyle = 'white';
+                            ctx.fillText(this.order[key][i].name, this.order[key][i].x, this.order[key][i].y);
+                        } else {
+                            this.order[key][i].sprite.render();
+                        }
                     }
                 }
             }
