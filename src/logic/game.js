@@ -76,8 +76,8 @@ var player = new Logic.character({
 	id: '',
 	isInThisRoom: '',
 	characterIndex: 0,
-  camera: new Renderer.Camera({
-  }),
+	camera: new Renderer.Camera({
+	}),
 	sprite: new Renderer.Sprite({
 		image: Renderer.Images.players[0],
 		width: 15,
@@ -93,6 +93,10 @@ var player = new Logic.character({
 	stamina: 100,
 	score: 0,
 });
+
+//sets camera position to (0,0) located at top left corner of the map
+//Eventually will set to the players random spawn position.
+player.camera.initialize();
 
 var leaderboard = new Logic.leaderboard({
 
@@ -129,10 +133,6 @@ window.onload = function() {
 		updatePlayers(playerData);
 	});
 
-	//sets camera position to (0,0) located at top left corner of the map
-  //Eventually will set to the players random spawn position.
-  player.camera.initialize();
-
 	socket.on('GetRoomArrowData', function(arrowData) {
 		//ctx.clearRect(-100, -100, canvas.width, canvas.height);
 		updateArrows(arrowData);
@@ -164,6 +164,7 @@ function updatePlayers(playerData) {
 	//debugMap.render();
 	//JsonMap.render(JsonMap.jsonMap);
 	var players = [];
+	var names = [];
 	for(var i = 0; i < playerData.length; i++) {
 		var data = playerData[i];
 		if(data.sprite == undefined) { break; }
@@ -187,11 +188,18 @@ function updatePlayers(playerData) {
 			stamina: 100,
 			score: data.score,
 		});
+
+		names.push({
+			name: data.name,
+			x: data.sprite.x,
+			y: data.sprite.y
+		});
 		//player.sprite.render();
 		if(data.id != globalClientId) {
 			players.push(player);
 		}
 	}
+	canvasScreen.order.names = names;
 	canvasScreen.order.players = players;
 }
 
