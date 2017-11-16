@@ -54,7 +54,7 @@ var Renderer = {
             ],
 			//layer2: []
 			players: [],
-      thisPlayer: [],
+            thisPlayer: [],
             arrows: [],
 			layer3: [
                 { 
@@ -120,7 +120,8 @@ var Renderer = {
                     })
                 }
             ],
-            names: []
+            names: [],
+            thisName: []
             //layer2: []
         }
 
@@ -129,7 +130,7 @@ var Renderer = {
             for(var key in this.order) {
                 if(this.order.hasOwnProperty(key)) {
                     for(var i = 0; i < this.order[key].length; i++) {
-                        if(key == 'names') {
+                        if(key == 'names' || key == 'thisName') {
                             ctx.font = '4pt Calibri';
                             ctx.fillStyle = 'white';
                             ctx.fillText(this.order[key][i].name, this.order[key][i].x, this.order[key][i].y);
@@ -143,6 +144,8 @@ var Renderer = {
     },
 
     Camera: function(options) {
+
+        this.enabled = options.enabled;
 
         this.isClamped = {
             x: 0,
@@ -159,11 +162,14 @@ var Renderer = {
         }
         //updates game of camera positioning
         this.update = function() {
-          this.calculatePostition();
+            this.calculatePostition();
         }
         //calulate position of camera
         //bounding to the edges of the map being implemented
         this.calculatePostition = function(x,y) {
+            if(!this.enabled) {
+                return;
+            }
           //height and width buffer calculate the distance between the player and the edge of the canvas
           var widthBuffer = ((canvas.width/5)/2);
           var heightBuffer = ((canvas.height/5)/2);

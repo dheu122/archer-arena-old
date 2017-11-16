@@ -78,16 +78,18 @@ var player = new Logic.character({
 	name: '',
 	id: '',
 	isInThisRoom: '',
+	isDead: false,
 	characterIndex: 0,
 	camera: new Renderer.Camera({
+		enabled: true
 	}),
 	sprite: new Renderer.Sprite({
 		image: Renderer.Images.players[0],
 		width: 15,
 		height: 16,
 		isSpriteSheet: true,
-		x: 0,
-		y: 0,
+		x: Math.floor((Math.random() * 1500) + 100),	// Hard-coded these values, CHANGEME
+		y: Math.floor((Math.random() * 1500) + 100),
 		index: 0,
 	}),
 	speed: 2,
@@ -148,6 +150,7 @@ window.onload = function() {
 	})
 
 	socket.on('YouDied', function() {
+		player.die();
 		console.log('You died');
 	})
 
@@ -160,7 +163,13 @@ window.onload = function() {
 
 function updateThisPlayer() {
 	canvasScreen.order.thisPlayer = [];
+	canvasScreen.order.thisName = [];
 	canvasScreen.order.thisPlayer.push(player);
+	canvasScreen.order.thisName.push({
+		name: player.name,
+		x: player.sprite.x,
+		y: player.sprite.y
+	})
 }
 
 function updatePlayers(playerData) {
@@ -176,10 +185,13 @@ function updatePlayers(playerData) {
 			id: data.id,
 			isInThisRoom: data.isInThisRoom,
 			characterIndex: data.characterIndex,
+			camera: new Renderer.Camera({
+				enabled: data.camera.enabled
+			}),
 			sprite: new Renderer.Sprite({
 				image: Renderer.Images.players[data.characterIndex],
-				width: 15,
-				height: 16,
+				width: data.sprite.width,
+				height: data.sprite.height,
 				isSpriteSheet: true,
 				x: data.sprite.x,
 				y: data.sprite.y,
@@ -192,14 +204,14 @@ function updatePlayers(playerData) {
 			score: data.score,
 		});
 
-		names.push({
-			name: data.name,
-			x: data.sprite.x,
-			y: data.sprite.y
-		});
 		//player.sprite.render();
 		if(data.id != globalClientId) {
 			players.push(player);
+			names.push({
+				name: data.name,
+				x: data.sprite.x,
+				y: data.sprite.y
+			});
 		}
 	}
 	canvasScreen.order.names = names;
@@ -253,7 +265,7 @@ function gameLoop() { //this is the main game loop, i found a version of it in a
 			player.camera.calculatePostition(player.sprite.x, player.sprite.y); //sets camera to the position passed in here
 			canvasScreen.renderInOrder();
 			socket.emit('SendArrowData', data);	
-		  	socket.emit('SendPlayerData', data); 		// Send current client's data to everyone, so they can update
+		  socket.emit('SendPlayerData', data); 		// Send current client's data to everyone, so they can update
 			lastLoopRun = new Date().getTime();
 		}
 	}
