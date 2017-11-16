@@ -245,16 +245,16 @@ var Logic = {
     },
 
     keyDownHandler: function(e) {
-        if(e.keyCode == Controls.rightKey) {
+        if(e.keyCode == Controls.rightKey || e.keyCode == Controls.rightKey2) {
             Logic.rightPressed = true;
         }
-        if(e.keyCode == Controls.leftKey) {
+        if(e.keyCode == Controls.leftKey || e.keyCode == Controls.leftKey2) {
             Logic.leftPressed = true;
         }
-        if(e.keyCode == Controls.upKey) {
+        if(e.keyCode == Controls.upKey || e.keyCode == Controls.upKey2) {
             Logic.upPressed = true;
         }
-        if(e.keyCode == Controls.downKey) {
+        if(e.keyCode == Controls.downKey || e.keyCode == Controls.downKey2) {
             Logic.downPressed = true;
         }
         if (e.keyCode == Controls.spaceKey) {
@@ -265,16 +265,16 @@ var Logic = {
         }
     },
     keyUpHandler: function(e) {
-        if(e.keyCode == Controls.rightKey) {
+        if(e.keyCode == Controls.rightKey || e.keyCode == Controls.rightKey2) {
             Logic.rightPressed = false;
         }
-        if(e.keyCode == Controls.leftKey) {
+        if(e.keyCode == Controls.leftKey || e.keyCode == Controls.leftKey2) {
             Logic.leftPressed = false;
         }
-        if(e.keyCode == Controls.upKey) {
+        if(e.keyCode == Controls.upKey || e.keyCode == Controls.upKey2) {
             Logic.upPressed = false;
         }
-        if(e.keyCode == Controls.downKey) {
+        if(e.keyCode == Controls.downKey || e.keyCode == Controls.downKey2) {
             Logic.downPressed = false;
         }
         if (e.keyCode == Controls.spaceKey) {
