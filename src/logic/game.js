@@ -96,7 +96,7 @@ var player = new Logic.character({
 	minSpeed: 2,
 	maxSpeed: 2.5,
 	stamina: 100,
-	score: 0,
+	score: 0
 });
 
 //sets camera position to (0,0) located at top left corner of the map
@@ -143,6 +143,10 @@ window.onload = function() {
 		updateArrows(arrowData);
 	})
 
+	socket.on('GetRoomPickupData', function(pickupData) {
+		updatePickups(pickupData);
+	});
+
 	socket.on('PlayerWasKilled', function(collision) {
 		//console.log(collision);
 		console.log(collision.playerWhoKilled.name + " Killed " + collision.playerWhoDied.name);
@@ -158,6 +162,11 @@ window.onload = function() {
 		player.score++;
 		console.log('You killed someone');
 	})
+
+	socket.on('AddArrowCount', function() {
+			player.arrowCount++;
+	})
+
 	gameLoop();
 }
 
@@ -170,6 +179,28 @@ function updateThisPlayer() {
 		x: player.sprite.x,
 		y: player.sprite.y
 	})
+}
+
+function updatePickups(pickupData) {
+	var pickups = [];
+	for(var i = 0; i < pickupData.length; i++) {
+		var data = pickupData[i];
+		var pickup = {
+				sprite: new Renderer.Sprite ({
+					image: Renderer.Images.arrow,
+					width: 16,
+					height: 16,
+					isSpriteSheet: true,
+					x: data.x,
+					y: data.y,
+					index: 0
+				})
+		}
+		//arrow.sprite.render();
+		pickups.push(pickup);
+	}
+	//console.log(arrows);
+	canvasScreen.order.pickups = pickups;
 }
 
 function updatePlayers(playerData) {
@@ -201,7 +232,7 @@ function updatePlayers(playerData) {
 			minSpeed: 2,
 			maxSpeed: 2.5,
 			stamina: 100,
-			score: data.score,
+			score: data.score
 		});
 
 		//player.sprite.render();
@@ -265,7 +296,8 @@ function gameLoop() { //this is the main game loop, i found a version of it in a
 			player.camera.calculatePostition(player.sprite.x, player.sprite.y); //sets camera to the position passed in here
 			canvasScreen.renderInOrder();
 			socket.emit('SendArrowData', data);	
-		  socket.emit('SendPlayerData', data); 		// Send current client's data to everyone, so they can update
+			socket.emit('SendPlayerData', data); 		// Send current client's data to everyone, so they can update
+			socket.emit('SendPickupData', data);
 			lastLoopRun = new Date().getTime();
 		}
 	}
@@ -275,6 +307,7 @@ function gameLoop() { //this is the main game loop, i found a version of it in a
 
 setInterval(function() {
 	if(globalRoomId) {
+		console.log('ArrowCount: ' + player.arrowCount);
 		socket.emit('CheckCollision', globalRoomId);
 	}
 }, 1000 / 10);

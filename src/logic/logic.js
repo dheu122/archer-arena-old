@@ -36,7 +36,7 @@ var Logic = {
         
         this.curArrowTimer = 0;
         this.arrowTimer = 60;
-        this.arrowCount = 100;
+        this.arrowCount = 1;
 
         this.score = 0;
         this.rank = 0;
@@ -224,6 +224,7 @@ var Logic = {
             function waitForRespawn() {
                 if(timer == 0) {
                     _this.respawn(tempName);
+                    this.name = tempName;
                     clearInterval(respawnTimer);
                 } else {
                     _this.name = 'Respawning in ' + timer;
@@ -236,6 +237,7 @@ var Logic = {
             this.sprite.width = 15;
             this.camera.enabled = true;
             this.isDead = false;
+            this.arrowCount = 1;
             this.name = tempName;
 
             // hard-coded the map-width/map-height. Change 1500 to mapWidth or mapHeight

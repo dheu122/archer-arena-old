@@ -96,6 +96,11 @@ io.on('connection', function(socket) {
         io.sockets.in(data.roomId).emit('GetRoomArrowData', arrowsInRoom);
     })
 
+    socket.on('SendPickupData', function(data) {
+        var pickupObjs = room.getPickupsInRoom(data.roomId);
+        io.sockets.in(data.roomId).emit('GetRoomPickupData', pickupObjs);
+    })
+
     socket.on('CheckCollision', function(roomId) {
         // Check collisions
         // Check if anyone was hit by an arrow
@@ -108,16 +113,23 @@ io.on('connection', function(socket) {
         var c = collision.returnCollided(roomId, players, arrows);
 
         if(c != undefined) {
-            var collisionData = {
-                playerWhoDied: players[player.getPlayerIndexById(c.player.id)],
-                playerWhoKilled: players[player.getPlayerIndexById(c.arrow.belongsTo)]
+            if(players[player.getPlayerIndexById(c.player.id)].isDead) {return;}
+            if(c.arrow != undefined) {
+                var collisionData = {
+                    playerWhoDied: players[player.getPlayerIndexById(c.player.id)],
+                    playerWhoKilled: players[player.getPlayerIndexById(c.arrow.belongsTo)]
+                }
+                
+                socket.broadcast.to(collisionData.playerWhoDied.id).emit('YouDied');
+                socket.broadcast.to(collisionData.playerWhoKilled.id).emit('YouKilled');
+                io.sockets.in(roomId).emit('PlayerWasKilled', collisionData);
+            } else {
+                if(socket.id == c.player.id) {
+                    socket.emit('AddArrowCount');
+                } else {
+                    socket.broadcast.to(c.player.id).emit('AddArrowCount');
+                }
             }
-
-            if(collisionData.playerWhoDied.isDead) { return; }
-            
-            socket.broadcast.to(collisionData.playerWhoDied.id).emit('YouDied');
-            socket.broadcast.to(collisionData.playerWhoKilled.id).emit('YouKilled');
-            io.sockets.in(roomId).emit('PlayerWasKilled', collisionData);
         }
     })
 

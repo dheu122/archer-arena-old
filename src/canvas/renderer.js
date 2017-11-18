@@ -52,7 +52,8 @@ var Renderer = {
                     })
                 }
             ],
-			//layer2: []
+            //layer2: []
+            pickups: [],
 			players: [],
             thisPlayer: [],
             arrows: [],
