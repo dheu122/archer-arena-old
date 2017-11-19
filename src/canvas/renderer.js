@@ -129,6 +129,8 @@ var Renderer = {
                 if(this.order.hasOwnProperty(key)) {
                     for(var i = 0; i < this.order[key].length; i++) {
                         this.order[key][i].sprite.render();
+                        // does not rotate arrow sprites... needs more work
+                        // if(this.order.key == 'arrows') this.order[key][i].sprite.render();
                     }
                 }
             }
@@ -146,8 +148,6 @@ var Renderer = {
           //initialize camera position to player
           //last two variables are the postion initilaization
           //0,0 is the top left corner of the map
-          //player position currently hardcoded. will set to
-          //random spawn position of player at final product
           ctx.setTransform(5, 0, 0, 5, 0, 0);
         }
         //updates game of camera positioning
@@ -208,6 +208,7 @@ var Renderer = {
         this.image.src = options.image;
         this.x = options.x;
         this.y = options.y;
+        this.angle = options.angle;
 
         this.isSpriteSheet = options.isSpriteSheet;
         this.width = options.width;
@@ -246,6 +247,13 @@ var Renderer = {
             else {
                 context.drawImage(this.image, this.x, this.y);
             }
+        }
+
+        this.rotation = function(){
+          ctx.clearRect(0, 0, this.width, this.height); //clears the sprite image
+          ctx.translate(this.width/2, this.height/2); //moves rotation point to center of image
+          ctx.rotate(this.angle); //rotates the canvas by the angle provided
+          ctx.translate(-this.width/2, -this.width/2); //moves rotation point back to top left corner of the image
         }
 
         this.animate = function(startIndex, endIndex, animateSpeed, animateType) {

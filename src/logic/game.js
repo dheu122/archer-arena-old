@@ -183,6 +183,7 @@ function updatePlayers(playerData) {
 				isSpriteSheet: true,
 				x: data.sprite.x,
 				y: data.sprite.y,
+        angle: data.sprite.angle,
 				index: data.sprite.index
 			}),
 			speed: 2,
@@ -211,6 +212,7 @@ function updateArrows(arrowData) {
 				isSpriteSheet: true,
 				x: data.sprite.x,
 				y: data.sprite.y,
+        angle: data.angle,
 				index: data.sprite.index
 			}),
 

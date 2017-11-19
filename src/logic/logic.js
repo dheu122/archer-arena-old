@@ -167,6 +167,7 @@ var Logic = {
                         isSpriteSheet: true,
                         x: this.sprite.x,  // set initial position of arrow to player position
                         y: this.sprite.y,
+                        angle: this.angle,
                         index: 0
                     }),
                     arrowSpeedX: deltaX,
