@@ -8,14 +8,14 @@ canvas.height = window.innerHeight;
 ctx.imageSmoothingEnabled = false;
 
 // test: remove later
-var mapWidth = 1600;
-var mapHeight = 1600;
+var mapWidth = 1280;
+var mapHeight = 1280;
 
 var Renderer = {
 
     // Images from our assets folder will go here
     Images: {
-        map1: 'assets/tileset_map1.png',
+        map1: 'assets/maps/tileset_map1.png',
         players: ['assets/players/player_blue.png',
                   'assets/players/player_black.png',
                   'assets/players/player_green.png',
@@ -31,96 +31,50 @@ var Renderer = {
             layer1: [
                 {
                     sprite: new Renderer.Sprite({
-                        image: '../../assets/map_layer1.png',
-                        width: 1600,
-                        height: 1600,
+                        image: '../../assets/maps/large_layer1.png',
+                        width: 1280,
+                        height: 1280,
                         isSpriteSheet: false,
                         x: 0,
                         y: 0
                     })
                 }
             ],
+			//layer1
+			
             layer2: [
                 {
                     sprite: new Renderer.Sprite({
-                        image: '../../assets/map_layer2.png',
-                        width: 1600,
-                        height: 1600,
+                        image: '../../assets/maps/large_layer2.png',
+                        width: 1280,
+                        height: 1280,
                         isSpriteSheet: false,
                         x: 0,
                         y: 0
                     })
                 }
             ],
-			//layer2: []
+			//layer2
+			
 			players: [],
-      thisPlayer: [],
+            thisPlayer: [],
             arrows: [],
+			names: [],
+            thisName: [],
+			
 			layer3: [
                 {
                     sprite: new Renderer.Sprite({
-                        image: '../../assets/map_layer3.png',
-                        width: 1600,
-                        height: 1600,
+                        image: '../../assets/maps/large_layer3.png',
+                        width: 1280,
+                        height: 1280,
                         isSpriteSheet: false,
                         x: 0,
                         y: 0
                     })
                 }
-            ],
-            //layer3: []
-			layer4: [
-                {
-                    sprite: new Renderer.Sprite({
-                        image: '../../assets/map_layer4.png',
-                        width: 1600,
-                        height: 1600,
-                        isSpriteSheet: false,
-                        x: 0,
-                        y: 0
-                    })
-                }
-            ],
-            //layer4: []
-			layer5: [
-                {
-                    sprite: new Renderer.Sprite({
-                        image: '../../assets/map_layer5.png',
-                        width: 1600,
-                        height: 1600,
-                        isSpriteSheet: false,
-                        x: 0,
-                        y: 0
-                    })
-                }
-            ],
-            //layer5: []
-			layer6: [
-                {
-                    sprite: new Renderer.Sprite({
-                        image: '../../assets/map_layer6.png',
-                        width: 1600,
-                        height: 1600,
-                        isSpriteSheet: false,
-                        x: 0,
-                        y: 0
-                    })
-                }
-            ],
-            //layer6: []
-			layer7: [
-                {
-                    sprite: new Renderer.Sprite({
-                        image: '../../assets/map_layer7.png',
-                        width: 1600,
-                        height: 1600,
-                        isSpriteSheet: false,
-                        x: 0,
-                        y: 0
-                    })
-                }
-            ],
-            //layer7: []
+            ]
+            //layer3
         }
 
         this.renderInOrder = function() {
@@ -128,9 +82,13 @@ var Renderer = {
             for(var key in this.order) {
                 if(this.order.hasOwnProperty(key)) {
                     for(var i = 0; i < this.order[key].length; i++) {
-                        this.order[key][i].sprite.render();
-                        // does not rotate arrow sprites... needs more work
-                        // if(this.order.key == 'arrows') this.order[key][i].sprite.render();
+                        if(key == 'names' || key == 'thisName') {
+                            ctx.font = '4pt Calibri';
+                            ctx.fillStyle = 'white';
+                            ctx.fillText(this.order[key][i].name, this.order[key][i].x, this.order[key][i].y);
+                        } else {
+                            this.order[key][i].sprite.render();
+                        }
                     }
                 }
             }
@@ -138,6 +96,8 @@ var Renderer = {
     },
 
     Camera: function(options) {
+
+        this.enabled = options.enabled;
 
         this.isClamped = {
             x: 0,
@@ -152,11 +112,14 @@ var Renderer = {
         }
         //updates game of camera positioning
         this.update = function() {
-          this.calculatePostition();
+            this.calculatePostition();
         }
         //calulate position of camera
         //bounding to the edges of the map being implemented
         this.calculatePostition = function(x,y) {
+            if(!this.enabled) {
+                return;
+            }
           //height and width buffer calculate the distance between the player and the edge of the canvas
           var widthBuffer = ((canvas.width/5)/2);
           var heightBuffer = ((canvas.height/5)/2);

@@ -22,8 +22,8 @@ function loadJSON(url, onsuccess) {
 
 
 ///////////////////////////////////////////////// SOUND FUNCTION
-var titleMusic = new sound("assets/TitleMusic2.wav");
-var gameMusic = new sound("assets/BackgroundMusicNoCrow.wav");
+var titleMusic = new sound("assets/music/TitleMusic2.wav");
+var gameMusic = new sound("assets/music/BackgroundMusicNoCrow.wav");
 
 function sound(src) {
     this.sound = document.createElement("audio");
@@ -78,17 +78,18 @@ var player = new Logic.character({
 	name: '',
 	id: '',
 	isInThisRoom: '',
+	isDead: false,
 	characterIndex: 0,
-  camera: new Renderer.Camera({
-  }),
-  // animator: new Animator.animator({}),
+	camera: new Renderer.Camera({
+		enabled: true
+	}),
 	sprite: new Renderer.Sprite({
 		image: Renderer.Images.players[0],
 		width: 15,
 		height: 16,
 		isSpriteSheet: true,
-		x: 0,
-		y: 0,
+		x: Math.floor((Math.random() * 1500) + 100),	// Hard-coded these values, CHANGEME
+		y: Math.floor((Math.random() * 1500) + 100),
 		index: 0,
 	}),
 	speed: 2,
@@ -98,24 +99,15 @@ var player = new Logic.character({
 	score: 0,
 });
 
+//sets camera position to (0,0) located at top left corner of the map
+//Eventually will set to the players random spawn position.
+player.camera.initialize();
+
 var leaderboard = new Logic.leaderboard({
 
 });
 
-// Map for debugging, remove later
-var debugMap = {
-	sprite: new Renderer.Sprite({
-		image: '../../assets/map_debug.png',
-		width: 619,
-		height: 620,
-		isSpriteSheet: false,
-		x: 0,
-		y: 0
-	})
-}
-
 window.onload = function() {
-	//loadJSON('/assets/TesterProper', gameLoop); //calls JSON
 
 	socket.on('JoinedRoom', function(identity) {
 		isTitlescreen = false;
@@ -133,10 +125,6 @@ window.onload = function() {
 		updatePlayers(playerData);
 	});
 
-	//sets camera position to (0,0) located at top left corner of the map
-  //Eventually will set to the players random spawn position.
-  player.camera.initialize();
-
 	socket.on('GetRoomArrowData', function(arrowData) {
 		//ctx.clearRect(-100, -100, canvas.width, canvas.height);
 		updateArrows(arrowData);
@@ -149,6 +137,7 @@ window.onload = function() {
 	})
 
 	socket.on('YouDied', function() {
+		player.die();
 		console.log('You died');
 	})
 
@@ -161,13 +150,19 @@ window.onload = function() {
 
 function updateThisPlayer() {
 	canvasScreen.order.thisPlayer = [];
+	canvasScreen.order.thisName = [];
 	canvasScreen.order.thisPlayer.push(player);
+	canvasScreen.order.thisName.push({
+		name: player.name,
+		x: player.sprite.x,
+		y: player.sprite.y
+	})
 }
 
 function updatePlayers(playerData) {
-	//debugMap.render();
-	//JsonMap.render(JsonMap.jsonMap);
+	
 	var players = [];
+	var names = [];
 	for(var i = 0; i < playerData.length; i++) {
 		var data = playerData[i];
 		if(data.sprite == undefined) { break; }
@@ -176,10 +171,13 @@ function updatePlayers(playerData) {
 			id: data.id,
 			isInThisRoom: data.isInThisRoom,
 			characterIndex: data.characterIndex,
+			camera: new Renderer.Camera({
+				enabled: data.camera.enabled
+			}),
 			sprite: new Renderer.Sprite({
 				image: Renderer.Images.players[data.characterIndex],
-				width: 15,
-				height: 16,
+				width: data.sprite.width,
+				height: data.sprite.height,
 				isSpriteSheet: true,
 				x: data.sprite.x,
 				y: data.sprite.y,
@@ -192,11 +190,18 @@ function updatePlayers(playerData) {
 			stamina: 100,
 			score: data.score,
 		});
+
 		//player.sprite.render();
 		if(data.id != globalClientId) {
 			players.push(player);
+			names.push({
+				name: data.name,
+				x: data.sprite.x,
+				y: data.sprite.y
+			});
 		}
 	}
+	canvasScreen.order.names = names;
 	canvasScreen.order.players = players;
 }
 
@@ -247,8 +252,8 @@ function gameLoop() { //this is the main game loop, i found a version of it in a
 			updateThisPlayer();
 			player.camera.calculatePostition(player.sprite.x, player.sprite.y); //sets camera to the position passed in here
 			canvasScreen.renderInOrder();
-			socket.emit('SendArrowData', data);
-		  	socket.emit('SendPlayerData', data); 		// Send current client's data to everyone, so they can update
+			socket.emit('SendArrowData', data);	
+		  socket.emit('SendPlayerData', data); 		// Send current client's data to everyone, so they can update
 			lastLoopRun = new Date().getTime();
 		}
 	}

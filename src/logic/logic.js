@@ -1,6 +1,38 @@
 var canvas = document.querySelector('canvas');
 var ctx = canvas.getContext("2d");
 
+
+///////////////////////////////////////////////// SOUND FUNCTION
+var arrowShot = new sound("assets/sounds/gunShot.wav");
+var arrowHit = new sound("assets/sounds/arrowHit.wav");
+
+function sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+    this.play = function(){
+        this.sound.play();
+    }
+    this.stop = function(){
+        this.sound.pause();
+    }
+} 
+
+
+function arrowHitSoundPlayer() {
+	arrowHit.play();
+}
+
+function arrowShotSoundPlayer() {
+	arrowShot.play();
+}
+
+/////////////////////////////////////////////////
+
+
 var socket = io();
 
 var staminaTimer = 0; //for setInterval of stamina
@@ -19,6 +51,8 @@ var Logic = {
     mousePositionFromPlayer: {},
 
     character: function(options) {
+        this.name = options.name;
+
         this.camera = options.camera;
         this.sprite = options.sprite;
 
@@ -28,6 +62,8 @@ var Logic = {
 
         this.maxStamina = 100;
         this.curStamina = this.maxStamina;
+
+        this.isDead = options.isDead;
 
         this.canDodge = true;
         this.canShoot = true;
@@ -41,12 +77,14 @@ var Logic = {
         this.origin = {x: 0, y: 0},
 
         this.update = function() {
-            this.move();
-            this.sprint();
-            this.dodge();
-            this.bound();
-            this.createArrow();
-            this.setOrigin();
+            if(!this.isDead) {
+                this.move();
+                this.sprint();
+                this.dodge();
+                this.bound();
+                this.createArrow();
+                this.setOrigin();
+            }
         }
         this.move = function() {
             //face right: index0 right movement: index1,index2
@@ -135,7 +173,11 @@ var Logic = {
 
             //creates arrow to shoot
 			if(Logic.mousePressed && this.canShoot && this.arrowCount > 0) {
-                //calculate direction to shoot arrow
+                
+				//shoot sound
+				arrowShotSoundPlayer();
+				
+				//calculate direction to shoot arrow
                 var deltaX = this.origin.x;
                 var deltaY = this.origin.y;
 
@@ -201,6 +243,43 @@ var Logic = {
             else if(this.camera.isClamped.y == 2) {
                 this.origin.y = (mapHeight - (canvas.height/5)) + (Logic.mousePositionFromPlayer.y - this.sprite.y) - 8;
             }
+        },
+        this.die = function() {
+            var _this = this;
+            var tempName = '';
+            var timer = 5;
+            var respawnTimer = setInterval(waitForRespawn, 1000);
+            var respawnNote = 'You died!';
+
+            this.camera.enabled = false;
+            this.isDead = true;
+            this.sprite.height = 0;
+            this.sprite.width = 0;
+            this.score = 0;
+
+            tempName = this.name;
+            this.name = respawnNote;
+
+            function waitForRespawn() {
+                if(timer == 0) {
+                    _this.respawn(tempName);
+                    clearInterval(respawnTimer);
+                } else {
+                    _this.name = 'Respawning in ' + timer;
+                    timer--;
+                }
+            }
+        },
+        this.respawn = function(tempName) {
+            this.sprite.height = 16;
+            this.sprite.width = 15;
+            this.camera.enabled = true;
+            this.isDead = false;
+            this.name = tempName;
+
+            // hard-coded the map-width/map-height. Change 1500 to mapWidth or mapHeight
+            this.sprite.x = Math.floor((Math.random() * 1500) + 100);
+            this.sprite.y = Math.floor((Math.random() * 1500) + 100);
         }
     },
 
@@ -246,16 +325,16 @@ var Logic = {
     },
 
     keyDownHandler: function(e) {
-        if(e.keyCode == Controls.rightKey) {
+        if(e.keyCode == Controls.rightKey || e.keyCode == Controls.rightKey2) {
             Logic.rightPressed = true;
         }
-        if(e.keyCode == Controls.leftKey) {
+        if(e.keyCode == Controls.leftKey || e.keyCode == Controls.leftKey2) {
             Logic.leftPressed = true;
         }
-        if(e.keyCode == Controls.upKey) {
+        if(e.keyCode == Controls.upKey || e.keyCode == Controls.upKey2) {
             Logic.upPressed = true;
         }
-        if(e.keyCode == Controls.downKey) {
+        if(e.keyCode == Controls.downKey || e.keyCode == Controls.downKey2) {
             Logic.downPressed = true;
         }
         if (e.keyCode == Controls.spaceKey) {
@@ -266,16 +345,16 @@ var Logic = {
         }
     },
     keyUpHandler: function(e) {
-        if(e.keyCode == Controls.rightKey) {
+        if(e.keyCode == Controls.rightKey || e.keyCode == Controls.rightKey2) {
             Logic.rightPressed = false;
         }
-        if(e.keyCode == Controls.leftKey) {
+        if(e.keyCode == Controls.leftKey || e.keyCode == Controls.leftKey2) {
             Logic.leftPressed = false;
         }
-        if(e.keyCode == Controls.upKey) {
+        if(e.keyCode == Controls.upKey || e.keyCode == Controls.upKey2) {
             Logic.upPressed = false;
         }
-        if(e.keyCode == Controls.downKey) {
+        if(e.keyCode == Controls.downKey || e.keyCode == Controls.downKey2) {
             Logic.downPressed = false;
         }
         if (e.keyCode == Controls.spaceKey) {
