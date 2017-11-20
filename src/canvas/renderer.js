@@ -8,14 +8,14 @@ canvas.height = window.innerHeight;
 ctx.imageSmoothingEnabled = false;
 
 // test: remove later
-var mapWidth = 1600;
-var mapHeight = 1600;
+var mapWidth = 1280;
+var mapHeight = 1280;
 
 var Renderer = {
 
     // Images from our assets folder will go here
     Images: {
-        map1: 'assets/tileset_map1.png',
+        map1: 'assets/maps/tileset_map1.png',
         players: ['assets/players/player_blue.png',
                   'assets/players/player_black.png',
                   'assets/players/player_green.png',
@@ -31,98 +31,50 @@ var Renderer = {
             layer1: [
                 { 
                     sprite: new Renderer.Sprite({
-                        image: '../../assets/map_layer1.png',
-                        width: 1600,
-                        height: 1600,
+                        image: '../../assets/maps/large_layer1.png',
+                        width: 1280,
+                        height: 1280,
                         isSpriteSheet: false,
                         x: 0,
                         y: 0
                     })
                 }
             ],
+			//layer1
+			
             layer2: [
                 { 
                     sprite: new Renderer.Sprite({
-                        image: '../../assets/map_layer2.png',
-                        width: 1600,
-                        height: 1600,
+                        image: '../../assets/maps/large_layer2.png',
+                        width: 1280,
+                        height: 1280,
                         isSpriteSheet: false,
                         x: 0,
                         y: 0
                     })
                 }
             ],
-			//layer2: []
+			//layer2
+			
 			players: [],
             thisPlayer: [],
             arrows: [],
+			names: [],
+            thisName: [],
+			
 			layer3: [
                 { 
                     sprite: new Renderer.Sprite({
-                        image: '../../assets/map_layer3.png',
-                        width: 1600,
-                        height: 1600,
+                        image: '../../assets/maps/large_layer3.png',
+                        width: 1280,
+                        height: 1280,
                         isSpriteSheet: false,
                         x: 0,
                         y: 0
                     })
                 }
-            ],
-            //layer3: []
-			layer4: [
-                { 
-                    sprite: new Renderer.Sprite({
-                        image: '../../assets/map_layer4.png',
-                        width: 1600,
-                        height: 1600,
-                        isSpriteSheet: false,
-                        x: 0,
-                        y: 0
-                    })
-                }
-            ],
-            //layer4: []
-			layer5: [
-                { 
-                    sprite: new Renderer.Sprite({
-                        image: '../../assets/map_layer5.png',
-                        width: 1600,
-                        height: 1600,
-                        isSpriteSheet: false,
-                        x: 0,
-                        y: 0
-                    })
-                }
-            ],
-            //layer5: []
-			layer6: [
-                { 
-                    sprite: new Renderer.Sprite({
-                        image: '../../assets/map_layer6.png',
-                        width: 1600,
-                        height: 1600,
-                        isSpriteSheet: false,
-                        x: 0,
-                        y: 0
-                    })
-                }
-            ],
-            //layer6: []
-			layer7: [
-                { 
-                    sprite: new Renderer.Sprite({
-                        image: '../../assets/map_layer7.png',
-                        width: 1600,
-                        height: 1600,
-                        isSpriteSheet: false,
-                        x: 0,
-                        y: 0
-                    })
-                }
-            ],
-            names: [],
-            thisName: []
-            //layer2: []
+            ]
+            //layer3
         }
 
         this.renderInOrder = function() {

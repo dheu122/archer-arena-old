@@ -22,8 +22,8 @@ function loadJSON(url, onsuccess) {
 
 
 ///////////////////////////////////////////////// SOUND FUNCTION
-var titleMusic = new sound("assets/TitleMusic2.wav");
-var gameMusic = new sound("assets/BackgroundMusicNoCrow.wav");
+var titleMusic = new sound("assets/music/TitleMusic2.wav");
+var gameMusic = new sound("assets/music/BackgroundMusicNoCrow.wav");
 
 function sound(src) {
     this.sound = document.createElement("audio");
@@ -107,20 +107,7 @@ var leaderboard = new Logic.leaderboard({
 	
 });
 
-// Map for debugging, remove later
-var debugMap = { 
-	sprite: new Renderer.Sprite({
-		image: '../../assets/map_debug.png',
-		width: 619,
-		height: 620,
-		isSpriteSheet: false,
-		x: 0,
-		y: 0
-	})
-}
-
 window.onload = function() {
-	//loadJSON('/assets/TesterProper', gameLoop); //calls JSON
 
 	socket.on('JoinedRoom', function(identity) {
 		isTitlescreen = false;
@@ -173,8 +160,7 @@ function updateThisPlayer() {
 }
 
 function updatePlayers(playerData) {
-	//debugMap.render();
-	//JsonMap.render(JsonMap.jsonMap);
+	
 	var players = [];
 	var names = [];
 	for(var i = 0; i < playerData.length; i++) {

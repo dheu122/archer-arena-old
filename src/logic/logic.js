@@ -1,6 +1,38 @@
 var canvas = document.querySelector('canvas');
 var ctx = canvas.getContext("2d");
 
+
+///////////////////////////////////////////////// SOUND FUNCTION
+var arrowShot = new sound("assets/sounds/gunShot.wav");
+var arrowHit = new sound("assets/sounds/arrowHit.wav");
+
+function sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+    this.play = function(){
+        this.sound.play();
+    }
+    this.stop = function(){
+        this.sound.pause();
+    }
+} 
+
+
+function arrowHitSoundPlayer() {
+	arrowHit.play();
+}
+
+function arrowShotSoundPlayer() {
+	arrowShot.play();
+}
+
+/////////////////////////////////////////////////
+
+
 var socket = io();
 
 var staminaTimer = 0; //for setInterval of stamina
@@ -141,7 +173,11 @@ var Logic = {
 
             //creates arrow to shoot
 			if(Logic.mousePressed && this.canShoot && this.arrowCount > 0) {
-                //calculate direction to shoot arrow
+                
+				//shoot sound
+				arrowShotSoundPlayer();
+				
+				//calculate direction to shoot arrow
                 var deltaX = this.origin.x;
                 var deltaY = this.origin.y;
 
