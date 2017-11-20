@@ -38,7 +38,7 @@ function sound(src) {
     this.stop = function(){
         this.sound.pause();
     }
-} 
+}
 
 var isTitlescreen = true;
 
@@ -50,19 +50,19 @@ function gameMusicPlayer() {
 function titleMusicPlayer() {
 	titleMusic.play();
 }
-	
-	
+
+
 function donePlaying() { //checks if the music has finished playing, then if true it plays it again
 
 	if (isTitlescreen == true) {
 		if (titleMusic.paused = true) {
-		titleMusicPlayer(); 
+		titleMusicPlayer();
 		}
 	}
 	else if (isTitlescreen == false) {
-		
+
 			titleMusic.stop();
-			
+
 			if (gameMusic.paused = true) {
 				gameMusicPlayer();
 			}
@@ -104,7 +104,7 @@ var player = new Logic.character({
 player.camera.initialize();
 
 var leaderboard = new Logic.leaderboard({
-	
+
 });
 
 window.onload = function() {
@@ -181,6 +181,7 @@ function updatePlayers(playerData) {
 				isSpriteSheet: true,
 				x: data.sprite.x,
 				y: data.sprite.y,
+        angle: data.sprite.angle,
 				index: data.sprite.index
 			}),
 			speed: 2,
@@ -216,15 +217,16 @@ function updateArrows(arrowData) {
 				isSpriteSheet: true,
 				x: data.sprite.x,
 				y: data.sprite.y,
+        angle: data.angle,
 				index: data.sprite.index
 			}),
-			
+
 			id: data.id,
 			arrowSpeedX: data.arrowSpeedX,
-			arrowSpeedY: data.arrowSpeedY,   
+			arrowSpeedY: data.arrowSpeedY,
 			angle: data.angle,
 			belongsTo: data.belongsTo,
-			isInThisRoom: data.isInThisRoom, 
+			isInThisRoom: data.isInThisRoom,
 			lifetime: data.lifetime,
 		});
 		//arrow.sprite.render();
