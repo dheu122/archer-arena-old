@@ -67,7 +67,7 @@ module.exports = {
                     // Is the arrow we are looking for.
                     var arrow = arrows[j];
                     arrow.lifetime--;
-                    if(arrow.lifetime <= 0 || (arrow.sprite.x < 20) || (arrow.sprite.x > 1260) || (arrow.sprite.y < 20) || (arrow.sprite.y > 1260))  {
+                    if(arrow.lifetime <= 0 || (arrow.sprite.x < 0) || (arrow.sprite.x > 1260) || (arrow.sprite.y < 0) || (arrow.sprite.y > 1260))  {
                         var arrowPosition = {
                             x: arrowsInRoom[i].sprite.x,
                             y: arrowsInRoom[i].sprite.y

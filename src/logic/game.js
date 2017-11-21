@@ -88,8 +88,8 @@ var player = new Logic.character({
 		width: 15,
 		height: 16,
 		isSpriteSheet: true,
-		x: Math.floor((Math.random() * 1500) + 100),	// Hard-coded these values, CHANGEME
-		y: Math.floor((Math.random() * 1500) + 100),
+		x: Math.floor((Math.random() * 1000) + 100),	// Hard-coded these values, CHANGEME
+		y: Math.floor((Math.random() * 1000) + 100),
 		index: 0,
 	}),
 	speed: 2,
@@ -153,6 +153,10 @@ window.onload = function() {
 	socket.on('AddArrowCount', function() {
 			player.arrowCount++;
 	})
+
+	socket.on('Disconnected', function() {
+		UI.disconnected();
+	});
 
 	gameLoop();
 }
