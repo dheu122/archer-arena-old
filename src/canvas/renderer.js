@@ -8,14 +8,14 @@ canvas.height = window.innerHeight;
 ctx.imageSmoothingEnabled = false;
 
 // test: remove later
-var mapWidth = 1600;
-var mapHeight = 1600;
+var mapWidth = 1280;
+var mapHeight = 1280;
 
 var Renderer = {
 
     // Images from our assets folder will go here
     Images: {
-        map1: 'assets/tileset_map1.png',
+        map1: 'assets/maps/tileset_map1.png',
         players: ['assets/players/player_blue.png',
                   'assets/players/player_black.png',
                   'assets/players/player_green.png',
@@ -29,101 +29,51 @@ var Renderer = {
 
         this.order = {
             layer1: [
-                { 
+                {
                     sprite: new Renderer.Sprite({
-                        image: '../../assets/map_layer1.png',
-                        width: 1600,
-                        height: 1600,
+                        image: '../../assets/maps/large_layer1.png',
+                        width: 1280,
+                        height: 1280,
                         isSpriteSheet: false,
                         x: 0,
                         y: 0
                     })
                 }
             ],
+			//layer1
+			
             layer2: [
-                { 
+                {
                     sprite: new Renderer.Sprite({
-                        image: '../../assets/map_layer2.png',
-                        width: 1600,
-                        height: 1600,
+                        image: '../../assets/maps/large_layer2.png',
+                        width: 1280,
+                        height: 1280,
                         isSpriteSheet: false,
                         x: 0,
                         y: 0
                     })
                 }
             ],
-            //layer2: []
             pickups: [],
 			players: [],
             thisPlayer: [],
             arrows: [],
+			names: [],
+            thisName: [],
+			
 			layer3: [
-                { 
+                {
                     sprite: new Renderer.Sprite({
-                        image: '../../assets/map_layer3.png',
-                        width: 1600,
-                        height: 1600,
+                        image: '../../assets/maps/large_layer3.png',
+                        width: 1280,
+                        height: 1280,
                         isSpriteSheet: false,
                         x: 0,
                         y: 0
                     })
                 }
-            ],
-            //layer3: []
-			layer4: [
-                { 
-                    sprite: new Renderer.Sprite({
-                        image: '../../assets/map_layer4.png',
-                        width: 1600,
-                        height: 1600,
-                        isSpriteSheet: false,
-                        x: 0,
-                        y: 0
-                    })
-                }
-            ],
-            //layer4: []
-			layer5: [
-                { 
-                    sprite: new Renderer.Sprite({
-                        image: '../../assets/map_layer5.png',
-                        width: 1600,
-                        height: 1600,
-                        isSpriteSheet: false,
-                        x: 0,
-                        y: 0
-                    })
-                }
-            ],
-            //layer5: []
-			layer6: [
-                { 
-                    sprite: new Renderer.Sprite({
-                        image: '../../assets/map_layer6.png',
-                        width: 1600,
-                        height: 1600,
-                        isSpriteSheet: false,
-                        x: 0,
-                        y: 0
-                    })
-                }
-            ],
-            //layer6: []
-			layer7: [
-                { 
-                    sprite: new Renderer.Sprite({
-                        image: '../../assets/map_layer7.png',
-                        width: 1600,
-                        height: 1600,
-                        isSpriteSheet: false,
-                        x: 0,
-                        y: 0
-                    })
-                }
-            ],
-            names: [],
-            thisName: []
-            //layer2: []
+            ]
+            //layer3
         }
 
         this.renderInOrder = function() {
@@ -157,8 +107,6 @@ var Renderer = {
           //initialize camera position to player
           //last two variables are the postion initilaization
           //0,0 is the top left corner of the map
-          //player position currently hardcoded. will set to
-          //random spawn position of player at final product
           ctx.setTransform(5, 0, 0, 5, 0, 0);
         }
         //updates game of camera positioning
@@ -187,21 +135,21 @@ var Renderer = {
           }
 
           this.setIsClamped = function(x, xMin, xMax, y, yMin, yMax) {
-            if(x > xMin && x < xMax) 
+            if(x > xMin && x < xMax)
                 this.isClamped.x = 0;   // Is not clamped
-            else if(x < xMin)  
+            else if(x < xMin)
                 this.isClamped.x = 1;   // Is at left
-            else if(x > xMax) 
+            else if(x > xMax)
                 this.isClamped.x = 2;   // Is at right
 
-            if(y > yMin && y < yMax) 
+            if(y > yMin && y < yMax)
                 this.isClamped.y = 0;   // Is not clamped
-            else if(y < yMin) 
+            else if(y < yMin)
                 this.isClamped.y = 1;   // Is at top
-            else if(y > yMax) 
+            else if(y > yMax)
                 this.isClamped.y = 2;   // Is at bottom
           }
-          
+
             //sets position of camera to passed in values (clamp returns the correct value to pass in);
             this.setIsClamped(x, xMin, xMax, y, yMin, yMax);
             this.setPosition(this.clamp(x, xMin, xMax),this.clamp(y, yMin, yMax));
@@ -222,6 +170,7 @@ var Renderer = {
         this.image.src = options.image;
         this.x = options.x;
         this.y = options.y;
+        this.angle = options.angle;
 
         this.isSpriteSheet = options.isSpriteSheet;
         this.width = options.width;
@@ -262,7 +211,13 @@ var Renderer = {
             }
         }
 
-        //TODO: get animation to reset after done animating
+        this.rotation = function(){
+          ctx.clearRect(0, 0, this.width, this.height); //clears the sprite image
+          ctx.translate(this.width/2, this.height/2); //moves rotation point to center of image
+          ctx.rotate(this.angle); //rotates the canvas by the angle provided
+          ctx.translate(-this.width/2, -this.width/2); //moves rotation point back to top left corner of the image
+        }
+
         this.animate = function(startIndex, endIndex, animateSpeed, animateType) {
             if(!this.isSpriteSheet) {
                 console.log("You cannot animate a single sprite, set isSpriteSheet to true");
