@@ -148,6 +148,7 @@ io.on('connection', function(socket) {
         }
 
         console.log('Connection id: ' + socket.id + ' has disconnected from the server');
+        UI.disconnected();
     })
 });
 
