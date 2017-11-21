@@ -53,7 +53,7 @@ io.on('connection', function(socket) {
 
     socket.on('SendPlayerData', function(data) {
         player.updatePlayer(data.playerData, socket.id, data.roomId);
-
+        /*
         var players = player.getPlayers();
         var playerIds = room.getPlayersInRoom(data.roomId); // Get the player ids from the room the player is in.
         var playersInRoom = [];
@@ -73,6 +73,7 @@ io.on('connection', function(socket) {
         // Using the player id, get their information and put that in an array.
 
         io.sockets.in(data.roomId).emit('GetRoomPlayerData', playersInRoom);
+        */
     })
 
     socket.on('AddArrowData', function(data) {
@@ -150,5 +151,44 @@ io.on('connection', function(socket) {
         console.log('Connection id: ' + socket.id + ' has disconnected from the server');
         socket.emit('Disconnected');
     })
+
 });
+
+setInterval(() => {
+    var rooms = room.getRooms();
+    for(var i = 0; i < rooms.length; i++) {
+        var roomId = rooms[i].roomId;
+
+        // Update Players
+        var players = player.getPlayers();
+        var playerIds = room.getPlayersInRoom(roomId); // Get the player ids from the room the player is in.
+        var playersInRoom = [];
+
+        if(!playerIds) {
+            return;
+        }
+
+        for(var i = 0; i < playerIds.length; i++) {
+            for(var j = 0; j < players.length; j++) {
+                if(playerIds[i] == players[j].id) {
+                    playersInRoom.push(players[i]);
+                    break;
+                }
+            }
+        }
+
+        // Update Arrows
+        var arrowIds = room.getArrowsInRoom(roomId);
+        var arrowsInRoom = [];
+
+        arrowsInRoom = arrow.updateAllArrowsInRoom(arrowIds, roomId);
+
+        // Update Pickups
+        var pickupObjs = room.getPickupsInRoom(roomId);
+
+        io.sockets.in(roomId).emit('GetRoomPlayerData', playersInRoom);
+        io.sockets.in(roomId).emit('GetRoomArrowData', arrowsInRoom);
+        io.sockets.in(roomId).emit('GetRoomPickupData', pickupObjs);
+    }
+}, 1000 / 60);
 
