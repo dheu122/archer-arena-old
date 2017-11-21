@@ -182,7 +182,7 @@ var Logic = {
                 var deltaY = this.origin.y;
 
                 var speed = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
-                var maxSpeed = 1;
+                var maxSpeed = 3;
 
                 var angle = Math.atan2(Logic.canvasMousePosition.x - (canvas.width / 2),-(Logic.canvasMousePosition.y - (canvas.height / 2))) * (180/Math.PI);
 
@@ -201,7 +201,7 @@ var Logic = {
                     belongsTo: globalClientId,
                     isInThisRoom: globalRoomId,
                     angle: angle,
-                    lifetime: 150,
+                    lifetime: 100,
 					sprite: new Renderer.Sprite({
                         image: Renderer.Images.arrow,
                         width: 16,
