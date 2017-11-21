@@ -112,18 +112,20 @@ var Logic = {
             //sprint while draining stamina but cannot shoot
             if(Logic.shiftPressed) {
                 var i = this.curStamina;
-                while (i >= 0) {
+                if (i >= 0) {
                     if (this.speed > this.maxSpeed) {
                         this.speed = this.maxSpeed;
                     }
                     else {
-                    Logic.mousePressed = false; //cannot shoot
-                    this.speed += 0.01;
-                    this.curStamina = i;
-                    i--;
-                        }
+                        Logic.mousePressed = false; //cannot shoot
+                        this.speed += 0.01;
+                        i--;
+                        this.curStamina = i;
                     }
+                } else {
+                    this.speed = this.minSpeed;
                 }
+            }
                 //otherwise recharge stamina to maximum value
             else if(Logic.shiftPressed == false && Logic.spacePressed == false && this.curStamina <= this.maxStamina) {
                 var i = this.curStamina;
