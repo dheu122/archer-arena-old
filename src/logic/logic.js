@@ -248,7 +248,7 @@ var Logic = {
         },
         this.die = function() {
             var _this = this;
-            var tempName = '';
+            //var tempName = '';
             var timer = 5;
             var respawnTimer = setInterval(waitForRespawn, 1000);
             var respawnNote = 'You died!';
@@ -259,13 +259,13 @@ var Logic = {
             this.sprite.width = 0;
             this.score = 0;
 
-            tempName = this.name;
+            //tempName = this.name;
             this.name = respawnNote;
 
             function waitForRespawn() {
                 if(timer == 0) {
-                    _this.respawn(tempName);
-                    this.name = tempName;
+                    _this.respawn();
+                    //this.name = tempName;
                     clearInterval(respawnTimer);
                 } else {
                     _this.name = 'Respawning in ' + timer;
@@ -273,13 +273,13 @@ var Logic = {
                 }
             }
         },
-        this.respawn = function(tempName) {
+        this.respawn = function(/*tempName*/) {
             this.sprite.height = 16;
             this.sprite.width = 15;
             this.camera.enabled = true;
             this.isDead = false;
             this.arrowCount = 1;
-            this.name = tempName;
+            //this.name = tempName;
 
             // hard-coded the map-width/map-height. Change 1500 to mapWidth or mapHeight
             this.sprite.x = Math.floor((Math.random() * 1500) + 100);

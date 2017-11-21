@@ -5,6 +5,7 @@ var socket = io();
 // which players it will associate with
 var globalRoomId;
 var globalClientId;
+var globalClientName;
 
 ///////////////////////////////////////////////// Function that loads the map .json file
 
@@ -113,6 +114,7 @@ window.onload = function() {
 		isTitlescreen = false;
 		globalRoomId = identity.roomId;
 		globalClientId = identity.id;
+		globalClientName = identity.name;
 		player.characterIndex = identity.characterIndex;
 		player.isInThisRoom = identity.roomId;
 		player.id = identity.id;
@@ -162,6 +164,10 @@ window.onload = function() {
 }
 
 function updateThisPlayer() {
+	if(player.name != globalClientName && !player.isDead) {
+		player.name = globalClientName;
+	}
+
 	canvasScreen.order.thisPlayer = [];
 	canvasScreen.order.thisName = [];
 	canvasScreen.order.thisPlayer.push(player);
@@ -206,6 +212,7 @@ function updatePlayers(playerData) {
 			id: data.id,
 			isInThisRoom: data.isInThisRoom,
 			characterIndex: data.characterIndex,
+			isDead: data.isDead,
 			camera: new Renderer.Camera({
 				enabled: data.camera.enabled
 			}),
@@ -229,11 +236,13 @@ function updatePlayers(playerData) {
 		//player.sprite.render();
 		if(data.id != globalClientId) {
 			players.push(player);
-			names.push({
-				name: data.name,
-				x: data.sprite.x,
-				y: data.sprite.y
-			});
+			if(!player.isDead) {
+				names.push({
+					name: data.name,
+					x: data.sprite.x,
+					y: data.sprite.y
+				});
+			}
 		}
 	}
 	canvasScreen.order.names = names;
