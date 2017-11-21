@@ -152,43 +152,66 @@ io.on('connection', function(socket) {
         socket.emit('Disconnected');
     })
 
-});
-
-setInterval(() => {
-    var rooms = room.getRooms();
-    for(var i = 0; i < rooms.length; i++) {
-        var roomId = rooms[i].roomId;
-
-        // Update Players
-        var players = player.getPlayers();
-        var playerIds = room.getPlayersInRoom(roomId); // Get the player ids from the room the player is in.
-        var playersInRoom = [];
-
-        if(!playerIds) {
-            return;
-        }
-
-        for(var i = 0; i < playerIds.length; i++) {
-            for(var j = 0; j < players.length; j++) {
-                if(playerIds[i] == players[j].id) {
-                    playersInRoom.push(players[i]);
-                    break;
+    setInterval(() => {
+        var rooms = room.getRooms();
+        for(var i = 0; i < rooms.length; i++) {
+            var roomId = rooms[i].roomId;
+    
+            // Update Players
+            var players = player.getPlayers();
+            var playerIds = room.getPlayersInRoom(roomId); // Get the player ids from the room the player is in.
+            var playersInRoom = [];
+    
+            if(!playerIds) {
+                return;
+            }
+    
+            for(var i = 0; i < playerIds.length; i++) {
+                for(var j = 0; j < players.length; j++) {
+                    if(playerIds[i] == players[j].id) {
+                        playersInRoom.push(players[i]);
+                        break;
+                    }
                 }
             }
+    
+            // Update Arrows
+            var arrowIds = room.getArrowsInRoom(roomId);
+            var arrowsInRoom = [];
+    
+            arrowsInRoom = arrow.updateAllArrowsInRoom(arrowIds, roomId);
+    
+            // Update Pickups
+            var pickupObjs = room.getPickupsInRoom(roomId);
+    
+            var arrows = arrow.getArrows();
+            var c = collision.returnCollided(roomId, players, arrows);
+    
+            if(c != undefined) {
+                if(players[player.getPlayerIndexById(c.player.id)].isDead) {return;}
+                if(c.arrow != undefined) {
+                    var collisionData = {
+                        playerWhoDied: players[player.getPlayerIndexById(c.player.id)],
+                        playerWhoKilled: players[player.getPlayerIndexById(c.arrow.belongsTo)]
+                    }
+                    
+                    socket.broadcast.to(collisionData.playerWhoDied.id).emit('YouDied');
+                    socket.broadcast.to(collisionData.playerWhoKilled.id).emit('YouKilled');
+                    io.sockets.in(roomId).emit('PlayerWasKilled', collisionData);
+                } else {
+                    if(socket.id == c.player.id) {
+                        socket.emit('AddArrowCount');
+                    } else {
+                        socket.broadcast.to(c.player.id).emit('AddArrowCount');
+                    }
+                }
+            }
+    
+            io.sockets.in(roomId).emit('GetRoomPlayerData', playersInRoom);
+            io.sockets.in(roomId).emit('GetRoomArrowData', arrowsInRoom);
+            io.sockets.in(roomId).emit('GetRoomPickupData', pickupObjs);
         }
+    }, 1000 / 60);
 
-        // Update Arrows
-        var arrowIds = room.getArrowsInRoom(roomId);
-        var arrowsInRoom = [];
-
-        arrowsInRoom = arrow.updateAllArrowsInRoom(arrowIds, roomId);
-
-        // Update Pickups
-        var pickupObjs = room.getPickupsInRoom(roomId);
-
-        io.sockets.in(roomId).emit('GetRoomPlayerData', playersInRoom);
-        io.sockets.in(roomId).emit('GetRoomArrowData', arrowsInRoom);
-        io.sockets.in(roomId).emit('GetRoomPickupData', pickupObjs);
-    }
-}, 1000 / 60);
+});
 
