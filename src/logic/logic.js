@@ -1,7 +1,41 @@
 var canvas = document.querySelector('canvas');
 var ctx = canvas.getContext("2d");
 
+
+///////////////////////////////////////////////// SOUND FUNCTION
+var arrowShot = new sound("assets/sounds/gunShot.wav");
+var arrowHit = new sound("assets/sounds/arrowHit.wav");
+
+function sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+    this.play = function(){
+        this.sound.play();
+    }
+    this.stop = function(){
+        this.sound.pause();
+    }
+} 
+
+
+function arrowHitSoundPlayer() {
+	arrowHit.play();
+}
+
+function arrowShotSoundPlayer() {
+	arrowShot.play();
+}
+
+/////////////////////////////////////////////////
+
+
 var socket = io();
+
+var staminaTimer = 0; //for setInterval of stamina
 
 var Logic = {
 
@@ -17,6 +51,8 @@ var Logic = {
     mousePositionFromPlayer: {},
 
     character: function(options) {
+        this.name = options.name;
+
         this.camera = options.camera;
         this.sprite = options.sprite;
 
@@ -27,39 +63,29 @@ var Logic = {
         this.maxStamina = 100;
         this.curStamina = this.maxStamina;
 
+        this.isDead = options.isDead;
+
         this.canDodge = true;
         this.canShoot = true;
-        
+
         this.curArrowTimer = 0;
         this.arrowTimer = 60;
         this.arrowCount = 100;
 
+        this.score = 0;
+
         this.origin = {x: 0, y: 0},
 
         this.update = function() {
-            this.move();
-            this.sprint();
-            this.dodge();
-            this.bound();
-            this.createArrow();
-            this.setOrigin();
-        }
-        /*this.firearrow function(){
-            var arrowX = charPosX + 10;
-            var arrowY = charPosY + 10;
-            if (mousePressed == true) {
-                this.sprite.x = arrowX;
-                this.sprite.y = arrowY;
-                render(arrow, mousePosX, mousePosY);
-
-                this.arrow = arrowSpeed;
-
-                if (this.arrow > canvas.edge || this.arrow > sprite.edge) {
-                    mousePressed = false;
-                    break;
-                }
+            if(!this.isDead) {
+                this.move();
+                this.sprint();
+                this.dodge();
+                this.bound();
+                this.createArrow();
+                this.setOrigin();
             }
-        }*/
+        }
         this.move = function() {
             //face right: index0 right movement: index1,index2
             if(Logic.rightPressed) {
@@ -91,20 +117,21 @@ var Logic = {
                         this.speed = this.maxSpeed;
                     }
                     else {
-                    Logic.mousePressed = false; //may be buggy
+                    Logic.mousePressed = false; //cannot shoot
                     this.speed += 0.01;
                     this.curStamina = i;
                     i--;
                         }
                     }
                 }
-                //otherwise recharge stamina to max 100
-            else if(Logic.shiftPressed == false && Logic.spacePressed == false && this.curStamina <= this.maxStamina) { //BUG: cannot move until stamina = 100
+                //otherwise recharge stamina to maximum value
+            else if(Logic.shiftPressed == false && Logic.spacePressed == false && this.curStamina <= this.maxStamina) {
                 var i = this.curStamina;
-                this.speed = this.minSpeed; //make this decelerate?
-                while (i <= this.maxStamina) {
-                    i++; //make this slower
+                this.speed = this.minSpeed;
+                if (i <= this.maxStamina && staminaTimer > 1) { //staminaTimer to 1 10th of a second
+                    i++;
                     this.curStamina = i;
+                    staminaTimer = 0; //reinitialize staminaTimer
                 }
             }
         }
@@ -146,7 +173,11 @@ var Logic = {
 
             //creates arrow to shoot
 			if(Logic.mousePressed && this.canShoot && this.arrowCount > 0) {
-                //calculate direction to shoot arrow
+                
+				//shoot sound
+				arrowShotSoundPlayer();
+				
+				//calculate direction to shoot arrow
                 var deltaX = this.origin.x;
                 var deltaY = this.origin.y;
 
@@ -157,7 +188,7 @@ var Logic = {
 
                 var timestamp = new Date().getUTCMilliseconds(); //time in milliseconds
                 var idString = Math.random().toString(36).substring(7); //random 5 letter string
-                
+
                 if(speed > maxSpeed) {
                     var speedRatio = speed / maxSpeed;
                     deltaX = deltaX / speedRatio;
@@ -178,13 +209,14 @@ var Logic = {
                         isSpriteSheet: true,
                         x: this.sprite.x,  // set initial position of arrow to player position
                         y: this.sprite.y,
+                        angle: this.angle,
                         index: 0
                     }),
                     arrowSpeedX: deltaX,
 				    arrowSpeedY: deltaY
 				});
-				
-                socket.emit('AddArrowData', arrow); //send arrow object to server 
+
+                socket.emit('AddArrowData', arrow); //send arrow object to server
                 this.arrowCount--;
                 this.canShoot = false;
                 this.curArrowTimer = 0;
@@ -194,7 +226,7 @@ var Logic = {
 
             if(this.camera.isClamped.x == 0) {
                 this.origin.x = (this.sprite.x - ((canvas.width/5)/2)) + (Logic.mousePositionFromPlayer.x - this.sprite.x) - 8;
-            } 
+            }
             else if(this.camera.isClamped.x == 1) {
                 this.origin.x = Logic.mousePositionFromPlayer.x - this.sprite.x - 8;
             }
@@ -204,13 +236,50 @@ var Logic = {
 
             if(this.camera.isClamped.y == 0) {
                 this.origin.y = (this.sprite.y - ((canvas.height/5)/2)) + (Logic.mousePositionFromPlayer.y - this.sprite.y) - 8;
-            } 
+            }
             else if(this.camera.isClamped.y == 1) {
                 this.origin.y = Logic.mousePositionFromPlayer.y - this.sprite.y - 8;
             }
             else if(this.camera.isClamped.y == 2) {
                 this.origin.y = (mapHeight - (canvas.height/5)) + (Logic.mousePositionFromPlayer.y - this.sprite.y) - 8;
             }
+        },
+        this.die = function() {
+            var _this = this;
+            var tempName = '';
+            var timer = 5;
+            var respawnTimer = setInterval(waitForRespawn, 1000);
+            var respawnNote = 'You died!';
+
+            this.camera.enabled = false;
+            this.isDead = true;
+            this.sprite.height = 0;
+            this.sprite.width = 0;
+            this.score = 0;
+
+            tempName = this.name;
+            this.name = respawnNote;
+
+            function waitForRespawn() {
+                if(timer == 0) {
+                    _this.respawn(tempName);
+                    clearInterval(respawnTimer);
+                } else {
+                    _this.name = 'Respawning in ' + timer;
+                    timer--;
+                }
+            }
+        },
+        this.respawn = function(tempName) {
+            this.sprite.height = 16;
+            this.sprite.width = 15;
+            this.camera.enabled = true;
+            this.isDead = false;
+            this.name = tempName;
+
+            // hard-coded the map-width/map-height. Change 1500 to mapWidth or mapHeight
+            this.sprite.x = Math.floor((Math.random() * 1500) + 100);
+            this.sprite.y = Math.floor((Math.random() * 1500) + 100);
         }
     },
 
@@ -218,28 +287,54 @@ var Logic = {
         this.sprite = options.sprite;
 
         this.id = options.id;
-		
+
         this.arrowSpeedX = options.arrowSpeedX;
-        this.arrowSpeedY = options.arrowSpeedY;   
+        this.arrowSpeedY = options.arrowSpeedY;
         this.angle = options.angle;
-		
+
 		this.belongsTo = options.belongsTo; //which player the arrow belongs to
         this.isInThisRoom = options.isInThisRoom; //which room the arrow is in
-        
+
         this.lifetime = options.lifetime;
     },
 
+    leaderboard: function(options) {
+        this.playerList = [];
+        this.isFirst = ''; //check if player is first place
+        this.isHit = ''; //check if player is hit by arrow
+        this.hit = ''; //check if player hit another player with arrow
+
+        this.update = function() {
+          //this.addPlayer();
+          this.playerList = this.sortScore(this.playerList, 'score');
+          //console.log(this.playerList);
+        }
+        this.addPlayer = function(player) { //update leaderboard with playerList array when player joins or leaves
+            this.playerList.push({
+                playerName: player.name,
+                playerId: player.id,
+                score: 0,
+            });
+        }
+        this.sortScore = function (array, key) { //sort scores of players and ranks them on leaderboard from highest (1st) to lowest
+            return array.sort(function(a, b) {
+                var x = a[key]; var y = b[key];
+                return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+            });
+        }
+    },
+
     keyDownHandler: function(e) {
-        if(e.keyCode == Controls.rightKey) {
+        if(e.keyCode == Controls.rightKey || e.keyCode == Controls.rightKey2) {
             Logic.rightPressed = true;
         }
-        if(e.keyCode == Controls.leftKey) {
+        if(e.keyCode == Controls.leftKey || e.keyCode == Controls.leftKey2) {
             Logic.leftPressed = true;
         }
-        if(e.keyCode == Controls.upKey) {
+        if(e.keyCode == Controls.upKey || e.keyCode == Controls.upKey2) {
             Logic.upPressed = true;
         }
-        if(e.keyCode == Controls.downKey) {
+        if(e.keyCode == Controls.downKey || e.keyCode == Controls.downKey2) {
             Logic.downPressed = true;
         }
         if (e.keyCode == Controls.spaceKey) {
@@ -250,16 +345,16 @@ var Logic = {
         }
     },
     keyUpHandler: function(e) {
-        if(e.keyCode == Controls.rightKey) {
+        if(e.keyCode == Controls.rightKey || e.keyCode == Controls.rightKey2) {
             Logic.rightPressed = false;
         }
-        if(e.keyCode == Controls.leftKey) {
+        if(e.keyCode == Controls.leftKey || e.keyCode == Controls.leftKey2) {
             Logic.leftPressed = false;
         }
-        if(e.keyCode == Controls.upKey) {
+        if(e.keyCode == Controls.upKey || e.keyCode == Controls.upKey2) {
             Logic.upPressed = false;
         }
-        if(e.keyCode == Controls.downKey) {
+        if(e.keyCode == Controls.downKey || e.keyCode == Controls.downKey2) {
             Logic.downPressed = false;
         }
         if (e.keyCode == Controls.spaceKey) {
@@ -282,7 +377,7 @@ var Logic = {
     getMousePosition: function (e) {
         var mouseX = e.clientX - ctx.canvas.offsetLeft;
         var mouseY = e.clientY - ctx.canvas.offsetTop;
-        
+
         var canvasMousePos = {
             x: e.clientX,
             y: e.clientY
@@ -296,6 +391,17 @@ var Logic = {
         Logic.mousePositionFromPlayer = mousePositionFromPlayer;
         Logic.canvasMousePosition = canvasMousePos;
     },
+    collision: function (object1, object2) {
+        if (object1.x < object2.x + object2.width &&
+        object1.x + object1.width > object2.x &&
+        object1.y < object2.y + object2.height &&
+        object1.y + object1.height > object2.y) {
+            canCollide = true;
+        }
+        else {
+            canCollide = false;
+        }
+    },
 }
 
 
@@ -305,7 +411,8 @@ document.addEventListener("keyup", Logic.keyUpHandler, false);
 
 document.addEventListener("mousedown", Logic.mouseDownHandler, false); //mouse click
 document.addEventListener("mouseup", Logic.mouseUpHandler, false);
-
 document.addEventListener("mousemove", Logic.getMousePosition, false); //mouse movement
 
-//document.addEventListener("spritemove", Logic.move, false);
+setInterval(function(){
+    staminaTimer++; //increment the stamina
+}, 1000/10); //10 times per 1 second (1000 is in milliseconds)

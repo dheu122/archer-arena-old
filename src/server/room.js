@@ -108,5 +108,15 @@ module.exports = {
                 room.playersInRoom.splice(i, 1);
             }
         }
+    },
+
+    removeArrowFromRoom: function(roomId, arrowId) {
+        var roomIndex = this.getRoomIndex(roomId);
+        var room = rooms[roomIndex];
+        for(var i = 0; i < room.arrowsInRoom.length; i++) {
+            if(arrowId == room.arrowsInRoom[i].id) {
+                room.arrowsInRoom.splice(i, 1);
+            }
+        }
     }
 }
