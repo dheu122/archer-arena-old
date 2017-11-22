@@ -4,6 +4,9 @@ canvas.height = window.innerHeight;
 
 var ctx = canvas.getContext('2d');
 
+ctx.imageSmoothingEnabled = false;
+
+
 // Drawing a rectangle
 // ctx.fillRect(x,y,width,height);
 // ctx.fillStyle = "rgba(255, 0 ,0 , 0.2)"; // changes the color of the fill
@@ -34,11 +37,42 @@ window.addEventListener('resize', function(){
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   initRain();
+  // initCircle();
+  // initArrows();
 })
+
+//Arrow object
+//_______________________________________
+function Arrow(dx,dy,dWidth,dHeight,sx,sy,sWidth,sHeight,angle){
+  this.dx = dx;
+  this.dy = dy;
+  this.dWidth = dWidth;
+  this.dHeight = dHeight
+  this.sx = sx;
+  this.sy = sy;
+  this.sWidth = sWidth;
+  this.sHeight = sHeight;
+  this.image = new Image();
+  this.image.src = 'C:\\Users\\Matthew\\archer-arena\\assets\\arrow_sprite.png';
+  this.angle = angle;
+
+  this.update = function(){
+    this.draw();
+    ctx.setTranform(5,0,0,5,0,0);
+  }
+
+  this.image.onload = function(){
+    this.update();
+  }
+
+  this.draw = function(){
+    ctx.drawImage(this.image,this.dx,this.dy,this.dWidth,this.dHeight,this.sx,this.sy,this.sWidth,this.sHeight);
+  }
+}
 
 //Moon object
 //_______________________________________
-function Moon(x,y,dx,dy,radius,fill){
+function Moon(x,y,dx,dy,radius,fill, fill2){
   //Variable setting
   this.radius = radius;
   this.x = x - (this.radius*2);
@@ -46,8 +80,9 @@ function Moon(x,y,dx,dy,radius,fill){
   this.xOrig = x - (this.radius*2);
   this.yOrig = y - (this.radius*2);
   this.dx = dx;
-  this.dy = dy;
+  this.dy = Math.pow();
   this.fill = fill;
+  this.fill2 = fill2;
 
   //called every frame in animation loop
   this.update = function(){
@@ -58,16 +93,16 @@ function Moon(x,y,dx,dy,radius,fill){
       this.y = this.yOrig;
       this.dy = -this.dy;
     }
-    if(this.x == innerWidth/2) {
-      this.dy = -this.dy;
+    if(this.x > innerWidth/2) {
+      if(this.dy < 0) this.dy = -this.dy;
     }
-    // else if(this.x < innerWidth){
-    //   this.dy = -this.dy;
-    // }
+
     this.x += this.dx;
     this.y += this.dy;
-
+    //Experimenting with path of moon
+    // this.y = 600 - Math.sqrt((this.x-(this.radius*2)*100) - this.radius*8);
     this.draw();
+
   }
 
   //draws the object
@@ -76,18 +111,34 @@ function Moon(x,y,dx,dy,radius,fill){
 
     ctx.beginPath();
     ctx.fillStyle = this.fill;
-    ctx.strokeStyle = 'black';
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
     ctx.stroke();
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.fillStyle = this.fill2;
+    ctx.arc(this.x - this.radius/5, this.y + this.radius/3, this.radius/5, 0, Math.PI * 2, false);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.fillStyle = this.fill2;
+    ctx.arc(this.x + this.radius/3, this.y - this.radius/2, this.radius/3, 0, Math.PI * 2, false);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.fillStyle = this.fill2;
+    ctx.arc(this.x - this.radius/2, this.y - this.radius/4, this.radius/7, 0, Math.PI * 2, false);
     ctx.fill();
   }
 
   this.drawAura = function() {
     var gradient = ctx.createRadialGradient(this.x,this.y,this.radius*2,this.x,this.y,0);
-    gradient.addColorStop(0,"white");
-    gradient.addColorStop(1,"rgba(0,0,255,1)");
+    gradient.addColorStop(0,"#2c5294");
+    gradient.addColorStop(.55,"white");
+    ctx.beginPath();
     ctx.fillStyle = gradient;
-    ctx.fillRect(this.x - (this.radius*2),this.y - (this.radius*2),(this.radius*2)*2,(this.radius*2)*2);
+    ctx.arc(this.x, this.y, this.radius * 2, 0, Math.PI * 2, false);
+    ctx.fill();
   }
 }
 
@@ -180,7 +231,7 @@ var colorArray = [
 
 var rainArray = [];
 
-var moon = new Moon(0,600,.2,-.1,100,'white');
+var moon = new Moon(200,600,.1,-.025,100,'white','#d3d3d3');
 //initializes rain array and elements
 function initRain(){
   rainArray = [];
@@ -211,20 +262,46 @@ function initCircle(){
   }
 }
 
+var arrowArray = [];
+//initializes arrow array and background
+function initArrows(){
+  arrowArray = [];
+  for (var i = 0; i < 360; i++){
+    var dx = i * 16;
+    var dy = i * 16;
+    var dWidth = 15;
+    var dHeight = 16;
+    var sx = 0;
+    var sy = 0;
+    var sWidth = 15;
+    var sHeight = 16;
+    var angle = i * Math.PI * 2;
+    arrowArray.push(new Arrow(dx,dy,dWidth,dHeight,sx,sy,sWidth,sHeight,angle));
+  }
+}
+
 // initCircle();
-initRain()
+initRain();
+// initArrows();
 //animate function clears the canvas and redraws all elements
 //***The order of updates determines the layer position***
 function animate(){
   requestAnimationFrame(animate);
   ctx.setTransform(1,0,0,1,0,0);
+  //clear canvas
   ctx.clearRect(0, 0, innerWidth, innerHeight);
+  //draw circles
   // for (var i = 0; i < circleArray.length; i++){
   //   circleArray[i].update();
   // }
   moon.update();
+  //draw rain
   for (var i = 0; i < rainArray.length; i++){
     rainArray[i].update();
   }
+  //draw arrows
+  // for (var i = 0; i < arrowArray.length; i++){
+  //   arrowArray[i].update();
+  // }
 }
 animate();
