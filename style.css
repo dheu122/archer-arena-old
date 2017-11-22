@@ -123,3 +123,31 @@ form{
     height: 100%;
 
 }
+
+
+#Leaderboard{
+   background-color: #ffffff;
+   opacity: 0.6;
+   filter: alpha(opacity=60); 
+   position: absolute;
+    top: 50px; 
+    left: 40px;
+    z-index:99;
+    width: 15%;
+    height: 25%;
+     
+}
+#Killfeed{
+    background-color: #ffffff;
+    opacity: 0.6;
+    filter: alpha(opacity=60); 
+    position: absolute;
+     top: 50px; 
+     right: 40px;
+     z-index:99;
+     width: 15%;
+     height: 10%;
+}
+
+
+}
