@@ -22,8 +22,8 @@ function loadJSON(url, onsuccess) {
 
 
 ///////////////////////////////////////////////// SOUND FUNCTION
-var titleMusic = new sound("assets/TitleMusic2.wav");
-var gameMusic = new sound("assets/BackgroundMusicNoCrow.wav");
+var titleMusic = new sound("assets/music/TitleMusic2.wav");
+var gameMusic = new sound("assets/music/BackgroundMusicNoCrow.wav");
 
 function sound(src) {
     this.sound = document.createElement("audio");
@@ -38,7 +38,7 @@ function sound(src) {
     this.stop = function(){
         this.sound.pause();
     }
-} 
+}
 
 var isTitlescreen = true;
 
@@ -50,19 +50,19 @@ function gameMusicPlayer() {
 function titleMusicPlayer() {
 	titleMusic.play();
 }
-	
-	
+
+
 function donePlaying() { //checks if the music has finished playing, then if true it plays it again
 
 	if (isTitlescreen == true) {
 		if (titleMusic.paused = true) {
-		titleMusicPlayer(); 
+		titleMusicPlayer();
 		}
 	}
 	else if (isTitlescreen == false) {
-		
+
 			titleMusic.stop();
-			
+
 			if (gameMusic.paused = true) {
 				gameMusicPlayer();
 			}
@@ -104,23 +104,10 @@ var player = new Logic.character({
 player.camera.initialize();
 
 var leaderboard = new Logic.leaderboard({
-	
+
 });
 
-// Map for debugging, remove later
-var debugMap = { 
-	sprite: new Renderer.Sprite({
-		image: '../../assets/map_debug.png',
-		width: 619,
-		height: 620,
-		isSpriteSheet: false,
-		x: 0,
-		y: 0
-	})
-}
-
 window.onload = function() {
-	//loadJSON('/assets/TesterProper', gameLoop); //calls JSON
 
 	socket.on('JoinedRoom', function(identity) {
 		isTitlescreen = false;
@@ -173,8 +160,7 @@ function updateThisPlayer() {
 }
 
 function updatePlayers(playerData) {
-	//debugMap.render();
-	//JsonMap.render(JsonMap.jsonMap);
+	
 	var players = [];
 	var names = [];
 	for(var i = 0; i < playerData.length; i++) {
@@ -195,6 +181,7 @@ function updatePlayers(playerData) {
 				isSpriteSheet: true,
 				x: data.sprite.x,
 				y: data.sprite.y,
+        angle: data.sprite.angle,
 				index: data.sprite.index
 			}),
 			speed: 2,
@@ -230,15 +217,16 @@ function updateArrows(arrowData) {
 				isSpriteSheet: true,
 				x: data.sprite.x,
 				y: data.sprite.y,
+        angle: data.angle,
 				index: data.sprite.index
 			}),
-			
+
 			id: data.id,
 			arrowSpeedX: data.arrowSpeedX,
-			arrowSpeedY: data.arrowSpeedY,   
+			arrowSpeedY: data.arrowSpeedY,
 			angle: data.angle,
 			belongsTo: data.belongsTo,
-			isInThisRoom: data.isInThisRoom, 
+			isInThisRoom: data.isInThisRoom,
 			lifetime: data.lifetime,
 		});
 		//arrow.sprite.render();
