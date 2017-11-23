@@ -32,9 +32,6 @@ function arrowShotSoundPlayer() {
 
 /////////////////////////////////////////////////
 
-
-var socket = io();
-
 var staminaTimer = 0; //for setInterval of stamina
 
 var Logic = {

@@ -32,8 +32,11 @@ server.listen(process.env.PORT || 4200, function() {
     console.log('Starting server on port 4200');
 });
 
-io.once('connection', function(socket) {
-    console.log(socket.id);
+io.on('connection', function(socket) {
+    socket.on('connect', function() {
+        console.log(socket.id);
+    });
+
     socket.on('ConnectToServer', function(playerData) {
         console.log('Connecting using id: ' + socket.id);
         var data = playerData;  // information such as nicknames, location?, character
