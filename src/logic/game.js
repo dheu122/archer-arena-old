@@ -5,6 +5,7 @@ var socket = io();
 // which players it will associate with
 var globalRoomId;
 var globalClientId;
+var globalClientName;
 
 ///////////////////////////////////////////////// Function that loads the map .json file
 
@@ -88,15 +89,15 @@ var player = new Logic.character({
 		width: 15,
 		height: 16,
 		isSpriteSheet: true,
-		x: Math.floor((Math.random() * 1500) + 100),	// Hard-coded these values, CHANGEME
-		y: Math.floor((Math.random() * 1500) + 100),
+		x: Math.floor((Math.random() * 1000) + 100),	// Hard-coded these values, CHANGEME
+		y: Math.floor((Math.random() * 1000) + 100),
 		index: 0,
 	}),
 	speed: 2,
 	minSpeed: 2,
 	maxSpeed: 2.5,
 	stamina: 100,
-	score: 0,
+	score: 0
 });
 
 //sets camera position to (0,0) located at top left corner of the map
@@ -113,6 +114,7 @@ window.onload = function() {
 		isTitlescreen = false;
 		globalRoomId = identity.roomId;
 		globalClientId = identity.id;
+		globalClientName = identity.name;
 		player.characterIndex = identity.characterIndex;
 		player.isInThisRoom = identity.roomId;
 		player.id = identity.id;
@@ -130,6 +132,10 @@ window.onload = function() {
 		updateArrows(arrowData);
 	})
 
+	socket.on('GetRoomPickupData', function(pickupData) {
+		updatePickups(pickupData);
+	});
+
 	socket.on('PlayerWasKilled', function(collision) {
 		//console.log(collision);
 		console.log(collision.playerWhoKilled.name + " Killed " + collision.playerWhoDied.name);
@@ -145,10 +151,23 @@ window.onload = function() {
 		player.score++;
 		console.log('You killed someone');
 	})
+
+	socket.on('AddArrowCount', function() {
+			player.arrowCount++;
+	})
+
+	socket.on('Disconnected', function() {
+		UI.disconnected();
+	});
+
 	gameLoop();
 }
 
 function updateThisPlayer() {
+	if(player.name != globalClientName && !player.isDead) {
+		player.name = globalClientName;
+	}
+
 	canvasScreen.order.thisPlayer = [];
 	canvasScreen.order.thisName = [];
 	canvasScreen.order.thisPlayer.push(player);
@@ -157,6 +176,28 @@ function updateThisPlayer() {
 		x: player.sprite.x,
 		y: player.sprite.y
 	})
+}
+
+function updatePickups(pickupData) {
+	var pickups = [];
+	for(var i = 0; i < pickupData.length; i++) {
+		var data = pickupData[i];
+		var pickup = {
+				sprite: new Renderer.Sprite ({
+					image: Renderer.Images.arrow,
+					width: 16,
+					height: 16,
+					isSpriteSheet: true,
+					x: data.x,
+					y: data.y,
+					index: 0
+				})
+		}
+		//arrow.sprite.render();
+		pickups.push(pickup);
+	}
+	//console.log(arrows);
+	canvasScreen.order.pickups = pickups;
 }
 
 function updatePlayers(playerData) {
@@ -171,6 +212,7 @@ function updatePlayers(playerData) {
 			id: data.id,
 			isInThisRoom: data.isInThisRoom,
 			characterIndex: data.characterIndex,
+			isDead: data.isDead,
 			camera: new Renderer.Camera({
 				enabled: data.camera.enabled
 			}),
@@ -188,17 +230,19 @@ function updatePlayers(playerData) {
 			minSpeed: 2,
 			maxSpeed: 2.5,
 			stamina: 100,
-			score: data.score,
+			score: data.score
 		});
 
 		//player.sprite.render();
 		if(data.id != globalClientId) {
 			players.push(player);
-			names.push({
-				name: data.name,
-				x: data.sprite.x,
-				y: data.sprite.y
-			});
+			if(!player.isDead) {
+				names.push({
+					name: data.name,
+					x: data.sprite.x,
+					y: data.sprite.y
+				});
+			}
 		}
 	}
 	canvasScreen.order.names = names;
@@ -252,8 +296,9 @@ function gameLoop() { //this is the main game loop, i found a version of it in a
 			updateThisPlayer();
 			player.camera.calculatePostition(player.sprite.x, player.sprite.y); //sets camera to the position passed in here
 			canvasScreen.renderInOrder();
-			socket.emit('SendArrowData', data);	
-		  socket.emit('SendPlayerData', data); 		// Send current client's data to everyone, so they can update
+			//socket.emit('SendArrowData', data);	
+			socket.emit('SendPlayerData', data); 		// Send current client's data to everyone, so they can update
+			//socket.emit('SendPickupData', data);
 			lastLoopRun = new Date().getTime();
 		}
 	}
@@ -264,6 +309,6 @@ function gameLoop() { //this is the main game loop, i found a version of it in a
 setInterval(function() {
 	if(globalRoomId) {
 		leaderboard.update();
-		socket.emit('CheckCollision', globalRoomId);
+		//socket.emit('CheckCollision', globalRoomId);
 	}
 }, 1000 / 10);

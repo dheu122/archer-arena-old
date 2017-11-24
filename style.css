@@ -14,7 +14,9 @@ html,body{
 }
 
 canvas {
+    position: absolute;
     background-color: transparent;
+    z-index: 99;
 }
 
 .center{
@@ -116,11 +118,27 @@ form{
 }
 
 #titlescreen{
+    position: absolute;
     top: 0px;
     left: 0px;
     z-index:100;
     width: 100%;
     height: 100%;
+}
+#disconnected {
+    position: absolute;
+    top: 50%;
+    left: 25%;
+    z-index: -100;
+    width: 50%;
+    height: 25%;
+
+    background-color: white;
+}
+
+#refresh {
+    width: 35%;
+    height: 35%;
 }
 
 #Leaderboard{
@@ -133,7 +151,6 @@ form{
     z-index:99;
     width: 15%;
     height: 25%;
-     
 }
 
 #Killfeed{

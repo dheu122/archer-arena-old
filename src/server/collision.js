@@ -15,6 +15,7 @@ module.exports = {
         var playerIdsInRoom = room.getPlayersInRoom(roomId);
         //var arrowIdsInRoom = room.getArrowsInRoom(roomId);
         var arrowsInRoom = room.getArrowsInRoom(roomId);
+        var pickupsInRoom = room.getPickupsInRoom(roomId);
         
         var playersInRoom = [];
 
@@ -47,13 +48,28 @@ module.exports = {
         for(var m = 0; m < playersInRoom.length; m++) {
             if(playersInRoom[m].sprite == undefined) { break; }
 
+            // Arrow shooting collides with player
             for(var n = 0; n < arrowsInRoom.length; n++) {
                 if(this.hasCollided(playersInRoom[m].sprite.x, playersInRoom[m].sprite.y, arrowsInRoom[n].sprite.x, arrowsInRoom[n].sprite.y) && playersInRoom[m].id != arrowsInRoom[n].belongsTo) {
                     var collision = {
                         player: playersInRoom[m],
                         arrow: arrowsInRoom[n]
                     }         
+                    collision.arrow.lifetime = 10;
                     //console.log(collision);
+                    return collision;
+                }
+            }
+
+            // Dropped arrow collides with player
+            for(var n = 0; n < pickupsInRoom.length; n++) {
+                if(this.hasCollided(playersInRoom[m].sprite.x, playersInRoom[m].sprite.y, pickupsInRoom[n].x, pickupsInRoom[n].y)) {
+                    var collision = {
+                        player: playersInRoom[m],
+                        pickup: pickupsInRoom[n]
+                    }         
+
+                    room.removePickupFromRoom(roomId, collision.pickup.id);
                     return collision;
                 }
             }
