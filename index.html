@@ -8,6 +8,7 @@
         <title>Archer Arena - Alpha</title>
         <link rel="shortcut icon" type="image/png" href="assets/favicon.png"/>
         <script src="/socket.io/socket.io.js"></script>
+        <script src="src/logic/ui.js"></script>
         <style>
             * { padding: 0; margin:0 ; }
             canvas {
@@ -18,10 +19,27 @@
             h3 {
                 font-family: "Calibri";
             }
+            .hidden {
+                display: none;
+            }
+
+            .unhidden {
+                display: block;
+            }
         </style>
     </head>
 
     <body>
+
+        <div id="killfeed" class = "hidden">
+            <table style="color:white; font-family: calibri; font-size: 200%;">
+                <th > P1 <img src="assets/ui_arrow.png" alt="whitearrow" class="ui-arrow"> P2</th>
+            </table>
+        </div>
+        <div id="arrowcount" class = "hidden">
+            <h3  style="color:white; font-size: 200%;"> 0 <img src="assets/ui_arrow.png" alt="whitearrow" class="ui-arrow"></h3>
+        </div>
+
         <div id="titlescreen">
             <img src="assets/titlescreen/title.png" alt="Title" id="title" class="center">
             <img src="assets/titlescreen/title_arrow.png" alt="arrow" class="title-arrow">
@@ -35,7 +53,7 @@
                         <button id="selection-arrow-left" type="button" onclick="UI.setCharacterIndex(true)"></button>
                         <button id="selection-arrow-right" type="button" onclick="UI.setCharacterIndex(false)"></button>
                     </div>
-                    <button id="login-button" type="button" onclick="UI.login()"></button>
+                    <button id="login-button" type="button" onclick="UI.login(); UI.loadHidden(this, 'killfeed'); UI.loadHidden(this, 'arrowcount')" value = "unhide"></button>
                 </div>
             </form>
         </div>
@@ -45,6 +63,5 @@
     <script src="src/canvas/renderer.js"></script>
     <script src="src/logic/logic.js"></script>
 	<script src="src/logic/map.js"></script>
-    <script src="src/logic/ui.js"></script>
     <script src="src/logic/game.js"></script>
 </html>

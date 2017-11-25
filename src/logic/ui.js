@@ -36,7 +36,20 @@ var UI = {
             characterIndex: UI.characterIndex
         }
         socket.emit('ConnectToServer', loginData);
-    }
+    },
 
+    loadHidden: function(click, divID) {
+        var item = document.getElementById(divID);
+        if (item) {
+            if(item.className == 'hidden') {
+                item.className = 'unhidden';
+                click.value = 'hide'
+            }
+            else {
+                item.className = 'hidden';
+                click.value = 'unhide'
+            }
+        }
+    }
 }
 // Manual browser testing functions will go here
