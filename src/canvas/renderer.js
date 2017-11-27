@@ -54,8 +54,7 @@ var Renderer = {
                     })
                 }
             ],
-			//layer2
-
+            pickups: [],
 			players: [],
             thisPlayer: [],
             arrows: [],
