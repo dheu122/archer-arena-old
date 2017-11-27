@@ -160,7 +160,7 @@ function updateThisPlayer() {
 }
 
 function updatePlayers(playerData) {
-	
+
 	var players = [];
 	var names = [];
 	for(var i = 0; i < playerData.length; i++) {
@@ -251,8 +251,10 @@ function gameLoop() { //this is the main game loop, i found a version of it in a
 			player.update();					// Updates current client to itself
 			updateThisPlayer();
 			player.camera.calculatePostition(player.sprite.x, player.sprite.y); //sets camera to the position passed in here
+      // player.camera.update();
 			canvasScreen.renderInOrder();
-			socket.emit('SendArrowData', data);	
+      player.camera.update();
+			socket.emit('SendArrowData', data);
 		  socket.emit('SendPlayerData', data); 		// Send current client's data to everyone, so they can update
 			lastLoopRun = new Date().getTime();
 		}
