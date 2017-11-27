@@ -133,9 +133,9 @@ var Renderer = {
           ctx.strokeRect((-this.x/5)+10, (-this.y/5) + 160, 50, 10);
 
           //Label
-          ctx.font = '10px serif';
+          ctx.font = '9px calibri';
           ctx.fillStyle = 'black';
-          ctx.fillText('Stamina',(-this.x/5)+11, (-this.y/5) + 169)
+          ctx.fillText('Stamina',(-this.x/5)+11, (-this.y/5) + 168)
         }
 
         //calulate position of camera
