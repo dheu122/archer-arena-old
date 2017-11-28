@@ -1,6 +1,38 @@
 var canvas = document.querySelector('canvas');
 var ctx = canvas.getContext("2d");
 
+
+///////////////////////////////////////////////// SOUND FUNCTION
+var arrowShot = new sound("assets/sounds/gunShot.wav");
+var arrowHit = new sound("assets/sounds/arrowHit.wav");
+
+function sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+    this.play = function(){
+        this.sound.play();
+    }
+    this.stop = function(){
+        this.sound.pause();
+    }
+} 
+
+
+function arrowHitSoundPlayer() {
+	arrowHit.play();
+}
+
+function arrowShotSoundPlayer() {
+	arrowShot.play();
+}
+
+/////////////////////////////////////////////////
+
+
 var socket = io();
 
 var staminaTimer = 0; //for setInterval of stamina
@@ -35,7 +67,7 @@ var Logic = {
 
         this.canDodge = true;
         this.canShoot = true;
-        
+
         this.curArrowTimer = 0;
         this.arrowTimer = 60;
         this.arrowCount = 100;
@@ -141,7 +173,11 @@ var Logic = {
 
             //creates arrow to shoot
 			if(Logic.mousePressed && this.canShoot && this.arrowCount > 0) {
-                //calculate direction to shoot arrow
+                
+				//shoot sound
+				arrowShotSoundPlayer();
+				
+				//calculate direction to shoot arrow
                 var deltaX = this.origin.x;
                 var deltaY = this.origin.y;
 
@@ -152,7 +188,7 @@ var Logic = {
 
                 var timestamp = new Date().getUTCMilliseconds(); //time in milliseconds
                 var idString = Math.random().toString(36).substring(7); //random 5 letter string
-                
+
                 if(speed > maxSpeed) {
                     var speedRatio = speed / maxSpeed;
                     deltaX = deltaX / speedRatio;
@@ -173,13 +209,14 @@ var Logic = {
                         isSpriteSheet: true,
                         x: this.sprite.x,  // set initial position of arrow to player position
                         y: this.sprite.y,
+                        angle: this.angle,
                         index: 0
                     }),
                     arrowSpeedX: deltaX,
 				    arrowSpeedY: deltaY
 				});
-				
-                socket.emit('AddArrowData', arrow); //send arrow object to server 
+
+                socket.emit('AddArrowData', arrow); //send arrow object to server
                 this.arrowCount--;
                 this.canShoot = false;
                 this.curArrowTimer = 0;
@@ -189,7 +226,7 @@ var Logic = {
 
             if(this.camera.isClamped.x == 0) {
                 this.origin.x = (this.sprite.x - ((canvas.width/5)/2)) + (Logic.mousePositionFromPlayer.x - this.sprite.x) - 8;
-            } 
+            }
             else if(this.camera.isClamped.x == 1) {
                 this.origin.x = Logic.mousePositionFromPlayer.x - this.sprite.x - 8;
             }
@@ -199,7 +236,7 @@ var Logic = {
 
             if(this.camera.isClamped.y == 0) {
                 this.origin.y = (this.sprite.y - ((canvas.height/5)/2)) + (Logic.mousePositionFromPlayer.y - this.sprite.y) - 8;
-            } 
+            }
             else if(this.camera.isClamped.y == 1) {
                 this.origin.y = Logic.mousePositionFromPlayer.y - this.sprite.y - 8;
             }
@@ -250,14 +287,14 @@ var Logic = {
         this.sprite = options.sprite;
 
         this.id = options.id;
-		
+
         this.arrowSpeedX = options.arrowSpeedX;
-        this.arrowSpeedY = options.arrowSpeedY;   
+        this.arrowSpeedY = options.arrowSpeedY;
         this.angle = options.angle;
-		
+
 		this.belongsTo = options.belongsTo; //which player the arrow belongs to
         this.isInThisRoom = options.isInThisRoom; //which room the arrow is in
-        
+
         this.lifetime = options.lifetime;
     },
 
@@ -340,7 +377,7 @@ var Logic = {
     getMousePosition: function (e) {
         var mouseX = e.clientX - ctx.canvas.offsetLeft;
         var mouseY = e.clientY - ctx.canvas.offsetTop;
-        
+
         var canvasMousePos = {
             x: e.clientX,
             y: e.clientY
@@ -374,7 +411,6 @@ document.addEventListener("keyup", Logic.keyUpHandler, false);
 
 document.addEventListener("mousedown", Logic.mouseDownHandler, false); //mouse click
 document.addEventListener("mouseup", Logic.mouseUpHandler, false);
-
 document.addEventListener("mousemove", Logic.getMousePosition, false); //mouse movement
 
 setInterval(function(){
