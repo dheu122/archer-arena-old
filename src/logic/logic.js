@@ -19,7 +19,7 @@ function sound(src) {
     this.stop = function(){
         this.sound.pause();
     }
-} 
+}
 
 
 function arrowHitSoundPlayer() {
@@ -172,10 +172,10 @@ var Logic = {
 
             //creates arrow to shoot
 			if(Logic.mousePressed && this.canShoot && this.arrowCount > 0) {
-                
+
 				//shoot sound
 				arrowShotSoundPlayer();
-				
+
 				//calculate direction to shoot arrow
                 var deltaX = this.origin.x;
                 var deltaY = this.origin.y;

@@ -35,6 +35,7 @@ var Renderer = {
                         image: '../../assets/maps/large_layer1.png',
                         width: 1280,
                         height: 1280,
+                        angle: null,
                         isSpriteSheet: false,
                         x: 0,
                         y: 0
@@ -49,6 +50,7 @@ var Renderer = {
                         image: '../../assets/maps/large_layer2.png',
                         width: 1280,
                         height: 1280,
+                        angle: null,
                         isSpriteSheet: false,
                         x: 0,
                         y: 0
@@ -68,6 +70,7 @@ var Renderer = {
                         image: '../../assets/maps/large_layer3.png',
                         width: 1280,
                         height: 1280,
+                        angle: null,
                         isSpriteSheet: false,
                         x: 0,
                         y: 0
@@ -200,7 +203,8 @@ var Renderer = {
         this.image.src = options.image;
         this.x = options.x;
         this.y = options.y;
-        this.angle = options.angle;
+        // this.angle = options.angle;
+        this.angle = Math.atan2(Logic.canvasMousePosition.x - (canvas.width / 2),-(Logic.canvasMousePosition.y - (canvas.height / 2))) * (180/Math.PI);
 
         this.isSpriteSheet = options.isSpriteSheet;
         this.width = options.width;
@@ -223,8 +227,22 @@ var Renderer = {
                     for(var row = 0; row < yTiles; row++) {
                         for(var col = 0; col < xTiles; col++) {
                             if(this.index == curTile) {
+                              if(this.angle != null) {
+                                context.translate(this.x, this.y);
+                                context.rotate((-this.angle * Math.PI * 2));
+                                context.translate(-(this.x), -(this.y));
+                                 // this.x - (this.width/5), this.y - (this.height/5)
+                                 // context.drawImage(this.image, col * this.width, row * this.height, this.width, this.height, this.x - (this.width/5), this.y - (this.height/5), this.width, this.height);
+                                context.drawImage(this.image, col * this.width, row * this.height, this.width, this.height, this.x - this.width/2, this.y - this.height/2, this.width, this.height);
+                                context.translate(this.x, this.y);
+                                context.rotate(-(-this.angle * Math.PI * 2));
+                                context.translate(-(this.x), -(this.y));
+                                return;
+                              }
+                              else{
                                 context.drawImage(this.image, col * this.width, row * this.height, this.width, this.height, this.x, this.y, this.width, this.height);
                                 return;
+                              }
                             }
                             else {
                                 curTile++;

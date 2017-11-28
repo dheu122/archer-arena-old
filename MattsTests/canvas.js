@@ -56,14 +56,26 @@ function Arrow(dx,dy,dWidth,dHeight,sx,sy,sWidth,sHeight,angle){
   this.sHeight = sHeight;
   this.image = new Image();
   this.image.src = 'C:/Users/Matthew/archer-arena/assets/arrow_sprite.png';
-  this.angle = 10;
-  this.velocity = .025;
+  this.angle = 0;
+  this.velocity = .01;
 
   this.update = function(){
+    ctx.fillStyle = 'green';
+    ctx.fillRect(0,0,2,2);
     ctx.translate(this.dx, this.dy);
-    ctx.rotate(this.angle);
+    ctx.fillStyle = 'blue';
+    ctx.fillRect(0,0,2,2);
+    ctx.rotate(this.angle += this.velocity);
+    console.log(this.angle);
+    ctx.fillStyle = 'gray';
+    ctx.fillRect(0,0,2,2);
     ctx.translate(-(this.dx), -(this.dy));
+    ctx.fillStyle = 'red';
+    ctx.fillRect(0,0,2,2);
     this.draw();
+    ctx.translate(this.dx, this.dy);
+    ctx.rotate(-this.angle);
+    ctx.translate(-(this.dx), -(this.dy));
   }
 
   this.draw = function(){
@@ -267,9 +279,13 @@ var arrowArray = [];
 //initializes arrow array and background
 function initArrows(){
   arrowArray = [];
+  var j = 1;
   for (var i = 0; i < 1; i++){
-    var dx = 100;
-    var dy = 100;
+    if (i == 27 || i == 54 || i == 81) j++;
+    var dx = (Math.random() * innerWidth)/4;
+    var dy = (Math.random() * innerHeight)/4;
+    // var dx = 16 * i;
+    // var dy = 10 * j;
     var dWidth = 15;
     var dHeight = 16;
     var sx = 0;
@@ -323,8 +339,9 @@ function animateArrow(){
   ctx.clearRect(0, 0, innerWidth, innerHeight);
 
   //draw arrows
-  arrowArray[0].update();
-
+  for (var i = 0; i < arrowArray.length; i++){
+  arrowArray[i].update();
+  }
 }
 
 

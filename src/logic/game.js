@@ -89,7 +89,7 @@ var player = new Logic.character({
 		width: 15,
 		height: 16,
 		isSpriteSheet: true,
-		x: Math.floor((Math.random() * 1000) + 100),	// Hard-coded these values, CHANGEME
+		x: Math.floor((Math.random() * 1000) + 100),	
 		y: Math.floor((Math.random() * 1000) + 100),
 		index: 0,
 	}),
