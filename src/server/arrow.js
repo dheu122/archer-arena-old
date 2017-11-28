@@ -8,6 +8,7 @@ var server = http.Server(app);
 var io = socket(server);
 
 var room = require('./room');
+var pickup = require('./pickup');
 
 var arrows = [];
 
@@ -66,9 +67,14 @@ module.exports = {
                     // Is the arrow we are looking for.
                     var arrow = arrows[j];
                     arrow.lifetime--;
-                    if(arrow.lifetime <= 0) {
+                    if(arrow.lifetime <= 0 || (arrow.sprite.x < 0) || (arrow.sprite.x > 1260) || (arrow.sprite.y < 0) || (arrow.sprite.y > 1260))  {
+                        var arrowPosition = {
+                            x: arrowsInRoom[i].sprite.x,
+                            y: arrowsInRoom[i].sprite.y
+                        }
                         room.removeArrowFromRoom(roomId, arrow.id);
                         this.deleteArrowAt(j);
+                        pickup.addPickupToRoom(roomId, arrowPosition);
                     } else {
                         arrow.sprite.x += arrow.arrowSpeedX;
                         arrow.sprite.y += arrow.arrowSpeedY;

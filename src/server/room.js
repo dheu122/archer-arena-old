@@ -13,7 +13,8 @@ var rooms = [];
     Informal Room Interface {
         roomId: string,
         playersInRoom: [playerIds, ...],
-        arrowsInRoom: [arrowIds, ...]
+        arrowsInRoom: [arrowIds, ...],
+        pickupsInRoom: [pickupObjs, ...]
     }
 */
 
@@ -37,6 +38,13 @@ module.exports = {
         }
     },
 
+    getPickupsInRoom: function(roomId) {
+        for(var i = 0; i < rooms.length; i++) {
+            if(roomId == rooms[i].roomId) 
+                return rooms[i].pickupsInRoom;
+        }
+    },
+
     getPlayersInRoom: function(roomId) {
         for(var i = 0; i < rooms.length; i++) {
             if(roomId == rooms[i].roomId)
@@ -52,6 +60,14 @@ module.exports = {
         }
     },
 
+    createPickupInRoom: function(roomId, pickupObject) {
+        for(var i = 0; i < rooms.length; i++) {
+            if(roomId == rooms[i].roomId) {
+                rooms[i].pickupsInRoom.push(pickupObject);
+            }
+        }
+    },
+
     createAndJoinRoom: function(playerId) {
         var timestamp = new Date().getUTCMilliseconds();
         var roomId = timestamp + '-' + playerId;
@@ -59,7 +75,8 @@ module.exports = {
         rooms.push({
             roomId: roomId,
             playersInRoom: [playerId],
-            arrowsInRoom: []
+            arrowsInRoom: [],
+            pickupsInRoom: []
         })
 
         console.log('Creating and joining new room: ' + roomId);
@@ -116,6 +133,16 @@ module.exports = {
         for(var i = 0; i < room.arrowsInRoom.length; i++) {
             if(arrowId == room.arrowsInRoom[i].id) {
                 room.arrowsInRoom.splice(i, 1);
+            }
+        }
+    },
+
+    removePickupFromRoom: function(roomId, pickupId) {
+        var roomIndex = this.getRoomIndex(roomId);
+        var room = rooms[roomIndex];
+        for(var i = 0; i < room.pickupsInRoom.length; i++) {
+            if(pickupId == room.pickupsInRoom[i].id) {
+                room.pickupsInRoom.splice(i, 1);
             }
         }
     }

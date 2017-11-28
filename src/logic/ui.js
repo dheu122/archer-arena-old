@@ -30,6 +30,14 @@ var UI = {
         else if(left == false && UI.characterIndex < 5) { UI.characterIndex++; }
     },
 
+    disconnected: function() {
+        document.getElementById('disconnected').style.zIndex = 200;
+    },
+
+    refreshPage: function() {
+        window.location.reload();
+    },
+
     login() {
         var loginData = {
             name: UI.getUsername(),

@@ -32,9 +32,6 @@ function arrowShotSoundPlayer() {
 
 /////////////////////////////////////////////////
 
-
-var socket = io();
-
 var staminaTimer = 0; //for setInterval of stamina
 
 var Logic = {
@@ -70,7 +67,7 @@ var Logic = {
 
         this.curArrowTimer = 0;
         this.arrowTimer = 60;
-        this.arrowCount = 100;
+        this.arrowCount = 1;
 
         this.score = 0;
 
@@ -112,18 +109,20 @@ var Logic = {
             //sprint while draining stamina but cannot shoot
             if(Logic.shiftPressed) {
                 var i = this.curStamina;
-                while (i >= 0) {
+                if (i >= 0) {
                     if (this.speed > this.maxSpeed) {
                         this.speed = this.maxSpeed;
                     }
                     else {
-                    Logic.mousePressed = false; //cannot shoot
-                    this.speed += 0.01;
-                    this.curStamina = i;
-                    i--;
-                        }
+                        Logic.mousePressed = false; //cannot shoot
+                        this.speed += 0.01;
+                        i--;
+                        this.curStamina = i;
                     }
+                } else {
+                    this.speed = this.minSpeed;
                 }
+            }
                 //otherwise recharge stamina to maximum value
             else if(Logic.shiftPressed == false && Logic.spacePressed == false && this.curStamina <= this.maxStamina) {
                 var i = this.curStamina;
@@ -246,7 +245,7 @@ var Logic = {
         },
         this.die = function() {
             var _this = this;
-            var tempName = '';
+            //var tempName = '';
             var timer = 5;
             var respawnTimer = setInterval(waitForRespawn, 1000);
             var respawnNote = 'You died!';
@@ -257,12 +256,13 @@ var Logic = {
             this.sprite.width = 0;
             this.score = 0;
 
-            tempName = this.name;
+            //tempName = this.name;
             this.name = respawnNote;
 
             function waitForRespawn() {
                 if(timer == 0) {
-                    _this.respawn(tempName);
+                    _this.respawn();
+                    //this.name = tempName;
                     clearInterval(respawnTimer);
                 } else {
                     _this.name = 'Respawning in ' + timer;
@@ -270,12 +270,13 @@ var Logic = {
                 }
             }
         },
-        this.respawn = function(tempName) {
+        this.respawn = function(/*tempName*/) {
             this.sprite.height = 16;
             this.sprite.width = 15;
             this.camera.enabled = true;
             this.isDead = false;
-            this.name = tempName;
+            this.arrowCount = 1;
+            //this.name = tempName;
 
             // hard-coded the map-width/map-height. Change 1500 to mapWidth or mapHeight
             this.sprite.x = Math.floor((Math.random() * 1500) + 100);

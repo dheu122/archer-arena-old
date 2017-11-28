@@ -41,7 +41,7 @@ var Renderer = {
                 }
             ],
 			//layer1
-			
+
             layer2: [
                 {
                     sprite: new Renderer.Sprite({
@@ -54,14 +54,13 @@ var Renderer = {
                     })
                 }
             ],
-			//layer2
-			
+            pickups: [],
 			players: [],
             thisPlayer: [],
             arrows: [],
 			names: [],
             thisName: [],
-			
+
 			layer3: [
                 {
                     sprite: new Renderer.Sprite({
@@ -96,8 +95,9 @@ var Renderer = {
     },
 
     Camera: function(options) {
-
         this.enabled = options.enabled;
+        this.x;
+        this.y;
 
         this.isClamped = {
             x: 0,
@@ -112,8 +112,31 @@ var Renderer = {
         }
         //updates game of camera positioning
         this.update = function() {
-            this.calculatePostition();
+            // this.calculatePostition();
+            this.draw();
+            console.log(player.curStamina);
         }
+
+
+        this.draw = function(){
+          //bar background
+          ctx.fillStyle = 'rgba(190,190,190,0.75)';
+          ctx.fillRect((-this.x/5) + 10, (-this.y/5) + 160, 50, 10);
+
+          //bar fill
+          ctx.fillStyle = 'green';
+          ctx.fillRect((-this.x/5) + 10, (-this.y/5) + 160, player.curStamina/2, 10);
+
+          //bar border
+          ctx.strokeStyle = 'gold';
+          ctx.strokeRect((-this.x/5)+10, (-this.y/5) + 160, 50, 10);
+
+          //Label
+          ctx.font = '9px calibri';
+          ctx.fillStyle = 'black';
+          ctx.fillText('Stamina',(-this.x/5)+11, (-this.y/5) + 168)
+        }
+
         //calulate position of camera
         //bounding to the edges of the map being implemented
         this.calculatePostition = function(x,y) {
@@ -160,6 +183,9 @@ var Renderer = {
         this.setPosition = function(x, y) {
           //need to multiply x and y values by 5 due to setTransform scaling of 5
           ctx.setTransform(5,0,0,5,((-x * 5) + canvas.width/2) - 8,((-y * 5) + canvas.height/2)- 8);
+          this.x = ((-x * 5) + canvas.width/2) - 8;
+          this.y = ((-y * 5) + canvas.height/2)- 8;
+
         }
     },
 
