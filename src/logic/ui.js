@@ -38,7 +38,7 @@ var UI = {
         socket.emit('ConnectToServer', loginData);
     },
 
-    loadHidden: function(click, divID) {
+    loadHidden: function(click, divID) { //display ingame UI elements after PLAY is clicked
         var item = document.getElementById(divID);
         if (item) {
             if(item.className == 'hidden') {
