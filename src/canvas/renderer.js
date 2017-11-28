@@ -22,7 +22,8 @@ var Renderer = {
                   'assets/players/player_pink.png',
                   'assets/players/player_purple.png',
                   'assets/players/player_red.png'],
-        arrow: 'assets/arrow_sprite.png'
+        arrow: 'assets/arrow_sprite.png',
+        ui_arrow: 'assets/ui_arrow.png',
     },
 
     Screen: function() {
@@ -96,6 +97,8 @@ var Renderer = {
 
     Camera: function(options) {
         this.enabled = options.enabled;
+        // this.uiArrow = new Image();
+        // this.uiArrow.src = options.image;
         this.x;
         this.y;
 
@@ -112,13 +115,12 @@ var Renderer = {
         }
         //updates game of camera positioning
         this.update = function() {
-            // this.calculatePostition();
             this.draw();
-            console.log(player.curStamina);
         }
 
 
         this.draw = function(){
+        //Stamina Bar________________________
           //bar background
           ctx.fillStyle = 'rgba(190,190,190,0.75)';
           ctx.fillRect((-this.x/5) + 10, (-this.y/5) + 160, 50, 10);
@@ -135,6 +137,7 @@ var Renderer = {
           ctx.font = '9px calibri';
           ctx.fillStyle = 'black';
           ctx.fillText('Stamina',(-this.x/5)+11, (-this.y/5) + 168)
+        //___________________________________
         }
 
         //calulate position of camera
@@ -236,13 +239,6 @@ var Renderer = {
             else {
                 context.drawImage(this.image, this.x, this.y);
             }
-        }
-
-        this.rotation = function(){
-          ctx.clearRect(0, 0, this.width, this.height); //clears the sprite image
-          ctx.translate(this.width/2, this.height/2); //moves rotation point to center of image
-          ctx.rotate(this.angle); //rotates the canvas by the angle provided
-          ctx.translate(-this.width/2, -this.width/2); //moves rotation point back to top left corner of the image
         }
 
         this.animate = function(startIndex, endIndex, animateSpeed, animateType) {
