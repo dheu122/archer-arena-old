@@ -56,22 +56,24 @@ function Arrow(dx,dy,dWidth,dHeight,sx,sy,sWidth,sHeight,angle){
   this.sHeight = sHeight;
   this.image = new Image();
   this.image.src = 'C:/Users/Matthew/archer-arena/assets/arrow_sprite.png';
-  this.angle = 0;
-  this.velocity = .01;
+  // this.angle = Math.atan2(mouse.x,mouse.y);
+  // this.velocity = .01;
 
   this.update = function(){
-    ctx.fillStyle = 'green';
-    ctx.fillRect(0,0,2,2);
-    ctx.translate(this.dx, this.dy);
-    ctx.fillStyle = 'blue';
-    ctx.fillRect(0,0,2,2);
-    ctx.rotate(this.angle += this.velocity);
+    this.angle = Math.atan2(mouse.x - (canvas.width)/2, mouse.y - (canvas.height)/2);
     console.log(this.angle);
-    ctx.fillStyle = 'gray';
-    ctx.fillRect(0,0,2,2);
+    // ctx.fillStyle = 'green';
+    // ctx.fillRect(0,0,2,2);
+    ctx.translate(this.dx, this.dy);
+    // ctx.fillStyle = 'blue';
+    // ctx.fillRect(0,0,2,2);
+    ctx.rotate(this.angle);
+    // ctx.rotate(this.angle += this.velocity);
+    // ctx.fillStyle = 'gray';
+    // ctx.fillRect(0,0,2,2);
     ctx.translate(-(this.dx), -(this.dy));
-    ctx.fillStyle = 'red';
-    ctx.fillRect(0,0,2,2);
+    // ctx.fillStyle = 'red';
+    // ctx.fillRect(0,0,2,2);
     this.draw();
     ctx.translate(this.dx, this.dy);
     ctx.rotate(-this.angle);
@@ -282,8 +284,8 @@ function initArrows(){
   var j = 1;
   for (var i = 0; i < 1; i++){
     if (i == 27 || i == 54 || i == 81) j++;
-    var dx = (Math.random() * innerWidth)/4;
-    var dy = (Math.random() * innerHeight)/4;
+    var dx = (canvas.width/2)/4;
+    var dy = (canvas.height/2)/4;
     // var dx = 16 * i;
     // var dy = 10 * j;
     var dWidth = 15;
@@ -293,6 +295,15 @@ function initArrows(){
     var sWidth = 15;
     var sHeight = 16;
     arrowArray.push(new Arrow(dx,dy,dWidth,dHeight,sx,sy,sWidth,sHeight));
+    // console.log(Math.cos(0));
+    // console.log(Math.cos(Math.PI/4));
+    // console.log(Math.cos(Math.PI/2));
+    // console.log(Math.cos((3 * Math.PI)/4));
+    // console.log(Math.cos(Math.PI));
+    // console.log(Math.cos((5 * Math.PI)/4));
+    // console.log(Math.cos((3 * Math.PI)/2));
+    // console.log(Math.cos((7 * Math.PI)/4));
+    // console.log(Math.cos((2 * Math.PI)));
   }
 }
 

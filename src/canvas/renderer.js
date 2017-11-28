@@ -204,7 +204,8 @@ var Renderer = {
         this.x = options.x;
         this.y = options.y;
         // this.angle = options.angle;
-        this.angle = Math.atan2(Logic.canvasMousePosition.x - (canvas.width / 2),-(Logic.canvasMousePosition.y - (canvas.height / 2))) * (180/Math.PI);
+        this.angle = Math.atan2(Logic.canvasMousePosition.x - (canvas.width/2), Logic.canvasMousePosition.y - (canvas.height/2);
+        console.log(this.angle);
 
         this.isSpriteSheet = options.isSpriteSheet;
         this.width = options.width;
