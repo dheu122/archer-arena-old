@@ -7,7 +7,6 @@ canvas.height = window.innerHeight;
 
 ctx.imageSmoothingEnabled = false;
 
-// test: remove later
 var mapWidth = 1280;
 var mapHeight = 1280;
 
@@ -23,7 +22,6 @@ var Renderer = {
                   'assets/players/player_purple.png',
                   'assets/players/player_red.png'],
         arrow: 'assets/arrow_sprite.png',
-        ui_arrow: 'assets/ui_arrow.png',
     },
 
     Screen: function() {
@@ -35,7 +33,6 @@ var Renderer = {
                         image: '../../assets/maps/large_layer1.png',
                         width: 1280,
                         height: 1280,
-                        angle: null,
                         isSpriteSheet: false,
                         x: 0,
                         y: 0
@@ -50,7 +47,6 @@ var Renderer = {
                         image: '../../assets/maps/large_layer2.png',
                         width: 1280,
                         height: 1280,
-                        angle: null,
                         isSpriteSheet: false,
                         x: 0,
                         y: 0
@@ -70,7 +66,6 @@ var Renderer = {
                         image: '../../assets/maps/large_layer3.png',
                         width: 1280,
                         height: 1280,
-                        angle: null,
                         isSpriteSheet: false,
                         x: 0,
                         y: 0
@@ -100,8 +95,6 @@ var Renderer = {
 
     Camera: function(options) {
         this.enabled = options.enabled;
-        // this.uiArrow = new Image();
-        // this.uiArrow.src = options.image;
         this.x;
         this.y;
 
@@ -126,22 +119,23 @@ var Renderer = {
         //Stamina Bar________________________
           //bar background
           ctx.fillStyle = 'rgba(190,190,190,0.75)';
-          ctx.fillRect((-this.x/5) + 10, (-this.y/5) + 160, 50, 10);
+          ctx.fillRect((-this.x/5) + (canvas.width/100)/2, (-this.y/5) + (canvas.height/100) * 17.5, canvas.width/25, canvas.height/75);
 
           //bar fill
           ctx.fillStyle = 'green';
-          ctx.fillRect((-this.x/5) + 10, (-this.y/5) + 160, player.curStamina/2, 10);
+          ctx.fillRect((-this.x/5) + (canvas.width/100)/2, (-this.y/5) + (canvas.height/100) * 17.5, ((player.curStamina/2)+1), canvas.height/75);
 
           //bar border
           ctx.strokeStyle = 'gold';
-          ctx.strokeRect((-this.x/5)+10, (-this.y/5) + 160, 50, 10);
+          ctx.strokeRect((-this.x/5) + (canvas.width/100)/2, (-this.y/5) + (canvas.height/100) * 17.5, canvas.width/25, canvas.height/75);
 
           //Label
           ctx.font = '9px calibri';
           ctx.fillStyle = 'black';
-          ctx.fillText('Stamina',(-this.x/5)+11, (-this.y/5) + 168)
+          ctx.fillText('Stamina',(-this.x/5) + ((canvas.width/100)/2) + 2, (-this.y/5) + (canvas.height/100) * 18.6)
         //___________________________________
         }
+
 
         //calulate position of camera
         //bounding to the edges of the map being implemented
@@ -203,10 +197,7 @@ var Renderer = {
         this.image.src = options.image;
         this.x = options.x;
         this.y = options.y;
-        // this.angle = options.angle;
-        this.angle = Math.atan2(Logic.canvasMousePosition.x - (canvas.width/2), Logic.canvasMousePosition.y - (canvas.height/2);
-        console.log(this.angle);
-
+        this.angle = options.angle;
         this.isSpriteSheet = options.isSpriteSheet;
         this.width = options.width;
         this.height = options.height;
@@ -229,15 +220,13 @@ var Renderer = {
                         for(var col = 0; col < xTiles; col++) {
                             if(this.index == curTile) {
                               if(this.angle != null) {
-                                context.translate(this.x, this.y);
-                                context.rotate((-this.angle * Math.PI * 2));
-                                context.translate(-(this.x), -(this.y));
-                                 // this.x - (this.width/5), this.y - (this.height/5)
-                                 // context.drawImage(this.image, col * this.width, row * this.height, this.width, this.height, this.x - (this.width/5), this.y - (this.height/5), this.width, this.height);
-                                context.drawImage(this.image, col * this.width, row * this.height, this.width, this.height, this.x - this.width/2, this.y - this.height/2, this.width, this.height);
-                                context.translate(this.x, this.y);
-                                context.rotate(-(-this.angle * Math.PI * 2));
-                                context.translate(-(this.x), -(this.y));
+                                context.translate(this.x + this.width/2, this.y + this.height/2);
+                                ctx.rotate(this.angle);
+                                context.translate(-(this.x + this.width/2), -(this.y + this.height/2));
+                                context.drawImage(this.image, col * this.width, row * this.height, this.width, this.height, this.x, this.y, this.width, this.height);
+                                context.translate(this.x + this.width/2, this.y + this.height/2);
+                                ctx.rotate(-this.angle);
+                                context.translate(-(this.x + this.width/2), -(this.y + this.height/2));
                                 return;
                               }
                               else{

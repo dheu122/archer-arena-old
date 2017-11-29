@@ -183,7 +183,7 @@ var Logic = {
                 var speed = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
                 var maxSpeed = 3;
 
-                var angle = Math.atan2(Logic.canvasMousePosition.x - (canvas.width / 2),-(Logic.canvasMousePosition.y - (canvas.height / 2))) * (180/Math.PI);
+								var angle = Math.atan2(Logic.canvasMousePosition.x - (canvas.width)/2, -(Logic.canvasMousePosition.y - (canvas.height)/2));
 
                 var timestamp = new Date().getUTCMilliseconds(); //time in milliseconds
                 var idString = Math.random().toString(36).substring(7); //random 5 letter string
@@ -206,8 +206,8 @@ var Logic = {
                         width: 16,
                         height: 16,
                         isSpriteSheet: true,
-                        x: this.sprite.x,  // set initial position of arrow to player position
-                        y: this.sprite.y,
+                        x: (player.sprite.x + 16/2),  // set initial position of arrow to player position
+                        y: (player.sprite.y + 16/2),
                         angle: this.angle,
                         index: 0
                     }),
@@ -293,7 +293,7 @@ var Logic = {
         this.arrowSpeedY = options.arrowSpeedY;
         this.angle = options.angle;
 
-		this.belongsTo = options.belongsTo; //which player the arrow belongs to
+				this.belongsTo = options.belongsTo; //which player the arrow belongs to
         this.isInThisRoom = options.isInThisRoom; //which room the arrow is in
 
         this.lifetime = options.lifetime;
