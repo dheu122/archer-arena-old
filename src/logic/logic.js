@@ -416,4 +416,4 @@ document.addEventListener("mousemove", Logic.getMousePosition, false); //mouse m
 
 setInterval(function(){
     staminaTimer++; //increment the stamina
-}, 1000/10); //10 times per 1 second (1000 is in milliseconds)
+}, 1000/20); //20 times per 1 second (1000 is in milliseconds)

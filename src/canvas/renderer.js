@@ -114,15 +114,16 @@ var Renderer = {
             this.draw();
         }
 
-
         this.draw = function(){
+
         //Stamina Bar________________________
           //bar background
           ctx.fillStyle = 'rgba(190,190,190,0.75)';
           ctx.fillRect((-this.x/5) + (canvas.width/100)/2, (-this.y/5) + (canvas.height/100) * 17.5, canvas.width/25, canvas.height/75);
 
-          //bar fill
+          //stamina bar fill
           ctx.fillStyle = 'green';
+
           ctx.fillRect((-this.x/5) + (canvas.width/100)/2, (-this.y/5) + (canvas.height/100) * 17.5, ((player.curStamina/2)+1), canvas.height/75);
 
           //bar border
@@ -134,6 +135,12 @@ var Renderer = {
           ctx.fillStyle = 'black';
           ctx.fillText('Stamina',(-this.x/5) + ((canvas.width/100)/2) + 2, (-this.y/5) + (canvas.height/100) * 18.6)
         //___________________________________
+
+          //arrow count bar label
+          ctx.font = '8px calibri';
+          ctx.fillStyle = 'white';
+          ctx.fillText('ARROWS ' + player.arrowCount, (-this.x/5) + 260, (-this.y/5) + 150);
+
         }
 
 
