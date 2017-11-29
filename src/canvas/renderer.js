@@ -137,9 +137,9 @@ var Renderer = {
         //___________________________________
 
           //arrow count bar label
-          ctx.font = '8px calibri';
-          ctx.fillStyle = 'white';
-          ctx.fillText('ARROWS ' + player.arrowCount, (-this.x/5) + 260, (-this.y/5) + 150);
+          ctx.font = '9px calibri';
+          ctx.fillStyle = 'rgba(0,0,0,.75)';
+          ctx.fillText('ARROWS ' + player.arrowCount, (-this.x/5) + (canvas.width/100) * 16, (-this.y/5) + (canvas.height/100) * 18.6);
 
         }
 
