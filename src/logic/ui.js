@@ -45,19 +45,5 @@ var UI = {
         }
         socket.emit('ConnectToServer', loginData);
     },
-
-    loadHidden: function(click, divID) { //display ingame UI elements after PLAY is clicked
-        var item = document.getElementById(divID);
-        if (item) {
-            if(item.className == 'hidden') {
-                item.className = 'unhidden';
-                click.value = 'hide'
-            }
-            else {
-                item.className = 'hidden';
-                click.value = 'unhide'
-            }
-        }
-    }
 }
 // Manual browser testing functions will go here
