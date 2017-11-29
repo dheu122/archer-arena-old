@@ -44,7 +44,6 @@ var UI = {
             characterIndex: UI.characterIndex
         }
         socket.emit('ConnectToServer', loginData);
-    }
-
+    },
 }
 // Manual browser testing functions will go here

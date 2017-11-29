@@ -114,27 +114,30 @@ var Renderer = {
         this.update = function() {
             // this.calculatePostition();
             this.draw();
-            console.log(player.curStamina);
         }
 
-
         this.draw = function(){
-          //bar background
-          ctx.fillStyle = 'rgba(190,190,190,0.75)';
-          ctx.fillRect((-this.x/5) + 10, (-this.y/5) + 160, 50, 10);
+          //stamina bar background
+          ctx.fillStyle = 'red';
+          ctx.fillRect((-this.x/5) + 10, (-this.y/5) + 150, 50, 10);
 
-          //bar fill
+          //stamina bar fill
           ctx.fillStyle = 'green';
-          ctx.fillRect((-this.x/5) + 10, (-this.y/5) + 160, player.curStamina/2, 10);
+          ctx.fillRect((-this.x/5) + 10, (-this.y/5) + 150, player.curStamina/2, 10);
 
-          //bar border
-          ctx.strokeStyle = 'gold';
-          ctx.strokeRect((-this.x/5)+10, (-this.y/5) + 160, 50, 10);
+          //stamina bar border
+          ctx.strokeStyle = 'white';
+          ctx.strokeRect((-this.x/5) + 10, (-this.y/5) + 150, 50, 10);
 
-          //Label
-          ctx.font = '9px calibri';
-          ctx.fillStyle = 'black';
-          ctx.fillText('Stamina',(-this.x/5)+11, (-this.y/5) + 168)
+          //stamina bar label
+          ctx.font = '8px calibri';
+          ctx.fillStyle = 'white';
+          ctx.fillText('STAMINA',(-this.x/5)+11, (-this.y/5) + 158);
+
+          //arrow count bar label
+          ctx.font = '8px calibri';
+          ctx.fillStyle = 'white';
+          ctx.fillText('ARROWS ' + player.arrowCount, (-this.x/5) + 260, (-this.y/5) + 150);
         }
 
         //calulate position of camera

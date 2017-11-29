@@ -8,6 +8,7 @@
         <title>Archer Arena - Alpha</title>
         <link rel="shortcut icon" type="image/png" href="assets/favicon.png"/>
         <script src="/socket.io/socket.io.js"></script>
+        <script src="src/logic/ui.js"></script>
         <style>
             * { padding: 0; margin:0 ; }
             canvas {
@@ -44,34 +45,6 @@
             <h1>You were disconnected</h1>
             <button id="refresh" onclick="UI.refreshPage()">Refresh Page</button>
         </div>
-        <!-- <div id ="endscoreboard">
-            <font size="10"<h1> Game Over</h1></font>
-            <table>
-              <p align="left"> <font size="10" <td> First:<br/>  <br/>Second:<br/>  <br/>Third:<b/></td></font></p>
-            </table>
-       </div>
-            <div id ="Killfeed">
-            <table>
-                <td> player1  player2
-                </td>
-            </table>
-        </div>
-        <div id="Leaderboard">
-            <h2>leaderboard</h2>
-            <table>
-                <tr>
-                    <td>1.<br/>2.<br/>3.<br/>4.<br/>5.<br/>6.<br/>7.<br/>8.</td>
-                </tr>
-                <tr>
-                    <td id="name1"></td>
-                    <td id="score1"></td>
-                </tr>
-                <tr>
-                    <td id="name2"></td>
-                    <td id="score2"></td>
-                </tr>
-            </table>
-        </div> -->
         <canvas id="gameCanvas"></canvas>
     </body>
     <script src="src/logic/controls.js"></script>
@@ -80,5 +53,4 @@
 	  <script src="src/logic/map.js"></script>
     <script src="src/logic/ui.js"></script>
     <script src="src/logic/game.js"></script>
-    <!-- <script src="MattsTests/canvas.js"></script> -->
 </html>
