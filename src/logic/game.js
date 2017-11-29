@@ -82,14 +82,14 @@ var player = new Logic.character({
 	isDead: false,
 	characterIndex: 0,
 	camera: new Renderer.Camera({
-		enabled: true
+		enabled: true,
 	}),
 	sprite: new Renderer.Sprite({
 		image: Renderer.Images.players[0],
 		width: 15,
 		height: 16,
 		isSpriteSheet: true,
-		x: Math.floor((Math.random() * 1000) + 100),	// Hard-coded these values, CHANGEME
+		x: Math.floor((Math.random() * 1000) + 100),
 		y: Math.floor((Math.random() * 1000) + 100),
 		index: 0,
 	}),
@@ -122,13 +122,10 @@ window.onload = function() {
 	});
 
 	socket.on('GetRoomPlayerData', function(playerData) {
-		//console.log(playerData);
-		//ctx.clearRect(-100, -100, canvas.width, canvas.height);
 		updatePlayers(playerData);
 	});
 
 	socket.on('GetRoomArrowData', function(arrowData) {
-		//ctx.clearRect(-100, -100, canvas.width, canvas.height);
 		updateArrows(arrowData);
 	})
 
@@ -137,10 +134,8 @@ window.onload = function() {
 	});
 
 	socket.on('PlayerWasKilled', function(collision) {
-		//console.log(collision);
 		console.log(collision.playerWhoKilled.name + " Killed " + collision.playerWhoDied.name);
-		//leaderboard.addScore(collision.playerWhoKilled, collision.playerWhoDied);
-	})
+  })
 
 	socket.on('YouDied', function() {
 		player.die();
@@ -193,10 +188,8 @@ function updatePickups(pickupData) {
 					index: 0
 				})
 		}
-		//arrow.sprite.render();
 		pickups.push(pickup);
 	}
-	//console.log(arrows);
 	canvasScreen.order.pickups = pickups;
 }
 
@@ -273,10 +266,8 @@ function updateArrows(arrowData) {
 			isInThisRoom: data.isInThisRoom,
 			lifetime: data.lifetime,
 		});
-		//arrow.sprite.render();
 		arrows.push(arrow);
 	}
-	//console.log(arrows);
 	canvasScreen.order.arrows = arrows;
 }
 // Clears the screen
@@ -295,12 +286,9 @@ function gameLoop() { //this is the main game loop, i found a version of it in a
 			player.update();					// Updates current client to itself
 			updateThisPlayer();
 			player.camera.calculatePostition(player.sprite.x, player.sprite.y); //sets camera to the position passed in here
-      // player.camera.update();
 			canvasScreen.renderInOrder();
       player.camera.update(); //updates camera ui
-			//socket.emit('SendArrowData', data);	
 			socket.emit('SendPlayerData', data); 		// Send current client's data to everyone, so they can update
-			//socket.emit('SendPickupData', data);
 			lastLoopRun = new Date().getTime();
 		}
 	}

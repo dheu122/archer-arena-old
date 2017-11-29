@@ -7,7 +7,6 @@ canvas.height = window.innerHeight;
 
 ctx.imageSmoothingEnabled = false;
 
-// test: remove later
 var mapWidth = 1280;
 var mapHeight = 1280;
 
@@ -22,7 +21,7 @@ var Renderer = {
                   'assets/players/player_pink.png',
                   'assets/players/player_purple.png',
                   'assets/players/player_red.png'],
-        arrow: 'assets/arrow_sprite.png'
+        arrow: 'assets/arrow_sprite.png',
     },
 
     Screen: function() {
@@ -112,33 +111,38 @@ var Renderer = {
         }
         //updates game of camera positioning
         this.update = function() {
-            // this.calculatePostition();
             this.draw();
         }
 
         this.draw = function(){
-          //stamina bar background
-          ctx.fillStyle = 'red';
-          ctx.fillRect((-this.x/5) + 10, (-this.y/5) + 150, 50, 10);
+
+        //Stamina Bar________________________
+          //bar background
+          ctx.fillStyle = 'rgba(190,190,190,0.75)';
+          ctx.fillRect((-this.x/5) + (canvas.width/100)/2, (-this.y/5) + (canvas.height/100) * 17.5, canvas.width/25, canvas.height/75);
 
           //stamina bar fill
           ctx.fillStyle = 'green';
-          ctx.fillRect((-this.x/5) + 10, (-this.y/5) + 150, player.curStamina/2, 10);
 
-          //stamina bar border
-          ctx.strokeStyle = 'white';
-          ctx.strokeRect((-this.x/5) + 10, (-this.y/5) + 150, 50, 10);
+          ctx.fillRect((-this.x/5) + (canvas.width/100)/2, (-this.y/5) + (canvas.height/100) * 17.5, ((player.curStamina/2)+1), canvas.height/75);
 
-          //stamina bar label
-          ctx.font = '8px calibri';
-          ctx.fillStyle = 'white';
-          ctx.fillText('STAMINA',(-this.x/5)+11, (-this.y/5) + 158);
+          //bar border
+          ctx.strokeStyle = 'gold';
+          ctx.strokeRect((-this.x/5) + (canvas.width/100)/2, (-this.y/5) + (canvas.height/100) * 17.5, canvas.width/25, canvas.height/75);
+
+          //Label
+          ctx.font = '9px calibri';
+          ctx.fillStyle = 'black';
+          ctx.fillText('Stamina',(-this.x/5) + ((canvas.width/100)/2) + 2, (-this.y/5) + (canvas.height/100) * 18.6)
+        //___________________________________
 
           //arrow count bar label
           ctx.font = '8px calibri';
           ctx.fillStyle = 'white';
           ctx.fillText('ARROWS ' + player.arrowCount, (-this.x/5) + 260, (-this.y/5) + 150);
+
         }
+
 
         //calulate position of camera
         //bounding to the edges of the map being implemented
@@ -201,7 +205,6 @@ var Renderer = {
         this.x = options.x;
         this.y = options.y;
         this.angle = options.angle;
-
         this.isSpriteSheet = options.isSpriteSheet;
         this.width = options.width;
         this.height = options.height;
@@ -223,8 +226,20 @@ var Renderer = {
                     for(var row = 0; row < yTiles; row++) {
                         for(var col = 0; col < xTiles; col++) {
                             if(this.index == curTile) {
+                              if(this.angle != null) {
+                                context.translate(this.x + this.width/2, this.y + this.height/2);
+                                ctx.rotate(this.angle);
+                                context.translate(-(this.x + this.width/2), -(this.y + this.height/2));
+                                context.drawImage(this.image, col * this.width, row * this.height, this.width, this.height, this.x, this.y, this.width, this.height);
+                                context.translate(this.x + this.width/2, this.y + this.height/2);
+                                ctx.rotate(-this.angle);
+                                context.translate(-(this.x + this.width/2), -(this.y + this.height/2));
+                                return;
+                              }
+                              else{
                                 context.drawImage(this.image, col * this.width, row * this.height, this.width, this.height, this.x, this.y, this.width, this.height);
                                 return;
+                              }
                             }
                             else {
                                 curTile++;
@@ -239,13 +254,6 @@ var Renderer = {
             else {
                 context.drawImage(this.image, this.x, this.y);
             }
-        }
-
-        this.rotation = function(){
-          ctx.clearRect(0, 0, this.width, this.height); //clears the sprite image
-          ctx.translate(this.width/2, this.height/2); //moves rotation point to center of image
-          ctx.rotate(this.angle); //rotates the canvas by the angle provided
-          ctx.translate(-this.width/2, -this.width/2); //moves rotation point back to top left corner of the image
         }
 
         this.animate = function(startIndex, endIndex, animateSpeed, animateType) {
